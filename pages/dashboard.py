@@ -3,6 +3,19 @@ import pandas as pd
 
 st.title("📊 Dashboard - Healthy Water")
 
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("👥 العملاء", len(df_c))
+col2.metric("🔧 الصيانات", len(df_m))
+col3.metric("💰 الإيراد", f"{total_revenue} ج.م")
+col4.metric("📦 مخزون منخفض", low_stock_items)
+
+st.divider()
+st.subheader("🏆 أفضل العملاء ربحًا")
+st.subheader("📅 الإيراد الشهري")
+st.subheader("📊 KPI Dashboard")
+st.subheader("🚨 تنبيه المخزون")
+
 # =========================
 # 🔐 Safe Loader (مهم جدًا)
 # =========================
