@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-
+st.title("📊 Dashboard - Healthy Water")
 
 # =========================
 # 🔐 Loader
@@ -43,7 +43,6 @@ if "quantity" in df_inv.columns and "min_limit" in df_inv.columns:
     low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
 else:
     low_stock_items = 0
-st.title("📊 Dashboard - Healthy Water")
 
 # =========================
 # 📊 UI (هنا بس العرض)
@@ -71,17 +70,22 @@ st.divider()
 st.subheader("📈 الإيراد من الصيانات")
 
 if not df_m.empty and "amount" in df_m.columns:
-    st.line_chart(df_m["amount"])
+    if not df_m.empty and "amount" in df_m.columns:
+    df_m["amount"] = pd.to_numeric(df_m["amount"], errors="coerce").fillna(0)
+
+    if "visit_date" in df_m.columns:
+        df_m["visit_date"] = pd.to_datetime(df_m["visit_date"], errors="coerce")
+        chart_data = df_m.groupby(df_m["visit_date"].dt.date)["amount"].sum()
+        st.line_chart(chart_data)
+    else:
+        st.line_chart(df_m["amount"])
 else:
     st.info("لا توجد بيانات")
 
 st.subheader("📦 المخزون")
 
-if not df_inv.empty and "item_name" in df_inv.columns:
+if not df_inv.empty and "item_name" in df_inv.columns and "quantity" in df_inv.columns:
+    df_inv["quantity"] = pd.to_numeric(df_inv["quantity"], errors="coerce").fillna(0)
     st.bar_chart(df_inv.set_index("item_name")["quantity"])
 st.divider()
-st.subheader("📅 فلترة البيانات")
-st.subheader("🏆 أفضل العملاء")
-st.subheader("📊 التحليل الشهري")
-st.subheader("🚨 تنبيهات النظام")
-st.subheader("📊 KPI Dashboard")
+st.info("🚧 سيتم إضافة التحليلات قريبًا")
