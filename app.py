@@ -40,7 +40,7 @@ elif page == "Store":
 
 # --- 1. الإعدادات والروابط المركزية ---
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwS0CSCFl0fSQyvefV8X1mn2YaNQ044F6KpFG8XMJsyhcT4VcaeCfPKBtG2dP74mgsq/exec"
-LOGO_PATH = "logo.png"
+assets/images/logo.png
 import os
 
 ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
