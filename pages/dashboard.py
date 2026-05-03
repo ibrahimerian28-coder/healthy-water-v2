@@ -1,5 +1,11 @@
 import streamlit as st
 import pandas as pd
+def safe_read(url):
+    try:
+        return pd.read_csv(url)
+    except:
+        return pd.DataFrame()
+df_orders = safe_read("URL")
 
 st.title("📊 Dashboard - Healthy Water")
 
