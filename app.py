@@ -15,7 +15,7 @@ WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwSW9s7nKgp5_fPRh9P7a5UqJ
 LOGO_PATH = "logo.png"
 import os
 
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 COMPANY_PHONE = "01286609535"
 
 # --- 2. الدوال المساعدة ---
