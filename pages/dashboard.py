@@ -48,9 +48,12 @@ df_store = pd.read_csv(
     "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1129472026"
 )
 
-df_orders = pd.read_csv(
-    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1423854754"
-)
+try:
+    df_orders = pd.read_csv(
+        "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1423854754"
+    )
+except:
+    df_orders = pd.DataFrame()
 
 # =========================
 # 📊 عرض الإحصائيات
