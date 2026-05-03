@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+st.write("DEBUG df_c:", df_c.shape)
+st.write(df_c.head())
 
 # =========================
 # 🔐 Loader
