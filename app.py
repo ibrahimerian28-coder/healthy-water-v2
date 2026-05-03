@@ -13,7 +13,9 @@ from bidi.algorithm import get_display
 # --- 1. الإعدادات والروابط المركزية ---
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwSW9s7nKgp5_fPRh9P7a5UqJ84bYfJrs7jkwTkCVRAFvHY3DZEcQfZ0PBGY4ksapT-aw/exec"
 LOGO_PATH = "logo.png"
-ADMIN_PASSWORD = "HgM18082019$&)"
+import os
+
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 COMPANY_PHONE = "01286609535"
 
 # --- 2. الدوال المساعدة ---
