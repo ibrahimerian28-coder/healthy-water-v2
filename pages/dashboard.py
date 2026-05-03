@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("📊 Dashboard - Healthy Water")
+
 
 # =========================
 # 🔐 Loader
@@ -43,6 +43,7 @@ if "quantity" in df_inv.columns and "min_limit" in df_inv.columns:
     low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
 else:
     low_stock_items = 0
+st.title("📊 Dashboard - Healthy Water")
 
 # =========================
 # 📊 UI (هنا بس العرض)
@@ -78,3 +79,9 @@ st.subheader("📦 المخزون")
 
 if not df_inv.empty and "item_name" in df_inv.columns:
     st.bar_chart(df_inv.set_index("item_name")["quantity"])
+st.divider()
+st.subheader("📅 فلترة البيانات")
+st.subheader("🏆 أفضل العملاء")
+st.subheader("📊 التحليل الشهري")
+st.subheader("🚨 تنبيهات النظام")
+st.subheader("📊 KPI Dashboard")
