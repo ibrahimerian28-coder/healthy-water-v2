@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-st.title("📊 Dashboard - Healthy Water")
-
 # =========================
 # 🔐 Loader
 # =========================
@@ -12,20 +10,17 @@ def safe_read(url):
     except:
         return pd.DataFrame()
 
+BASE_URL = "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid="
+
 # =========================
-# 📥 Load Data (مرة واحدة فقط)
+# 📥 Load Data
 # =========================
-df_c = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=0")
-
-df_m = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=2120582392")
-
-df_inv = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1767710106")
-
-df_exp = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=288947510")
-
-df_store = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1129472026")
-
-df_orders = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1423854754")
+df_c = safe_read(BASE_URL + "0")
+df_m = safe_read(BASE_URL + "2120582392")
+df_inv = safe_read(BASE_URL + "1767710106")
+df_exp = safe_read(BASE_URL + "288947510")
+df_store = safe_read(BASE_URL + "1129472026")
+df_orders = safe_read(BASE_URL + "1423854754")
 
 # =========================
 # 📊 Calculations
@@ -33,20 +28,26 @@ df_orders = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuV
 total_customers = len(df_c)
 total_maintenance = len(df_m)
 
+# revenue
 if "amount" in df_m.columns:
     df_m["amount"] = pd.to_numeric(df_m["amount"], errors="coerce").fillna(0)
     total_revenue = df_m["amount"].sum()
 else:
     total_revenue = 0
 
+# low stock
 if "quantity" in df_inv.columns and "min_limit" in df_inv.columns:
+    df_inv["quantity"] = pd.to_numeric(df_inv["quantity"], errors="coerce").fillna(0)
+    df_inv["min_limit"] = pd.to_numeric(df_inv["min_limit"], errors="coerce").fillna(0)
     low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
 else:
     low_stock_items = 0
 
 # =========================
-# 📊 UI (هنا بس العرض)
+# 📊 UI
 # =========================
+st.title("📊 Dashboard - Healthy Water")
+
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric("👥 العملاء", total_customers)
@@ -57,6 +58,7 @@ col4.metric("📦 مخزون منخفض", low_stock_items)
 st.divider()
 
 st.subheader("📈 نظرة عامة")
+
 st.write("📌 الطلبات:", len(df_orders))
 st.write("📌 المنتجات:", len(df_store))
 st.write("📌 المصروفات:", len(df_exp))
@@ -64,28 +66,19 @@ st.write("📌 المصروفات:", len(df_exp))
 st.success("تم ربط البيانات بنجاح ✔")
 
 # =========================
-# 📊 Charts
+# 📈 Charts
 # =========================
 st.divider()
 st.subheader("📈 الإيراد من الصيانات")
 
 if not df_m.empty and "amount" in df_m.columns:
-    if not df_m.empty and "amount" in df_m.columns:
-    df_m["amount"] = pd.to_numeric(df_m["amount"], errors="coerce").fillna(0)
-
-    if "visit_date" in df_m.columns:
-        df_m["visit_date"] = pd.to_datetime(df_m["visit_date"], errors="coerce")
-        chart_data = df_m.groupby(df_m["visit_date"].dt.date)["amount"].sum()
-        st.line_chart(chart_data)
-    else:
-        st.line_chart(df_m["amount"])
+    st.line_chart(df_m["amount"])
 else:
-    st.info("لا توجد بيانات")
+    st.info("لا توجد بيانات للإيراد")
 
 st.subheader("📦 المخزون")
 
-if not df_inv.empty and "item_name" in df_inv.columns and "quantity" in df_inv.columns:
-    df_inv["quantity"] = pd.to_numeric(df_inv["quantity"], errors="coerce").fillna(0)
+if not df_inv.empty and "item_name" in df_inv.columns:
     st.bar_chart(df_inv.set_index("item_name")["quantity"])
-st.divider()
-st.info("🚧 سيتم إضافة التحليلات قريبًا")
+else:
+    st.info("لا توجد بيانات مخزون")
