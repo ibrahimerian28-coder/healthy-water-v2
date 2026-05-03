@@ -1,5 +1,17 @@
 import streamlit as st
 import pandas as pd
+df_c = safe_read(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=0"
+)
+
+df_m = safe_read(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=2120582392"
+)
+
+df_inv = safe_read(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1767710106"
+)
+col1.metric("👥 العملاء", len(df_c))
 
 st.title("📊 Dashboard - Healthy Water")
 
