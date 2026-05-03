@@ -1,5 +1,10 @@
-import base64
 import streamlit as st
+
+# لازم تكون أول حاجة في الملف
+st.set_page_config(page_title="Healthy Water", layout="wide")
+
+# باقي الـ imports
+import base64
 import pandas as pd
 import requests
 from datetime import datetime, timedelta
@@ -9,6 +14,29 @@ import io
 import os
 from arabic_reshaper import reshape
 from bidi.algorithm import get_display
+# =========================
+# 🔥 NAVIGATION SYSTEM
+# =========================
+
+page = st.sidebar.selectbox(
+    "📌 القائمة",
+    ["Dashboard", "Customers", "Maintenance", "Inventory", "Store"]
+)
+
+if page == "Dashboard":
+    import pages.dashboard
+
+elif page == "Customers":
+    import pages.customers
+
+elif page == "Maintenance":
+    import pages.maintenance
+
+elif page == "Inventory":
+    import pages.inventory
+
+elif page == "Store":
+    import pages.store
 
 # --- 1. الإعدادات والروابط المركزية ---
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwSW9s7nKgp5_fPRh9P7a5UqJ84bYfJrs7jkwTkCVRAFvHY3DZEcQfZ0PBGY4ksapT-aw/exec"
