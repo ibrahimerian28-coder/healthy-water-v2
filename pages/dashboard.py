@@ -1,5 +1,13 @@
 import streamlit as st
 import pandas as pd
+# =========================
+# 🔐 Safe Loader (مهم جدًا)
+# =========================
+def safe_read(url):
+    try:
+        return pd.read_csv(url)
+    except:
+        return pd.DataFrame()
 df_c = safe_read(
     "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=0"
 )
@@ -28,14 +36,7 @@ st.subheader("📅 الإيراد الشهري")
 st.subheader("📊 KPI Dashboard")
 st.subheader("🚨 تنبيه المخزون")
 
-# =========================
-# 🔐 Safe Loader (مهم جدًا)
-# =========================
-def safe_read(url):
-    try:
-        return pd.read_csv(url)
-    except:
-        return pd.DataFrame()
+
 
 # =========================
 # 👥 Customers
