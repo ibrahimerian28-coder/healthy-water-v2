@@ -1,17 +1,60 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 
-# هنا هنفترض إن الداتا بتتجاب من app أو api
 st.title("📊 Dashboard - Healthy Water")
 
-# أمثلة مؤقتة (لحد ما نربط الداتا الصح)
-total_customers = 120
-total_maintenance = 45
-total_revenue = 25000
-low_stock_items = 5
+# =========================
+# 👥 Customers
+# =========================
+df_c = pd.read_csv(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=0"
+)
+total_customers = len(df_c)
 
-# عرض الإحصائيات
+# =========================
+# 🔧 Maintenance
+# =========================
+df_m = pd.read_csv(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=2120582392"
+)
+total_maintenance = len(df_m)
+
+df_m["amount"] = pd.to_numeric(df_m.get("amount", 0), errors="coerce").fillna(0)
+total_revenue = df_m["amount"].sum()
+
+# =========================
+# 📦 Inventory
+# =========================
+df_inv = pd.read_csv(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1767710106"
+)
+
+if "quantity" in df_inv.columns and "min_limit" in df_inv.columns:
+    low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
+else:
+    low_stock_items = 0
+
+# =========================
+# 📊 Expenses (موجودة لو حبيت تستخدمها لاحقًا)
+# =========================
+df_exp = pd.read_csv(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=288947510"
+)
+
+# =========================
+# 📊 Store (اختياري)
+# =========================
+df_store = pd.read_csv(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1129472026"
+)
+
+df_orders = pd.read_csv(
+    "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1423854754"
+)
+
+# =========================
+# 📊 عرض الإحصائيات
+# =========================
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric("👥 العملاء", total_customers)
@@ -22,4 +65,4 @@ col4.metric("📦 مخزون منخفض", low_stock_items)
 st.divider()
 
 st.subheader("📈 نظرة عامة")
-st.info("هنا هنضيف الرسوم البيانية بعد ربط البيانات")
+st.success("تم ربط كل الشيتات بنجاح ✔")
