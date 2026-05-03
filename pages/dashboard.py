@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-st.write("DEBUG df_c:", df_c.shape)
-st.write(df_c.head())
+
 
 # =========================
 # 🔐 Loader
@@ -11,8 +10,15 @@ def safe_read(url):
         return pd.read_csv(url)
     except:
         return pd.DataFrame()
+df_c = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=0")
+
+df_m = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=2120582392")
+
+df_inv = safe_read("https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid=1767710106")
 
 BASE_URL = "https://docs.google.com/spreadsheets/d/15jfgmIYddNQvzieuVTtepNSmvKcEsD5PqUMMatYyVlQ/export?format=csv&gid="
+st.write("DEBUG df_c shape:", df_c.shape)
+st.write(df_c.head())
 
 # =========================
 # 📥 Load Data
