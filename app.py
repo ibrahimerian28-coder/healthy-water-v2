@@ -39,7 +39,7 @@ elif page == "Store":
     import pages.store
 
 # --- 1. الإعدادات والروابط المركزية ---
-WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwSW9s7nKgp5_fPRh9P7a5UqJ84bYfJrs7jkwTkCVRAFvHY3DZEcQfZ0PBGY4ksapT-aw/exec"
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwS0CSCFl0fSQyvefV8X1mn2YaNQ044F6KpFG8XMJsyhcT4VcaeCfPKBtG2dP74mgsq/exec"
 LOGO_PATH = "logo.png"
 import os
 
