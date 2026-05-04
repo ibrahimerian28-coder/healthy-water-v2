@@ -268,53 +268,85 @@ elif st.session_state.user_type == "admin":
                     st.success("تم الحفظ بنجاح!"); st.rerun()
 
     elif menu == "بيانات العملاء":
-        st.header("👥 إدارة العملاء")
-        search = st.text_input("🔍 بحث (اسم، هاتف، منطقة، ID)")
-        filtered = df_c[df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)] if search else df_c
-        st.write("Columns:", filtered.columns)
-        st.write(filtered.head())
-        if not filtered.empty and 'area' in filtered.columns:
-            for area, group in filtered.groupby('area'):
-                st.subheader(f"📍 {area}")
-        
-                for _, r in group.iterrows():
-                    st.write(r)
+    st.header("👥 إدارة العملاء")
 
-        else:
-            st.error("❌ لا توجد بيانات أو العمود غير موجود")
-            st.write("Shape:", filtered.shape)
-            st.write("Columns:", filtered.columns)
-            for _, r in group.iterrows():
-                with st.expander(f"👤 {r['name']} | 📞 {r['phone']}"):
-                    c1, c2 = st.columns(2)
-                    c1.write(f"🏠 **العنوان:** {r.get('adress', 'غير مسجل')}")
-                    c1.write(f"📍 **المنطقة:** {r.get('area', 'غير مسجل')}")
-                    c1.write(f"📅 **تاريخ التركيب:** {r.get('install_date', 'غير مسجل')}")
-                    
-                    cust_hist = df_m[df_m['name'] == r['name']].sort_values('v_date_dt', ascending=False)
-                    
-                    if not cust_hist.empty:
-                        last_v = cust_hist.iloc[0]['v_date_dt']
-                        next_v = last_v + timedelta(days=to_num(r['cycle'])*30)
-                        st.warning(f"🕒 **تاريخ الزيارة القادمة المتوقع:** {next_v.date()}")
-                        
-                        st.write("🛠️ **سجل الصيانات:**")
-                        display_hist = cust_hist.copy()
-                        check_cols = ['P1', 'P2', 'P3', 'membrane', 'post_carbon', 'Calcite', 'infrared']
-                        for col in check_cols:
-                            if col in display_hist.columns:
-                                display_hist[col] = display_hist[col].apply(lambda x: "✅" if str(x).lower() in ['true', '1', '✅'] else "❌")
-                        
-                        show_cols = ['visit_date'] + check_cols + ['amount', 'notes']
-                        st.dataframe(display_hist[show_cols], use_container_width=True, hide_index=True)
-                        
-                        if st.button("📄 تحميل تقرير PDF", key=f"pdf_{r['row_index_internal']}"):
-                            pdf_data = generate_customer_pdf(r, cust_hist)
-                            st.download_button(label="اضغط لبدء التحميل", data=pdf_data, file_name=f"{r['name']}.pdf", mime="application/pdf")
-                    
-                    phones = [r.get(p) for p in ['phone', 'phone_1', 'phone_2', 'phone_3', 'phone_4'] if str(r.get(p, '')).strip() != ""]
-                    for ph in phones:
-                        st.markdown(f"<b>📞 {ph}</b> <a href='tel:{ph}'>اتصال</a> | <a href='https://wa.me/2{ph}'>واتساب</a>", unsafe_allow_html=True)
+    search = st.text_input("🔍 بحث (اسم، هاتف، منطقة)")
+
+    filtered = df_c[
+        df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)
+    ] if search else df_c
+
+    # ترتيب حسب المنطقة
+    for area, group in filtered.groupby('area'):
+
+        st.markdown(f"## 📍 {area}")
+
+        for _, r in group.iterrows():
+
+            with st.expander(f"👤 {r['name']} | 📞 {r['phone']}"):
+
+                col1, col2 = st.columns([1,1])
+
+                with col1:
+                    st.write(f"🏠 **العنوان:** {r.get('adress','-')}")
+                    st.write(f"📅 **تاريخ التركيب:** {r.get('install_date','-')}")
+                    st.write(f"🔁 **الدورة:** {r.get('cycle','-')} شهر")
+
+                # سجل الصيانة
+                cust_hist = df_m[df_m['name'] == r['name']].copy()
+
+                if not cust_hist.empty:
+
+                    cust_hist = cust_hist.sort_values('v_date_dt', ascending=False)
+
+                    st.markdown("### 🛠️ سجل الصيانات")
+
+                    display = cust_hist.copy()
+
+                    check_cols = ['P1','P2','P3','membrane','post_carbon','Calcite','infrared']
+
+                    for col in check_cols:
+                        if col in display.columns:
+                            display[col] = display[col].apply(
+                                lambda x: "✅" if str(x).lower() in ['true','1','✅'] else "❌"
+                            )
+
+                    show_cols = ['visit_date'] + check_cols + ['amount','notes']
+
+                    st.dataframe(
+                        display[show_cols],
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
+                    # ميعاد الزيارة القادمة
+                    last_visit = cust_hist.iloc[0]['v_date_dt']
+                    next_visit = last_visit + timedelta(days=to_num(r['cycle']) * 30)
+
+                    st.info(f"📅 الزيارة القادمة: {next_visit.date()}")
+
+                    # زر PDF
+                    if st.button("📄 تحميل تقرير", key=f"pdf_{r['row_index_internal']}"):
+                        pdf_data = generate_customer_pdf(r, cust_hist)
+                        st.download_button(
+                            "⬇️ تحميل",
+                            pdf_data,
+                            file_name=f"{r['name']}.pdf",
+                            mime="application/pdf"
+                        )
+
+                # أرقام التواصل
+                phones = [
+                    r.get(p) for p in ['phone','phone_1','phone_2','phone_3','phone_4']
+                    if str(r.get(p,'')).strip() != ""
+                ]
+
+                st.markdown("### 📞 تواصل")
+
+                for ph in phones:
+                    st.markdown(
+                        f"📱 {ph} | [اتصال](tel:{ph}) | [واتساب](https://wa.me/2{ph})"
+                    )
 
     elif menu == "جدول المواعيد 📅":
         st.header("📅 جدول مواعيد الصيانة")
