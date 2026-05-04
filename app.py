@@ -260,6 +260,8 @@ elif st.session_state.user_type == "admin":
         st.header("👥 إدارة العملاء")
         search = st.text_input("🔍 بحث (اسم، هاتف، منطقة، ID)")
         filtered = df_c[df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)] if search else df_c
+        st.write("Columns:", filtered.columns)
+        st.write(filtered.head())
         for area, group in filtered.groupby('area'):
             st.markdown(f"### 📍 {area}")
             for _, r in group.iterrows():
