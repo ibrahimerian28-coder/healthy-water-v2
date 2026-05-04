@@ -262,8 +262,12 @@ elif st.session_state.user_type == "admin":
         filtered = df_c[df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)] if search else df_c
         st.write("Columns:", filtered.columns)
         st.write(filtered.head())
-        for area, group in filtered.groupby('area'):
-            st.markdown(f"### 📍 {area}")
+        if 'area' in filtered.columns:
+            for area, group in filtered.groupby('area'):
+                st.write(area)
+        else:
+            st.error("❌ عمود area مش موجود")
+            st.write("الأعمدة الموجودة:", filtered.columns)
             for _, r in group.iterrows():
                 with st.expander(f"👤 {r['name']} | 📞 {r['phone']}"):
                     c1, c2 = st.columns(2)
