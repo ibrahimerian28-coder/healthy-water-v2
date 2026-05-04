@@ -62,7 +62,7 @@ def execute_gsheet_action(action, sheet_name, data=None, row_index=None):
 
 @st.cache_data(ttl=1)
 def load_data(gid):
-    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
+    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/edit?usp=sharing"
     try:
         df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
