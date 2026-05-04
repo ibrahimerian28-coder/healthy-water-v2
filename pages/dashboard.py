@@ -16,6 +16,9 @@ df_m = safe_read("https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvL
 
 df_inv = safe_read("https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid=1767710106")
 
+st.write("DEBUG INVENTORY COLUMNS:")
+st.write(df_inv.columns.tolist())
+
 BASE_URL = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid="
 st.write("DEBUG df_c shape:", df_c.shape)
 st.write(df_c.head())
