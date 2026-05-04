@@ -15,9 +15,10 @@ df_c = safe_read("https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvL
 df_m = safe_read("https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid=2120582392")
 
 df_inv = safe_read("https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid=1767710106")
+df_inv.columns = df_inv.columns.str.strip()
 
-st.write("DEBUG INVENTORY COLUMNS:")
-st.write(df_inv.columns.tolist())
+df_inv["row_index_internal"] = df_inv.index + 2
+
 
 BASE_URL = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid="
 st.write("DEBUG df_c shape:", df_c.shape)
