@@ -264,8 +264,11 @@ elif st.session_state.user_type == "admin":
         st.write(filtered.head())
         if not filtered.empty and 'area' in filtered.columns:
             for area, group in filtered.groupby('area'):
+                st.subheader(f"📍 {area}")
+        
                 for _, r in group.iterrows():
-                st.write(r)
+                    st.write(r)
+
         else:
             st.error("❌ لا توجد بيانات أو العمود غير موجود")
             st.write("Shape:", filtered.shape)
