@@ -1,5 +1,11 @@
 import streamlit as st
 import pandas as pd
+# تهيئة session state
+if "user_type" not in st.session_state:
+    st.session_state.user_type = None
+
+if "customer_data" not in st.session_state:
+    st.session_state.customer_data = None
 
 # =========================
 # 🔐 Config
