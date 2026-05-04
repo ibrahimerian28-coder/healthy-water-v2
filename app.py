@@ -267,7 +267,7 @@ elif st.session_state.user_type == "admin":
                 if execute_gsheet_action("append", "Customers", data):
                     st.success("تم الحفظ بنجاح!"); st.rerun()
 
-    elif menu == "بيانات العملاء":
+elif menu == "بيانات العملاء":
     st.header("👥 إدارة العملاء")
 
     search = st.text_input("🔍 بحث (اسم، هاتف، منطقة)")
