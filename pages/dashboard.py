@@ -8,7 +8,9 @@ BASE_URL = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2
 
 def safe_read(url):
     try:
-        return pd.read_csv(url)
+        df = pd.read_csv(url)
+        df.columns = [str(c).strip() for c in df.columns]  # تنظيف آمن
+        return df
     except:
         return pd.DataFrame()
 
@@ -21,12 +23,6 @@ df_inv = safe_read(BASE_URL + "1767710106")
 df_exp = safe_read(BASE_URL + "288947510")
 df_store = safe_read(BASE_URL + "1129472026")
 df_orders = safe_read(BASE_URL + "1423854754")
-
-# =========================
-# 🧹 Clean Columns
-# =========================
-for df in [df_c, df_m, df_inv, df_exp, df_store, df_orders]:
-    df.columns = df.columns.str.strip()
 
 # =========================
 # 📊 Calculations
@@ -43,7 +39,11 @@ else:
     total_revenue = 0
 
 # Low stock
-if not df_inv.empty and "quantity" in df_inv.columns and "min_limit" in df_inv.columns:
+if (
+    not df_inv.empty
+    and "quantity" in df_inv.columns
+    and "min_limit" in df_inv.columns
+):
     df_inv["quantity"] = pd.to_numeric(df_inv["quantity"], errors="coerce").fillna(0)
     df_inv["min_limit"] = pd.to_numeric(df_inv["min_limit"], errors="coerce").fillna(0)
     low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
@@ -68,6 +68,7 @@ st.divider()
 # =========================
 # 📌 Overview
 # =========================
+
 st.subheader("📈 نظرة عامة")
 
 st.write("📌 الطلبات:", len(df_orders))
@@ -79,6 +80,7 @@ st.success("تم ربط البيانات بنجاح ✔")
 # =========================
 # 📈 Charts
 # =========================
+
 st.divider()
 st.subheader("📈 الإيراد من الصيانات")
 
@@ -90,18 +92,25 @@ else:
 # =========================
 # 📦 Inventory
 # =========================
+
 st.subheader("📦 المخزون")
 
-if not df_inv.empty and "item_name" in df_inv.columns and "quantity" in df_inv.columns:
+if (
+    not df_inv.empty
+    and "item_name" in df_inv.columns
+    and "quantity" in df_inv.columns
+):
     st.bar_chart(df_inv.set_index("item_name")["quantity"])
 else:
     st.info("لا توجد بيانات مخزون")
 
 # =========================
-# 🧠 Debug (اختياري وقت التطوير)
+# 🧠 Debug (اختياري)
 # =========================
+
 with st.expander("🔍 Debug Data"):
     st.write("Customers:", df_c.columns.tolist())
     st.write("Maintenance:", df_m.columns.tolist())
     st.write("Inventory:", df_inv.columns.tolist())
     st.write("Store:", df_store.columns.tolist())
+    st.write("Orders:", df_orders.columns.tolist())
