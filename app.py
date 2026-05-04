@@ -14,6 +14,7 @@ import io
 import os
 from arabic_reshaper import reshape
 from bidi.algorithm import get_display
+
 # =========================
 # 🔥 NAVIGATION SYSTEM
 # =========================
@@ -248,6 +249,9 @@ elif st.session_state.user_type == "admin":
     ) 
     
     if menu == "إضافة عميل جديد":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("➕ إضافة عميل جديد")
         with st.form("add_customer_form"):
             existing_areas = sorted(df_c['area'].unique().tolist()) if not df_c.empty else []
@@ -274,6 +278,9 @@ elif st.session_state.user_type == "admin":
                     st.success("تم الحفظ بنجاح!"); st.rerun()
 
     elif menu == "بيانات العملاء":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("👥 إدارة العملاء")
 
         search = st.text_input("🔍 بحث (اسم، هاتف، منطقة)")
@@ -355,6 +362,9 @@ elif st.session_state.user_type == "admin":
                         )
 
     elif menu == "جدول المواعيد 📅":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("📅 جدول مواعيد الصيانة")
         today = datetime.now().date()
         days_to_show = []
@@ -408,6 +418,9 @@ elif st.session_state.user_type == "admin":
                                 st.rerun()
 
     elif menu == "تسجيل صيانة":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("🔧 تسجيل زيارة صيانة")
         default_idx = 0
         if 'target_customer' in st.session_state:
@@ -431,6 +444,9 @@ elif st.session_state.user_type == "admin":
                     st.success("تم التسجيل بنجاح!"); st.rerun()
 
     elif menu == "المخزن 📦":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("📦 إدارة المخزن")
         total_inventory_value = 0 
         
@@ -470,12 +486,18 @@ elif st.session_state.user_type == "admin":
         st.sidebar.metric("إجمالي رأس المال", f"{total_inventory_value} ج.م")
 
     elif menu == "الاحتياجات 🚨":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("🚨 أصناف تحت حد الأمان")
         needs = df_inv[df_inv['quantity'].apply(to_num) <= df_inv['min_limit'].apply(to_num)]
         if not needs.empty: st.table(needs[['item_name', 'quantity', 'min_limit']])
         else: st.success("كل الأصناف متوفرة فوق حد الأمان.")
 
     elif menu == "المصروفات":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("💵 إدارة المصروفات")
         selected_date = st.date_input("تاريخ المصروفات", datetime.now())
         
@@ -524,6 +546,9 @@ elif st.session_state.user_type == "admin":
             st.dataframe(recent_exp, use_container_width=True, hide_index=True)
 
     elif menu == "الأرباح 📈":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("📈 تقارير صافي الأرباح")
 
         def get_daily_net(target_date):
@@ -617,6 +642,9 @@ elif st.session_state.user_type == "admin":
             
     # --- 7. إدارة المنتجات ⚙️ ---
     elif menu == "إدارة المنتجات ⚙️":
+        if st.session_state.user_type != "admin":
+            st.warning("🚫 غير مصرح لك بالدخول")
+            st.stop()
         st.header("⚙️ إدارة منتجات المتجر")
         with st.form("add_product_form", clear_on_submit=True):
             st.subheader("إضافة منتج جديد")
@@ -650,6 +678,7 @@ elif st.session_state.user_type == "admin":
 
     # --- 8. المتجر 🛒 (النظام المتكامل: سلة + دفع + إجمالي) ---
     elif menu == "المتجر 🛒":
+        
         st.header("🛒 متجر Healthy Water")
         
         # 1. تهيئة سلة التسوق في الذاكرة (Session State)
