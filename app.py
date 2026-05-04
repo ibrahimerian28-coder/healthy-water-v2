@@ -93,6 +93,7 @@ df_store = load_data("1168172935") # Store_Products (مثال للـ GID)
 # التأكد من تحويل الأعمدة الرقمية لضمان عدم حدوث أخطاء في الحسابات
 if not df_store.empty:
     df_store['Price'] = df_store['Price'].apply(to_num)
+    st.write("STORE COLUMNS:", df_store.columns.tolist())
     df_store['Old_Price'] = df_store['Old_Price'].apply(to_num)
 
 st.set_page_config(page_title="Healthy Water Pro", layout="wide", page_icon="🚰")
