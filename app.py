@@ -62,13 +62,14 @@ def execute_gsheet_action(action, sheet_name, data=None, row_index=None):
 
 @st.cache_data(ttl=1)
 def load_data(gid):
-    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/edit?usp=sharing"
+    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
     try:
         df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
         df['row_index_internal'] = range(2, len(df) + 2)
         return df.fillna("")
-    except: return pd.DataFrame()
+    except:
+        return pd.DataFrame()
 
 def parse_dt(val):
     if not val or str(val).strip() == "": return None
@@ -92,9 +93,18 @@ df_store = load_data("1168172935") # Store_Products (مثال للـ GID)
 
 # التأكد من تحويل الأعمدة الرقمية لضمان عدم حدوث أخطاء في الحسابات
 if not df_store.empty:
-    df_store['Price'] = df_store['Price'].apply(to_num)
+    df_store.columns = [str(c).strip() for c in df_store.columns]
+
+    if 'Price' in df_store.columns:
+        df_store['Price'] = df_store['Price'].apply(to_num)
+
+    if 'Old_Price' in df_store.columns:
+        df_store['Old_Price'] = df_store['Old_Price'].apply(to_num)
+
+    # Debug (امسحه بعد ما تتأكد)
     st.write("STORE COLUMNS:", df_store.columns.tolist())
-    df_store['Old_Price'] = df_store['Old_Price'].apply(to_num)
+else:
+    st.warning("⚠️ بيانات المتجر لم يتم تحميلها")
 
 st.set_page_config(page_title="Healthy Water Pro", layout="wide", page_icon="🚰")
 
