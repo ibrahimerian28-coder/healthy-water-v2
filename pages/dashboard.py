@@ -9,7 +9,7 @@ BASE_URL = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2
 def safe_read(url):
     try:
         df = pd.read_csv(url)
-        df.columns = [str(c).strip() for c in df.columns]  # تنظيف آمن
+        df.columns = [str(c).strip() for c in df.columns]
         return df
     except:
         return pd.DataFrame()
@@ -17,36 +17,41 @@ def safe_read(url):
 # =========================
 # 📥 Load Data
 # =========================
-df_c = safe_read(BASE_URL + "0")
-df_m = safe_read(BASE_URL + "2120582392")
-df_inv = safe_read(BASE_URL + "1767710106")
-df_exp = safe_read(BASE_URL + "288947510")
-df_store = safe_read(BASE_URL + "1129472026")
-df_orders = safe_read(BASE_URL + "1423854754")
+df_c = safe_read(BASE_URL + "0")                 # Customers
+df_m = safe_read(BASE_URL + "2120582392")        # Maintenance
+df_inv = safe_read(BASE_URL + "1767710106")      # Inventory
+df_exp = safe_read(BASE_URL + "288947510")       # Expenses
+df_store = safe_read(BASE_URL + "1129472026")     # Store_Products
+df_orders = safe_read(BASE_URL + "1423854754")    # Store_Orders (empty)
 
 # =========================
 # 📊 Calculations
 # =========================
 
+# 👥 Customers
 total_customers = len(df_c)
+
+# 🔧 Maintenance
 total_maintenance = len(df_m)
 
-# Revenue
+# 💰 Revenue (from Maintenance amount)
 if not df_m.empty and "amount" in df_m.columns:
     df_m["amount"] = pd.to_numeric(df_m["amount"], errors="coerce").fillna(0)
     total_revenue = df_m["amount"].sum()
 else:
     total_revenue = 0
 
-# Low stock
-if (
-    not df_inv.empty
-    and "quantity" in df_inv.columns
-    and "min_limit" in df_inv.columns
-):
-    df_inv["quantity"] = pd.to_numeric(df_inv["quantity"], errors="coerce").fillna(0)
-    df_inv["min_limit"] = pd.to_numeric(df_inv["min_limit"], errors="coerce").fillna(0)
-    low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
+# 📦 Inventory
+if not df_inv.empty:
+    if "quantity" in df_inv.columns:
+        df_inv["quantity"] = pd.to_numeric(df_inv["quantity"], errors="coerce").fillna(0)
+    if "min_limit" in df_inv.columns:
+        df_inv["min_limit"] = pd.to_numeric(df_inv["min_limit"], errors="coerce").fillna(0)
+
+    if "quantity" in df_inv.columns and "min_limit" in df_inv.columns:
+        low_stock_items = len(df_inv[df_inv["quantity"] <= df_inv["min_limit"]])
+    else:
+        low_stock_items = 0
 else:
     low_stock_items = 0
 
@@ -71,9 +76,11 @@ st.divider()
 
 st.subheader("📈 نظرة عامة")
 
-st.write("📌 الطلبات:", len(df_orders))
+st.write("📌 العملاء:", len(df_c))
+st.write("📌 الصيانات:", len(df_m))
 st.write("📌 المنتجات:", len(df_store))
 st.write("📌 المصروفات:", len(df_exp))
+st.write("📌 الطلبات:", len(df_orders))
 
 st.success("تم ربط البيانات بنجاح ✔")
 
@@ -105,7 +112,7 @@ else:
     st.info("لا توجد بيانات مخزون")
 
 # =========================
-# 🧠 Debug (اختياري)
+# 🧠 Debug
 # =========================
 
 with st.expander("🔍 Debug Data"):
@@ -113,4 +120,4 @@ with st.expander("🔍 Debug Data"):
     st.write("Maintenance:", df_m.columns.tolist())
     st.write("Inventory:", df_inv.columns.tolist())
     st.write("Store:", df_store.columns.tolist())
-    st.write("Orders:", df_orders.columns.tolist())
+    st.write("Expenses:", df_exp.columns.tolist())
