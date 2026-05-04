@@ -84,12 +84,18 @@ def read_gsheet(sheet_name):
     gids = {"Store_Products": "123456789"} # يجب التأكد من الـ GID الصحيح لهذا الشيت
     return load_data(gids.get(sheet_name, "0"))
 
-# --- 3. تحميل البيانات ---
-df_c = load_data("0")          # Customers
-df_m = load_data("2120582392") # Maintenance
-df_inv = load_data("1767710106") # Inventory
-df_exp = load_data("288947510")  # Expenses
-df_store = load_data("1168172935") # Store_Products (مثال للـ GID)
+if st.session_state.user_type is not None:
+    df_c = load_data("0")
+    df_m = load_data("2120582392")
+    df_inv = load_data("1767710106")
+    df_exp = load_data("288947510")
+    df_store = load_data("1168172935")
+else:
+    df_c = pd.DataFrame()
+    df_m = pd.DataFrame()
+    df_inv = pd.DataFrame()
+    df_exp = pd.DataFrame()
+    df_store = pd.DataFrame()
 
 # التأكد من تحويل الأعمدة الرقمية لضمان عدم حدوث أخطاء في الحسابات
 if not df_store.empty:
