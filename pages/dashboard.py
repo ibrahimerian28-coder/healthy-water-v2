@@ -21,14 +21,18 @@ def safe_read(url):
         return pd.DataFrame()
 
 # =========================
-# 📥 Load Data
-# =========================
-df_c = safe_read(BASE_URL + "0")                 # Customers
-df_m = safe_read(BASE_URL + "2120582392")        # Maintenance
-df_inv = safe_read(BASE_URL + "1767710106")      # Inventory
-df_exp = safe_read(BASE_URL + "288947510")       # Expenses
-df_store = safe_read(BASE_URL + "1129472026")     # Store_Products
-df_orders = safe_read(BASE_URL + "1423854754")    # Store_Orders (empty)
+if st.session_state.user_type is not None:
+    df_c = load_data("0")
+    df_m = load_data("2120582392")
+    df_inv = load_data("1767710106")
+    df_exp = load_data("288947510")
+    df_store = load_data("1168172935")
+else:
+    df_c = pd.DataFrame()
+    df_m = pd.DataFrame()
+    df_inv = pd.DataFrame()
+    df_exp = pd.DataFrame()
+    df_store = pd.DataFrame()
 
 # =========================
 # 📊 Calculations
