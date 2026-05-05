@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # =========================
-# 🔥 CONFIG
+# CONFIG
 # =========================
 
 st.set_page_config(page_title="Healthy Water Pro", layout="wide")
@@ -19,7 +19,7 @@ COMPANY_PHONE = "01286609535"
 
 
 # =========================
-# 🔥 SHEETS GIDs
+# SHEETS
 # =========================
 
 SHEETS = {
@@ -32,12 +32,12 @@ SHEETS = {
 
 
 # =========================
-# 🔥 HELPERS
+# HELPERS
 # =========================
 
-def to_num(v):
+def to_num(x):
     try:
-        return float(str(v).replace(",", "")) if v not in [None, ""] else 0
+        return float(str(x).replace(",", "")) if x not in ["", None] else 0
     except:
         return 0
 
@@ -52,7 +52,7 @@ def load_data(gid):
         return pd.DataFrame()
 
 
-def execute_gsheet_action(action, sheet, data=None, row_index=None):
+def call_api(action, sheet, data=None, row_index=None):
     payload = {
         "action": action,
         "sheet": sheet,
@@ -67,7 +67,7 @@ def execute_gsheet_action(action, sheet, data=None, row_index=None):
 
 
 # =========================
-# 🔥 SESSION STATE
+# SESSION
 # =========================
 
 if "user_type" not in st.session_state:
@@ -75,7 +75,7 @@ if "user_type" not in st.session_state:
 
 
 # =========================
-# 🔥 LOAD DATA
+# LOAD DATA
 # =========================
 
 df_c = load_data(SHEETS["Customers"])
@@ -86,18 +86,18 @@ df_store = load_data(SHEETS["Store_Products"])
 
 
 # =========================
-# 🔐 LOGIN PAGE
+# LOGIN
 # =========================
 
 if st.session_state.user_type is None:
 
     st.title("🚰 Healthy Water System")
 
-    tab1, tab2 = st.tabs(["🔒 Admin", "👤 Customer"])
+    tab1, tab2 = st.tabs(["Admin", "Customer"])
 
     with tab1:
         pwd = st.text_input("Password", type="password")
-        if st.button("Login Admin"):
+        if st.button("Login"):
             if pwd == ADMIN_PASSWORD:
                 st.session_state.user_type = "admin"
                 st.rerun()
@@ -105,16 +105,16 @@ if st.session_state.user_type is None:
                 st.error("Wrong password")
 
     with tab2:
-        phone = st.text_input("Phone Number")
-        if st.button("Login Customer"):
-            if phone.strip() != "":
+        phone = st.text_input("Phone")
+        if st.button("Enter"):
+            if phone:
                 st.session_state.user_type = "customer"
                 st.session_state.phone = phone
                 st.rerun()
 
 
 # =========================
-# 👑 ADMIN PANEL
+# ADMIN PANEL
 # =========================
 
 elif st.session_state.user_type == "admin":
@@ -122,15 +122,8 @@ elif st.session_state.user_type == "admin":
     st.sidebar.image(LOGO_PATH, use_container_width=True)
 
     page = st.sidebar.selectbox(
-        "📌 Menu",
-        [
-            "Dashboard",
-            "Customers",
-            "Maintenance",
-            "Inventory",
-            "Expenses",
-            "Store"
-        ]
+        "Menu",
+        ["Dashboard", "Customers", "Maintenance", "Inventory", "Expenses", "Store"]
     )
 
     # -------------------------
@@ -140,204 +133,104 @@ elif st.session_state.user_type == "admin":
         st.title("📊 Dashboard")
 
     # -------------------------
-    # CUSTOMERS
+    # CUSTOMERS (CLEAN + FIXED)
     # -------------------------
-   elif page == "Customers":
-    st.title("👥 إدارة العملاء")
+    elif page == "Customers":
 
-    # =========================
-    # 🔍 SEARCH BAR
-    # =========================
-    search = st.text_input("🔍 بحث (اسم / هاتف / منطقة / ID)")
+        st.title("👥 Customers")
 
-    df_show = df_c.copy()
+        search = st.text_input("Search")
 
-    if search:
-        df_show = df_show[
-            df_show.astype(str).apply(
-                lambda x: x.str.contains(search, case=False, na=False)
-            ).any(axis=1)
-        ]
+        df_show = df_c.copy()
 
-    # =========================
-    # 📍 GROUP BY AREA
-    # =========================
-    if "area" in df_show.columns:
-        areas = df_show["area"].fillna("غير محدد").unique()
-    else:
-        areas = ["الكل"]
+        if search:
+            df_show = df_show[
+                df_show.astype(str).apply(
+                    lambda x: x.str.contains(search, case=False, na=False)
+                ).any(axis=1)
+            ]
 
-    for area in areas:
-        st.markdown(f"## 📍 {area}")
+        areas = df_show["area"].fillna("Unknown").unique() if "area" in df_show else ["All"]
 
-        group = df_show if area == "الكل" else df_show[df_show["area"] == area]
+        for area in areas:
 
-        # =========================
-        # 👤 CUSTOMER CARD
-        # =========================
-        for _, r in group.iterrows():
+            st.markdown(f"## 📍 {area}")
 
-            with st.expander(f"👤 {r.get('name','')} | 📞 {r.get('phone','')}"):
+            group = df_show if area == "All" else df_show[df_show["area"] == area]
 
-                col1, col2 = st.columns(2)
+            for _, r in group.iterrows():
 
-                # -------------------------
-                # INFO SECTION
-                # -------------------------
-                with col1:
-                    st.write(f"📞 Phone: {r.get('phone','')}")
-                    st.write(f"📞 Phone 2: {r.get('phone_1','')}")
-                    st.write(f"📞 Phone 3: {r.get('phone_2','')}")
-                    st.write(f"🏠 Address: {r.get('adress','')}")
-                    st.write(f"📍 Area: {r.get('area','')}")
-                    st.write(f"📌 Location: {r.get('location_url','')}")
-                    st.write(f"🔁 Cycle: {r.get('cycle','')} شهر")
+                with st.expander(f"👤 {r.get('name','')}"):
 
-                # -------------------------
-                # CONTACT BUTTONS
-                # -------------------------
-                phones = [
-                    r.get("phone"),
-                    r.get("phone_1"),
-                    r.get("phone_2"),
-                    r.get("phone_3"),
-                    r.get("phone_4"),
-                ]
+                    st.write("📞", r.get("phone", ""))
+                    st.write("🏠", r.get("adress", ""))
+                    st.write("📍", r.get("area", ""))
+                    st.write("🔗", r.get("location_url", ""))
 
-                st.markdown("### 📞 تواصل سريع")
+                    st.markdown("### 📞 Contacts")
 
-                for p in phones:
-                    if str(p).strip() not in ["", "None"]:
-                        st.markdown(
-                            f"📱 {p} | [اتصال](tel:{p}) | [واتساب](https://wa.me/2{p})"
-                        )
-
-                # -------------------------
-                # LAST VISIT + NEXT VISIT
-                # -------------------------
-                cust_name = r.get("name")
-
-                cust_hist = df_m[df_m["name"] == cust_name]
-
-                if not cust_hist.empty:
-                    cust_hist = cust_hist.sort_values("visit_date", ascending=False)
-
-                    last_visit = cust_hist.iloc[0]["visit_date"]
-
-                    try:
-                        last_date = pd.to_datetime(last_visit)
-                        cycle = int(to_num(r.get("cycle", 0)))
-                        next_visit = last_date + pd.Timedelta(days=cycle * 30)
-
-                        st.info(f"📅 الزيارة القادمة: {next_visit.date()}")
-                    except:
-                        pass
-
-                # -------------------------
-                # MAINTENANCE HISTORY
-                # -------------------------
-                st.markdown("### 🛠️ سجل الصيانات")
-
-                if not cust_hist.empty:
-                    show_cols = [
-                        "visit_date",
-                        "P1","P2","P3",
-                        "membrane",
-                        "post_carbon",
-                        "Calcite",
-                        "infrared",
-                        "other",
-                        "amount",
-                        "notes"
-                    ]
-
-                    st.dataframe(
-                        cust_hist[show_cols],
-                        use_container_width=True
-                    )
-                else:
-                    st.warning("لا يوجد سجل صيانات")
-
-                # -------------------------
-                # DELETE BUTTON (SAFE)
-                # -------------------------
-                st.markdown("### ⚙️ إدارة العميل")
-
-                if st.button(f"🗑️ حذف العميل {cust_name}", key=f"del_{cust_name}"):
-
-                    confirm = st.checkbox("تأكيد الحذف")
-
-                    if confirm:
-                        idx = r.get("row_index", None)
-
-                        if idx:
-                            execute_gsheet_action(
-                                "delete",
-                                "Customers",
-                                row_index=idx
+                    for p in ["phone", "phone_1", "phone_2", "phone_3", "phone_4"]:
+                        if str(r.get(p, "")) != "":
+                            st.markdown(
+                                f"{r.get(p)} | [Call](tel:{r.get(p)}) | [WhatsApp](https://wa.me/2{r.get(p)})"
                             )
-                            st.success("تم الحذف")
-                            st.rerun()
 
     # -------------------------
     # MAINTENANCE
     # -------------------------
     elif page == "Maintenance":
         st.title("🔧 Maintenance")
-
-        st.dataframe(df_m, use_container_width=True)
+        st.dataframe(df_m)
 
     # -------------------------
     # INVENTORY
     # -------------------------
     elif page == "Inventory":
         st.title("📦 Inventory")
-
-        st.dataframe(df_inv, use_container_width=True)
+        st.dataframe(df_inv)
 
     # -------------------------
     # EXPENSES
     # -------------------------
     elif page == "Expenses":
         st.title("💵 Expenses")
-
-        st.dataframe(df_exp, use_container_width=True)
+        st.dataframe(df_exp)
 
     # -------------------------
     # STORE
     # -------------------------
     elif page == "Store":
-        st.title("🛒 Store Products")
-
-        st.dataframe(df_store, use_container_width=True)
+        st.title("🛒 Store")
+        st.dataframe(df_store)
 
 
 # =========================
-# 👤 CUSTOMER PANEL
+# CUSTOMER PANEL
 # =========================
 
 elif st.session_state.user_type == "customer":
 
     st.sidebar.image(LOGO_PATH, use_container_width=True)
 
-    st.title("👤 Customer Area")
+    st.title("👤 My Account")
 
     phone = st.session_state.get("phone")
 
     if phone:
-        user_data = df_c[df_c["phone"].astype(str) == str(phone)]
 
-        st.subheader("📄 Your Data")
-        st.dataframe(user_data)
+        user = df_c[df_c["phone"].astype(str) == str(phone)]
 
-        st.subheader("🔧 Your Maintenance History")
+        st.subheader("📄 My Data")
+        st.dataframe(user)
 
-        cust_names = user_data["name"].tolist() if "name" in user_data.columns else []
-        df_hist = df_m[df_m["name"].isin(cust_names)]
+        names = user["name"].tolist() if "name" in user else []
 
-        st.dataframe(df_hist)
+        history = df_m[df_m["name"].isin(names)]
 
-        st.markdown("### 📞 Contact Us")
+        st.subheader("🔧 Maintenance History")
+        st.dataframe(history)
+
+        st.markdown("### 📞 Contact")
         st.markdown(f"""
         ☎️ {COMPANY_PHONE}  
         [Call](tel:{COMPANY_PHONE}) | 
