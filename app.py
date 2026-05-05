@@ -133,22 +133,23 @@ elif st.session_state.user_type == "admin":
     st.write("DEBUG:", df_c.shape)
     st.dataframe(df_c.head())
 # -------------------------
-# CUSTOMERS (FINAL FIX AFTER SHEET UPDATE)
+# CUSTOMERS (STABLE VERSION)
 # -------------------------
 elif page == "Customers":
 
     st.title("👥 Customer Management")
 
     # =========================
-    # CLEAN DATA (IMPORTANT)
+    # PREP DATA
     # =========================
     df = df_c.copy()
-
-    # تنظيف الأعمدة
     df.columns = df.columns.str.strip()
 
     # حذف الصفوف الفاضية
-    df = df[df["name"].astype(str).str.strip() != ""]
+    if "name" in df.columns:
+        df = df[df["name"].astype(str).str.strip() != ""]
+
+    df = df.reset_index(drop=True)
 
     # =========================
     # HELPERS
@@ -171,7 +172,7 @@ elif page == "Customers":
     # ADD CUSTOMER
     # =========================
     with st.expander("➕ Add New Customer"):
-        with st.form("add_customer"):
+        with st.form("add_customer_form"):
 
             name = st.text_input("Name")
             phone = st.text_input("Phone")
@@ -190,7 +191,6 @@ elif page == "Customers":
             submit = st.form_submit_button("Save")
 
             if submit:
-
                 new_row = [
                     "",  # customer_id auto
                     name, phone, phone1, phone2, phone3, phone4,
@@ -202,7 +202,7 @@ elif page == "Customers":
                     st.success("✅ Customer added")
                     st.rerun()
                 else:
-                    st.error("❌ Failed")
+                    st.error("❌ Failed to add")
 
     st.divider()
 
@@ -213,29 +213,30 @@ elif page == "Customers":
 
     search = col1.text_input("🔍 Search")
 
+    areas = []
     if "area" in df.columns:
         areas = sorted(df["area"].dropna().astype(str).unique())
-    else:
-        areas = []
 
-    selected_area = col2.selectbox("📍 Filter by Area", ["All"] + areas)
+    selected_area = col2.selectbox("📍 Area", ["All"] + areas)
 
     # search
     if search:
-        df = df[df.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
+        mask = df.apply(lambda row: row.astype(str).str.contains(search, case=False).any(), axis=1)
+        df = df[mask]
 
     # filter
-    if selected_area != "All" and "area" in df.columns:
-        df = df[df["area"] == selected_area]
+    if selected_area != "All":
+        df = df[df["area"].astype(str).str.strip() == selected_area.strip()]
 
     # sort
     if "area" in df.columns:
-        df["area"] = df["area"].fillna("").astype(str).str.strip()
         df = df.sort_values(by=["area", "name"])
 
     # =========================
     # DISPLAY CUSTOMERS
     # =========================
+    st.write(f"📊 Total Customers: {len(df)}")
+
     for i, row in df.iterrows():
 
         customer_id = str(row.get("customer_id", f"row_{i}"))
@@ -243,6 +244,7 @@ elif page == "Customers":
             customer_id = f"row_{i}"
 
         real_row_index = i + 2
+        unique = f"{customer_id}_{i}"
 
         with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')} | 🆔 {customer_id}"):
 
@@ -283,13 +285,12 @@ elif page == "Customers":
             # -------- location --------
             loc = str(row.get("location_url", "")).strip()
             if loc and loc.lower() != "nan":
-                st.markdown(f"📍 [Open Location]({loc})")
+                st.markdown(f"📍 [Open Location in Maps]({loc})")
 
             st.divider()
 
             # -------- actions --------
             colA, colB = st.columns(2)
-            unique = f"{customer_id}_{i}"
 
             # DELETE
             with colA:
@@ -318,7 +319,7 @@ elif page == "Customers":
         er = st.session_state["edit_data"]
         rid = st.session_state["edit_index"]
 
-        with st.form("edit_customer"):
+        with st.form("edit_form"):
 
             name = st.text_input("Name", er.get("name",""))
             phone = st.text_input("Phone", er.get("phone",""))
@@ -346,7 +347,7 @@ elif page == "Customers":
                 ]
 
                 if call_api("update", "Customers", updated, row_index=rid):
-                    st.success("Updated")
+                    st.success("Updated successfully")
                     st.session_state.pop("edit_data")
                     st.session_state.pop("edit_index")
                     st.rerun()
