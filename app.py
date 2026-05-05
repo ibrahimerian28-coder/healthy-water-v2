@@ -142,16 +142,142 @@ elif st.session_state.user_type == "admin":
     # -------------------------
     # CUSTOMERS
     # -------------------------
-    elif page == "Customers":
-        st.title("👥 Customers")
+   elif page == "Customers":
+    st.title("👥 إدارة العملاء")
 
-        search = st.text_input("Search")
-        if search:
-            df_show = df_c[df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
-        else:
-            df_show = df_c
+    # =========================
+    # 🔍 SEARCH BAR
+    # =========================
+    search = st.text_input("🔍 بحث (اسم / هاتف / منطقة / ID)")
 
-        st.dataframe(df_show, use_container_width=True)
+    df_show = df_c.copy()
+
+    if search:
+        df_show = df_show[
+            df_show.astype(str).apply(
+                lambda x: x.str.contains(search, case=False, na=False)
+            ).any(axis=1)
+        ]
+
+    # =========================
+    # 📍 GROUP BY AREA
+    # =========================
+    if "area" in df_show.columns:
+        areas = df_show["area"].fillna("غير محدد").unique()
+    else:
+        areas = ["الكل"]
+
+    for area in areas:
+        st.markdown(f"## 📍 {area}")
+
+        group = df_show if area == "الكل" else df_show[df_show["area"] == area]
+
+        # =========================
+        # 👤 CUSTOMER CARD
+        # =========================
+        for _, r in group.iterrows():
+
+            with st.expander(f"👤 {r.get('name','')} | 📞 {r.get('phone','')}"):
+
+                col1, col2 = st.columns(2)
+
+                # -------------------------
+                # INFO SECTION
+                # -------------------------
+                with col1:
+                    st.write(f"📞 Phone: {r.get('phone','')}")
+                    st.write(f"📞 Phone 2: {r.get('phone_1','')}")
+                    st.write(f"📞 Phone 3: {r.get('phone_2','')}")
+                    st.write(f"🏠 Address: {r.get('adress','')}")
+                    st.write(f"📍 Area: {r.get('area','')}")
+                    st.write(f"📌 Location: {r.get('location_url','')}")
+                    st.write(f"🔁 Cycle: {r.get('cycle','')} شهر")
+
+                # -------------------------
+                # CONTACT BUTTONS
+                # -------------------------
+                phones = [
+                    r.get("phone"),
+                    r.get("phone_1"),
+                    r.get("phone_2"),
+                    r.get("phone_3"),
+                    r.get("phone_4"),
+                ]
+
+                st.markdown("### 📞 تواصل سريع")
+
+                for p in phones:
+                    if str(p).strip() not in ["", "None"]:
+                        st.markdown(
+                            f"📱 {p} | [اتصال](tel:{p}) | [واتساب](https://wa.me/2{p})"
+                        )
+
+                # -------------------------
+                # LAST VISIT + NEXT VISIT
+                # -------------------------
+                cust_name = r.get("name")
+
+                cust_hist = df_m[df_m["name"] == cust_name]
+
+                if not cust_hist.empty:
+                    cust_hist = cust_hist.sort_values("visit_date", ascending=False)
+
+                    last_visit = cust_hist.iloc[0]["visit_date"]
+
+                    try:
+                        last_date = pd.to_datetime(last_visit)
+                        cycle = int(to_num(r.get("cycle", 0)))
+                        next_visit = last_date + pd.Timedelta(days=cycle * 30)
+
+                        st.info(f"📅 الزيارة القادمة: {next_visit.date()}")
+                    except:
+                        pass
+
+                # -------------------------
+                # MAINTENANCE HISTORY
+                # -------------------------
+                st.markdown("### 🛠️ سجل الصيانات")
+
+                if not cust_hist.empty:
+                    show_cols = [
+                        "visit_date",
+                        "P1","P2","P3",
+                        "membrane",
+                        "post_carbon",
+                        "Calcite",
+                        "infrared",
+                        "other",
+                        "amount",
+                        "notes"
+                    ]
+
+                    st.dataframe(
+                        cust_hist[show_cols],
+                        use_container_width=True
+                    )
+                else:
+                    st.warning("لا يوجد سجل صيانات")
+
+                # -------------------------
+                # DELETE BUTTON (SAFE)
+                # -------------------------
+                st.markdown("### ⚙️ إدارة العميل")
+
+                if st.button(f"🗑️ حذف العميل {cust_name}", key=f"del_{cust_name}"):
+
+                    confirm = st.checkbox("تأكيد الحذف")
+
+                    if confirm:
+                        idx = r.get("row_index", None)
+
+                        if idx:
+                            execute_gsheet_action(
+                                "delete",
+                                "Customers",
+                                row_index=idx
+                            )
+                            st.success("تم الحذف")
+                            st.rerun()
 
     # -------------------------
     # MAINTENANCE
