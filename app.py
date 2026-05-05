@@ -56,10 +56,19 @@ def call_api(action, sheet, data=None, row_index=None):
         "data": data,
         "row_index": row_index
     }
+
     try:
         r = requests.post(WEB_APP_URL, json=payload, timeout=20)
-        return r.status_code == 200
-    except:
+
+        # 👇 مهم جدًا: نقرأ رد السيرفر
+        response_text = r.text.strip()
+
+        st.write("DEBUG RESPONSE:", response_text)
+
+        return response_text == "OK"
+
+    except Exception as e:
+        st.error(e)
         return False
 
 # =========================
