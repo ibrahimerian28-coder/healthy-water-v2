@@ -268,7 +268,9 @@ elif st.session_state.user_type == "admin":
                 # -------- location --------
                 loc = str(row.get("location_url", "")).strip()
                 if loc and loc.lower() != "nan":
-                    st.markdown(f"📍 [Open Location]({loc})")
+                    if loc and loc.lower() != "nan":
+                        fixed_loc = f"https://www.google.com/maps/search/?api=1&query={loc}"
+                        st.markdown(f"[📍 Open Location in Maps]({fixed_loc})")
 
                 st.divider()
 
