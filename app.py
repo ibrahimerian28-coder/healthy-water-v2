@@ -2,7 +2,11 @@ import streamlit as st
 
 # لازم تكون أول حاجة في الملف
 st.set_page_config(page_title="Healthy Water", layout="wide")
+if 'user_type' not in st.session_state:
+    st.session_state.user_type = None
 
+if "user_type" not in st.session_state:
+    st.session_state.user_type = None
 # باقي الـ imports
 import base64
 import pandas as pd
