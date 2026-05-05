@@ -97,7 +97,7 @@ if st.session_state.user_type is None:
 
     with tab1:
         pwd = st.text_input("Password", type="password")
-        if st.button("Login"):
+        if st.button("Login Admin"):
             if pwd == ADMIN_PASSWORD:
                 st.session_state.user_type = "admin"
                 st.rerun()
@@ -106,7 +106,7 @@ if st.session_state.user_type is None:
 
     with tab2:
         phone = st.text_input("Phone")
-        if st.button("Enter"):
+        if st.button("Enter Customer"):
             if phone:
                 st.session_state.user_type = "customer"
                 st.session_state.phone = phone
@@ -133,38 +133,49 @@ elif st.session_state.user_type == "admin":
         st.title("📊 Dashboard")
 
     # -------------------------
-    # CUSTOMERS (CLEAN + FIXED)
+    # CUSTOMERS
     # -------------------------
     elif page == "Customers":
-    st.title("👥 Customer Profiles")
+        st.title("👥 Customer Profiles")
 
-    search = st.text_input("🔍 Search customer")
+        search = st.text_input("🔍 Search customer")
 
-    filtered = df_c.copy()
-    if search:
-        filtered = df_c[df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
+        filtered = df_c.copy()
 
-    for i, row in filtered.iterrows():
+        if search:
+            filtered = df_c[df_c.astype(str).apply(
+                lambda x: x.str.contains(search, case=False, na=False)
+            ).any(axis=1)]
 
-        with st.expander(f"👤 {row['name']} | 📍 {row['area']}"):
+        for _, row in filtered.iterrows():
 
-            st.write("📞 Phones:")
-            phones = [row.get("phone"), row.get("phone_1"), row.get("phone_2"), row.get("phone_3"), row.get("phone_4")]
+            with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')}"):
 
-            for ph in phones:
-                if str(ph).strip():
-                    col1, col2 = st.columns(2)
-                    col1.write(ph)
-                    col2.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
+                st.write("📞 Phones:")
 
-            st.write(f"🏠 Address: {row.get('adress','')}")
-            st.write(f"📍 Area: {row.get('area','')}")
-            st.write(f"📅 Install: {row.get('install_date','')}")
-            st.write(f"🔁 Cycle: {row.get('cycle','')}")
+                phones = [
+                    row.get("phone"),
+                    row.get("phone_1"),
+                    row.get("phone_2"),
+                    row.get("phone_3"),
+                    row.get("phone_4"),
+                ]
 
-            # زر حذف آمن
-            if st.button("🗑️ Delete Customer", key=f"del_customer_{row['row_index']}"):
-                st.warning("Confirm delete logic here")
+                for ph in phones:
+                    if str(ph).strip():
+                        c1, c2 = st.columns(2)
+                        c1.write(ph)
+                        c2.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
+
+                st.write(f"🏠 Address: {row.get('adress','')}")
+                st.write(f"📍 Area: {row.get('area','')}")
+                st.write(f"📅 Install: {row.get('install_date','')}")
+                st.write(f"🔁 Cycle: {row.get('cycle','')}")
+
+                # DELETE BUTTON (unique key fixed)
+                if st.button("🗑️ Delete Customer", key=f"del_customer_{row.name}"):
+                    st.warning("Delete logic not activated yet")
+
     # -------------------------
     # MAINTENANCE
     # -------------------------
@@ -213,14 +224,14 @@ elif st.session_state.user_type == "customer":
         st.subheader("📄 My Data")
         st.dataframe(user)
 
-        names = user["name"].tolist() if "name" in user else []
+        names = user["name"].tolist() if "name" in user.columns else []
 
         history = df_m[df_m["name"].isin(names)]
 
         st.subheader("🔧 Maintenance History")
         st.dataframe(history)
 
-        st.markdown("### 📞 Contact")
+        st.markdown("### 📞 Contact Company")
         st.markdown(f"""
         ☎️ {COMPANY_PHONE}  
         [Call](tel:{COMPANY_PHONE}) | 
