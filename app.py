@@ -95,28 +95,18 @@ if st.session_state.user_type:
 # =========================
 # 🔐 LOGIN PAGE
 # =========================
-if st.session_state.user_type is None:
-    st.title("🚰 Healthy Water System")
-
-    tab1, tab2 = st.tabs(["Admin", "Customer"])
-
-    with tab1:
-        pwd = st.text_input("كلمة المرور", type="password")
-        if st.button("دخول الأدمن"):
-            if pwd == ADMIN_PASSWORD:
-                st.session_state.user_type = "admin"
-                st.rerun()
-            else:
-                st.error("كلمة مرور خاطئة")
-
-    with tab2:
-        phone = st.text_input("رقم الهاتف")
-        if st.button("دخول العميل"):
-            st.session_state.user_type = "customer"
-            st.session_state.customer_phone = phone
-            st.rerun()
-
-    st.stop()
+if st.session_state.user_type:
+    st.session_state.df_c = load_data("0")
+    st.session_state.df_m = load_data("2120582392")
+    st.session_state.df_inv = load_data("1767710106")
+    st.session_state.df_exp = load_data("288947510")
+    st.session_state.df_store = load_data("1168172935")
+else:
+    st.session_state.df_c = pd.DataFrame()
+    st.session_state.df_m = pd.DataFrame()
+    st.session_state.df_inv = pd.DataFrame()
+    st.session_state.df_exp = pd.DataFrame()
+    st.session_state.df_store = pd.DataFrame()
 
 
 # =========================
