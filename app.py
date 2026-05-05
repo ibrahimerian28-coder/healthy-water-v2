@@ -137,140 +137,140 @@ elif st.session_state.user_type == "admin":
     # -------------------------
     elif page == "Customers":
 
-    st.title("👥 Customer Profiles")
+        st.title("👥 Customer Profiles")
 
-    search = st.text_input("🔍 Search by name / phone / area")
+        search = st.text_input("🔍 Search by name / phone / area")
 
-    df_show = df_c.copy()
+        df_show = df_c.copy()
 
-    if search:
-        df_show = df_show[
-            df_show.astype(str).apply(
+        if search:
+            df_show = df_show[
+                df_show.astype(str).apply(
                 lambda x: x.str.contains(search, case=False, na=False)
-            ).any(axis=1)
-        ]
+                ).any(axis=1)
+            ]
 
-    areas = df_show["area"].fillna("Unknown").unique() if "area" in df_show else ["All"]
+        areas = df_show["area"].fillna("Unknown").unique() if "area" in df_show else ["All"]
 
-    for area in areas:
+        for area in areas:
 
-        st.markdown(f"## 📍 {area}")
+            st.markdown(f"## 📍 {area}")
 
-        group = df_show if area == "All" else df_show[df_show["area"] == area]
+            group = df_show if area == "All" else df_show[df_show["area"] == area]
 
-        for _, r in group.iterrows():
+            for _, r in group.iterrows():
 
-            name = r.get("name", "")
-            phone = r.get("phone", "")
-
-            # =========================
-            # CUSTOMER PROFILE CARD
-            # =========================
-            with st.expander(f"👤 {name} | 📞 {phone}"):
-
-                col1, col2 = st.columns([2, 1])
-
-                # -------------------------
-                # BASIC INFO
-                # -------------------------
-                with col1:
-
-                    st.markdown("### 👤 Customer Info")
-
-                    st.write("📞 Phone:", r.get("phone", ""))
-                    st.write("📞 Phone 2:", r.get("phone_1", ""))
-                    st.write("📞 Phone 3:", r.get("phone_2", ""))
-                    st.write("📞 Phone 4:", r.get("phone_3", ""))
-                    st.write("🏠 Address:", r.get("adress", ""))
-                    st.write("📍 Area:", r.get("area", ""))
-                    st.write("🔗 Location:", r.get("location_url", ""))
-                    st.write("🔁 Cycle (months):", r.get("cycle", ""))
-
-                # -------------------------
-                # CONTACT BUTTONS
-                # -------------------------
-                st.markdown("### 📞 Quick Actions")
-
-                phones = [
-                    r.get("phone"),
-                    r.get("phone_1"),
-                    r.get("phone_2"),
-                    r.get("phone_3"),
-                    r.get("phone_4"),
-                ]
-
-                for p in phones:
-                    if str(p).strip():
-                        st.markdown(
-                            f"📱 {p} | [📞 Call](tel:{p}) | [💬 WhatsApp](https://wa.me/2{p})"
-                        )
+                name = r.get("name", "")
+                phone = r.get("phone", "")
 
                 # =========================
-                # MAINTENANCE HISTORY
+                # CUSTOMER PROFILE CARD
                 # =========================
-                st.markdown("### 🛠️ Maintenance History")
+                with st.expander(f"👤 {name} | 📞 {phone}"):
 
-                history = df_m[df_m["name"] == name]
-
-                if not history.empty:
-
-                    history = history.sort_values("visit_date", ascending=False)
-
-                    st.dataframe(history, use_container_width=True)
+                    col1, col2 = st.columns([2, 1])
 
                     # -------------------------
-                    # NEXT VISIT CALCULATION
+                    # BASIC INFO
                     # -------------------------
-                    try:
-                        last_date = pd.to_datetime(history.iloc[0]["visit_date"])
-                        cycle = int(to_num(r.get("cycle", 0)))
+                    with col1:
 
-                        next_visit = last_date + timedelta(days=cycle * 30)
+                        st.markdown("### 👤 Customer Info")
 
-                        st.success(f"📅 Next Visit: {next_visit.date()}")
+                        st.write("📞 Phone:", r.get("phone", ""))
+                        st.write("📞 Phone 2:", r.get("phone_1", ""))
+                        st.write("📞 Phone 3:", r.get("phone_2", ""))
+                        st.write("📞 Phone 4:", r.get("phone_3", ""))
+                        st.write("🏠 Address:", r.get("adress", ""))
+                        st.write("📍 Area:", r.get("area", ""))
+                        st.write("🔗 Location:", r.get("location_url", ""))
+                        st.write("🔁 Cycle (months):", r.get("cycle", ""))
 
-                    except:
-                        st.warning("⚠️ Cannot calculate next visit")
+                    # -------------------------
+                    # CONTACT BUTTONS
+                    # -------------------------
+                    st.markdown("### 📞 Quick Actions")
 
-                else:
-                    st.info("No maintenance history")
+                    phones = [
+                        r.get("phone"),
+                        r.get("phone_1"),
+                        r.get("phone_2"),
+                        r.get("phone_3"),
+                        r.get("phone_4"),
+                    ]
 
-                # =========================
-                # PROFILE ACTIONS
-                # =========================
-                st.markdown("### ⚙️ Actions")
+                    for p in phones:
+                        if str(p).strip():
+                            st.markdown(
+                                f"📱 {p} | [📞 Call](tel:{p}) | [💬 WhatsApp](https://wa.me/2{p})"
+                            )
 
-                c1, c2 = st.columns(2)
+                    # =========================
+                    # MAINTENANCE HISTORY
+                    # =========================
+                    st.markdown("### 🛠️ Maintenance History")
 
-                # -------------------------
-                # DELETE CUSTOMER
-                # -------------------------
-                with c1:
+                    history = df_m[df_m["name"] == name]
 
-                    if st.button(f"🗑️ Delete {name}", key=f"del_{name}"):
+                    if not history.empty:
 
-                        confirm = st.checkbox("Confirm delete")
+                        history = history.sort_values("visit_date", ascending=False)
 
-                        if confirm:
+                        st.dataframe(history, use_container_width=True)
 
-                            idx = r.get("row_index", None)
+                        # -------------------------
+                        # NEXT VISIT CALCULATION
+                        # -------------------------
+                        try:
+                            last_date = pd.to_datetime(history.iloc[0]["visit_date"])
+                            cycle = int(to_num(r.get("cycle", 0)))
 
-                            if idx:
-                                call_api(
-                                    "delete",
-                                    "Customers",
-                                    row_index=idx
-                                )
-                                st.success("Deleted successfully")
-                                st.rerun()
+                            next_visit = last_date + timedelta(days=cycle * 30)
 
-                # -------------------------
-                # EDIT PLACEHOLDER
-                # -------------------------
-                with c2:
-                    if st.button(f"✏️ Edit {name}", key=f"edit_{name}"):
+                            st.success(f"📅 Next Visit: {next_visit.date()}")
 
-                        st.info("Edit feature will be upgraded in next step 🚀")
+                        except:
+                            st.warning("⚠️ Cannot calculate next visit")
+
+                    else:
+                        st.info("No maintenance history")
+
+                    # =========================
+                    # PROFILE ACTIONS
+                    # =========================
+                    st.markdown("### ⚙️ Actions")
+
+                    c1, c2 = st.columns(2)
+    
+                    # -------------------------
+                    # DELETE CUSTOMER
+                    # -------------------------
+                    with c1:
+
+                        if st.button(f"🗑️ Delete {name}", key=f"del_{name}"):
+
+                            confirm = st.checkbox("Confirm delete")
+
+                            if confirm:
+
+                                idx = r.get("row_index", None)
+
+                                if idx:
+                                    call_api(
+                                        "delete",
+                                        "Customers",
+                                        row_index=idx
+                                    )
+                                    st.success("Deleted successfully")
+                                    st.rerun()
+
+                    # -------------------------
+                    # EDIT PLACEHOLDER
+                    # -------------------------
+                    with c2:
+                        if st.button(f"✏️ Edit {name}", key=f"edit_{name}"):
+
+                            st.info("Edit feature will be upgraded in next step 🚀")
     # -------------------------
     # MAINTENANCE
     # -------------------------
