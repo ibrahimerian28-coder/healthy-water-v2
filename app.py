@@ -132,11 +132,22 @@ elif st.session_state.user_type == "admin":
         st.title("📊 Dashboard")
 
     # -------------------------
-# CUSTOMERS (PRO VERSION)
+# CUSTOMERS (FINAL FIX AFTER SHEET UPDATE)
 # -------------------------
 elif page == "Customers":
 
     st.title("👥 Customer Management")
+
+    # =========================
+    # CLEAN DATA (IMPORTANT)
+    # =========================
+    df = df_c.copy()
+
+    # تنظيف الأعمدة
+    df.columns = df.columns.str.strip()
+
+    # حذف الصفوف الفاضية
+    df = df[df["name"].astype(str).str.strip() != ""]
 
     # =========================
     # HELPERS
@@ -200,22 +211,26 @@ elif page == "Customers":
     col1, col2 = st.columns(2)
 
     search = col1.text_input("🔍 Search")
-    areas = sorted(df_c["area"].dropna().astype(str).unique())
-    selected_area = col2.selectbox("📍 Filter by Area", ["All"] + areas)
 
-    df = df_c.copy()
+    if "area" in df.columns:
+        areas = sorted(df["area"].dropna().astype(str).unique())
+    else:
+        areas = []
+
+    selected_area = col2.selectbox("📍 Filter by Area", ["All"] + areas)
 
     # search
     if search:
         df = df[df.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
 
     # filter
-    if selected_area != "All":
+    if selected_area != "All" and "area" in df.columns:
         df = df[df["area"] == selected_area]
 
     # sort
-    df["area"] = df["area"].fillna("").astype(str).str.strip()
-    df = df.sort_values(by=["area", "name"])
+    if "area" in df.columns:
+        df["area"] = df["area"].fillna("").astype(str).str.strip()
+        df = df.sort_values(by=["area", "name"])
 
     # =========================
     # DISPLAY CUSTOMERS
@@ -223,12 +238,16 @@ elif page == "Customers":
     for i, row in df.iterrows():
 
         customer_id = str(row.get("customer_id", f"row_{i}"))
-        real_row_index = i + 2  # google sheet row
+        if customer_id.lower() == "nan":
+            customer_id = f"row_{i}"
+
+        real_row_index = i + 2
 
         with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')} | 🆔 {customer_id}"):
 
             # -------- phones --------
             st.write("📞 Phones:")
+
             phones = [
                 row.get("phone"),
                 row.get("phone_1"),
@@ -245,8 +264,11 @@ elif page == "Customers":
                     c2.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp]({wa_link(ph)})")
 
             # -------- details --------
-            if row.get("adress"):
-                st.write(f"🏠 {row.get('adress')}")
+            if row.get("address"):
+                st.write(f"🏠 {row.get('address')}")
+
+            if row.get("area"):
+                st.write(f"📍 {row.get('area')}")
 
             if row.get("install_date"):
                 st.write(f"📅 {row.get('install_date')}")
@@ -259,14 +281,13 @@ elif page == "Customers":
 
             # -------- location --------
             loc = str(row.get("location_url", "")).strip()
-            if loc:
+            if loc and loc.lower() != "nan":
                 st.markdown(f"📍 [Open Location]({loc})")
 
             st.divider()
 
             # -------- actions --------
             colA, colB = st.columns(2)
-
             unique = f"{customer_id}_{i}"
 
             # DELETE
@@ -305,7 +326,7 @@ elif page == "Customers":
             phone3 = st.text_input("Phone 3", er.get("phone_3",""))
             phone4 = st.text_input("Phone 4", er.get("phone_4",""))
 
-            address = st.text_input("Address", er.get("adress",""))
+            address = st.text_input("Address", er.get("address",""))
             area = st.text_input("Area", er.get("area",""))
             location_url = st.text_input("Location URL", er.get("location_url",""))
             install_date = st.text_input("Install Date", er.get("install_date",""))
