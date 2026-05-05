@@ -198,10 +198,19 @@ elif st.session_state.user_type == "admin":
 
                 if submit:
                     new_row = [
-                        "",  # customer_id auto
-                        name, phone, phone1, phone2, phone3, phone4,
-                        address, area, location_url,
-                        install_date, cycle, status
+                        "",  # customer_id
+                        name,
+                        phone,
+                        phone1,
+                        phone2,
+                        phone3,
+                        phone4,
+                        address,
+                        area,
+                        location_url,
+                        install_date,
+                        cycle,
+                        status
                     ]
 
                     ok = call_api("append", "Customers", new_row)
