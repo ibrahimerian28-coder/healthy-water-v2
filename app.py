@@ -376,31 +376,31 @@ else:
 # CUSTOMER PANEL
 # =========================
 
-elif st.session_state.user_type == "customer":
+    elif st.session_state.user_type == "customer":
 
-    st.sidebar.image(LOGO_PATH, use_container_width=True)
+        st.sidebar.image(LOGO_PATH, use_container_width=True)
 
-    st.title("👤 My Account")
+        st.title("👤 My Account")
 
-    phone = st.session_state.get("phone")
+        phone = st.session_state.get("phone")
 
-    if phone:
+        if phone:
 
-        user = df_c[df_c["phone"].astype(str) == str(phone)]
+            user = df_c[df_c["phone"].astype(str) == str(phone)]
 
-        st.subheader("📄 My Data")
-        st.dataframe(user)
+            st.subheader("📄 My Data")
+            st.dataframe(user)
 
-        names = user["name"].tolist() if "name" in user.columns else []
+            names = user["name"].tolist() if "name" in user.columns else []
 
-        history = df_m[df_m["name"].isin(names)]
+            history = df_m[df_m["name"].isin(names)]
 
-        st.subheader("🔧 Maintenance History")
-        st.dataframe(history)
+            st.subheader("🔧 Maintenance History")
+            st.dataframe(history)
 
-        st.markdown("### 📞 Contact")
-        st.markdown(f"""
-        ☎️ {COMPANY_PHONE}  
-        [Call](tel:{COMPANY_PHONE}) | 
-        [WhatsApp](https://wa.me/2{COMPANY_PHONE})
-        """)
+            st.markdown("### 📞 Contact")
+            st.markdown(f"""
+            ☎️ {COMPANY_PHONE}  
+            [Call](tel:{COMPANY_PHONE}) | 
+            [WhatsApp](https://wa.me/2{COMPANY_PHONE})
+            """)
