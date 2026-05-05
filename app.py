@@ -132,81 +132,81 @@ elif st.session_state.user_type == "admin":
         st.title("📊 Dashboard")
     st.write("DEBUG:", df_c.shape)
     st.dataframe(df_c.head())
-# -------------------------
-# CUSTOMERS (WORKING FINAL)
-# -------------------------
-elif page == "Customers":
+    # -------------------------
+    # CUSTOMERS (WORKING FINAL)
+    # -------------------------
+    elif page == "Customers":
 
-    st.title("👥 Customer Management")
+        st.title("👥 Customer Management")
 
-    # =========================
-    # LOAD DATA
-    # =========================
-    df = df_c.copy()
-    df.columns = df.columns.str.strip()
+        # =========================
+        # LOAD DATA
+        # =========================
+        df = df_c.copy()
+        df.columns = df.columns.str.strip()
 
-    # حذف الصفوف الفاضية
-    if "name" in df.columns:
-        df = df[df["name"].astype(str).str.strip() != ""]
+        # حذف الصفوف الفاضية
+        if "name" in df.columns:
+            df = df[df["name"].astype(str).str.strip() != ""]
 
-    df = df.reset_index(drop=True)
+        df = df.reset_index(drop=True)
 
-    st.write("عدد العملاء:", len(df))
+        st.write("عدد العملاء:", len(df))
 
-    # =========================
-    # DISPLAY
-    # =========================
-    for i in range(len(df)):
+        # =========================
+        # DISPLAY
+        # =========================
+        for i in range(len(df)):
 
-        row = df.iloc[i]
+            row = df.iloc[i]
 
-        name = str(row.get("name", "")).strip()
-        area = str(row.get("area", "")).strip()
-        customer_id = str(row.get("customer_id", i))
+            name = str(row.get("name", "")).strip()
+            area = str(row.get("area", "")).strip()
+            customer_id = str(row.get("customer_id", i))
 
-        if not name:
-            continue
+            if not name:
+                continue
 
-        with st.expander(f"👤 {name} | 📍 {area} | 🆔 {customer_id}"):
+            with st.expander(f"👤 {name} | 📍 {area} | 🆔 {customer_id}"):
 
-            # -------- phones --------
-            st.write("📞 Phones:")
+                # -------- phones --------
+                st.write("📞 Phones:")
 
-            phones = [
-                row.get("phone"),
-                row.get("phone_1"),
-                row.get("phone_2"),
-                row.get("phone_3"),
-                row.get("phone_4"),
-            ]
+                phones = [
+                    row.get("phone"),
+                    row.get("phone_1"),
+                    row.get("phone_2"),
+                    row.get("phone_3"),
+                    row.get("phone_4"),
+                ]
 
-            for ph in phones:
-                if pd.notna(ph):
-                    ph = str(ph).strip()
-                    if ph and ph.lower() not in ["none", "nan"]:
-                        st.write(ph)
-                        st.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
+                for ph in phones:
+                    if pd.notna(ph):
+                        ph = str(ph).strip()
+                        if ph and ph.lower() not in ["none", "nan"]:
+                            st.write(ph)
+                            st.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
 
-            # -------- details --------
-            if row.get("address"):
-                st.write(f"🏠 {row.get('address')}")
+                # -------- details --------
+                if row.get("address"):
+                    st.write(f"🏠 {row.get('address')}")
 
-            if row.get("area"):
-                st.write(f"📍 {row.get('area')}")
+                if row.get("area"):
+                    st.write(f"📍 {row.get('area')}")
 
-            if row.get("install_date"):
-                st.write(f"📅 {row.get('install_date')}")
+                if row.get("install_date"):
+                    st.write(f"📅 {row.get('install_date')}")
 
-            if row.get("cycle"):
-                st.write(f"🔁 Cycle: {row.get('cycle')}")
+                if row.get("cycle"):
+                    st.write(f"🔁 Cycle: {row.get('cycle')}")
 
-            if row.get("status"):
-                st.write(f"📌 {row.get('status')}")
+                if row.get("status"):
+                    st.write(f"📌 {row.get('status')}")
 
-            # -------- location --------
-            loc = str(row.get("location_url", "")).strip()
-            if loc and loc.lower() != "nan":
-                st.markdown(f"[📍 Open Location]({loc})")
+                # -------- location --------
+                loc = str(row.get("location_url", "")).strip()
+                if loc and loc.lower() != "nan":
+                    st.markdown(f"[📍 Open Location]({loc})")
     # -------------------------
     # MAINTENANCE
     # -------------------------
