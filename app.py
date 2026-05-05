@@ -239,8 +239,7 @@ if st.session_state.user_type is None:
 
 # --- 6. واجهة الأدمن ---
 elif st.session_state.user_type == "admin":
-    st.info("يرجى تسجيل الدخول كأدمن")
-    st.stop()
+    
     st.sidebar.image(LOGO_PATH, use_column_width=True)
     if 'menu_choice' not in st.session_state: st.session_state.menu_choice = "بيانات العملاء"
     
