@@ -242,7 +242,7 @@ elif st.session_state.user_type == "admin":
                     row.get("phone_4"),
                 ]
 
-            for ph in phones:
+                for ph in phones:
                     ph = clean_phone(ph)
 
                     if ph:
