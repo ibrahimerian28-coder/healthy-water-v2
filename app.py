@@ -237,16 +237,27 @@ elif page == "Customers":
     # =========================
     st.write(f"📊 Total Customers: {len(df)}")
 
-    for i, row in df.iterrows():
+    # =========================
+# DISPLAY CUSTOMERS (SAFE VERSION)
+# =========================
 
-        customer_id = str(row.get("customer_id", f"row_{i}"))
-        if customer_id.lower() == "nan":
-            customer_id = f"row_{i}"
+st.write("عدد العملاء:", len(df))
 
-        real_row_index = i + 2
-        unique = f"{customer_id}_{i}"
+if len(df) == 0:
+    st.error("❌ مفيش بيانات بعد الفلترة")
+else:
+    for i in range(len(df)):
 
-        with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')} | 🆔 {customer_id}"):
+        row = df.iloc[i]
+
+        name = str(row.get("name", "")).strip()
+        area = str(row.get("area", "")).strip()
+        customer_id = str(row.get("customer_id", i))
+
+        if name == "":
+            continue  # skip empty rows
+
+        with st.expander(f"👤 {name} | 📍 {area} | 🆔 {customer_id}"):
 
             # -------- phones --------
             st.write("📞 Phones:")
@@ -260,11 +271,11 @@ elif page == "Customers":
             ]
 
             for ph in phones:
-                ph = clean_phone(ph)
-                if ph:
-                    c1, c2 = st.columns([1, 3])
-                    c1.write(ph)
-                    c2.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp]({wa_link(ph)})")
+                if pd.notna(ph):
+                    ph = str(ph).strip()
+                    if ph and ph.lower() not in ["none", "nan"]:
+                        st.write(ph)
+                        st.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
 
             # -------- details --------
             if row.get("address"):
@@ -285,28 +296,7 @@ elif page == "Customers":
             # -------- location --------
             loc = str(row.get("location_url", "")).strip()
             if loc and loc.lower() != "nan":
-                st.markdown(f"📍 [Open Location in Maps]({loc})")
-
-            st.divider()
-
-            # -------- actions --------
-            colA, colB = st.columns(2)
-
-            # DELETE
-            with colA:
-                if st.button("🗑️ Delete", key=f"del_{unique}"):
-                    if call_api("delete", "Customers", row_index=real_row_index):
-                        st.success("Deleted")
-                        st.rerun()
-                    else:
-                        st.error("Delete failed")
-
-            # EDIT
-            with colB:
-                if st.button("✏️ Edit", key=f"edit_{unique}"):
-                    st.session_state["edit_data"] = row.to_dict()
-                    st.session_state["edit_index"] = real_row_index
-                    st.rerun()
+                st.markdown(f"[📍 Open Location]({loc})")
 
     # =========================
     # EDIT FORM
