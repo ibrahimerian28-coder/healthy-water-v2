@@ -179,7 +179,10 @@ elif st.session_state.user_type == "admin":
                 st.write(f"🔁 Cycle: {row.get('cycle','')}")
 
                 # زر حذف (مفتاح ثابت لتجنب الأخطاء)
-                if st.button("🗑️ Delete Customer", key=f"del_customer_{row.get('row_index','')}"):
+                if st.button(
+                    "🗑️ Delete Customer",
+                    key=f"del_customer_{row.name}_{row.get('phone','')}"
+                ):
                     st.warning("Delete logic not activated yet")
 
     # -------------------------
