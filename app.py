@@ -136,54 +136,218 @@ elif st.session_state.user_type == "admin":
     # CUSTOMERS (FIXED + CLEAN)
     # -------------------------
     elif page == "Customers":
+
         st.title("👥 Customer Profiles")
 
-        search = st.text_input("🔍 Search customer")
+        search = st.text_input("🔍 Search by name / phone / area")
 
+        # =========================
+        # FILTER
+        # =========================
         filtered = df_c.copy()
 
         if search:
             filtered = df_c[
                 df_c.astype(str).apply(
-                    lambda x: x.str.contains(search, case=False, na=False)
-                ).any(axis=1)
+                     lambda x: x.str.contains(search, case=False, na=False)
+                 ).any(axis=1)
             ]
 
-        for _, row in filtered.iterrows():
+        # تنظيف المناطق
+        filtered["area"] = filtered["area"].fillna("غير محدد")
 
-            with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')}"):
+        # =========================
+        # GROUP BY AREA
+        # =========================
+        for area in sorted(filtered["area"].unique()):
 
-                st.write("📞 Phones:")
+            st.markdown(f"## 📍 {area}")
 
-                phones = [
-                    row.get("phone"),
-                    row.get("phone_1"),
-                    row.get("phone_2"),
-                    row.get("phone_3"),
-                    row.get("phone_4"),
-                ]
+            area_df = filtered[filtered["area"] == area]
+    
+            for _, row in area_df.iterrows():
 
-                # تنظيف None + فاضي
-                clean_phones = [p for p in phones if str(p).strip() and str(p).lower() != "none"]
+                with st.expander(f"👤 {row.get('name','')} | 📞 {row.get('phone','')}"):
 
-                for ph in clean_phones:
-                    col1, col2 = st.columns([1, 2])
-                    col1.write(f"📱 {ph}")
-                    col2.markdown(
-                        f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})"
-                    )
+                    # =========================
+                    # BASIC INFO
+                    # =========================
+                    st.subheader("📄 Customer Info")
 
-                st.write(f"🏠 Address: {row.get('adress','')}")
-                st.write(f"📍 Area: {row.get('area','')}")
-                st.write(f"📅 Install: {row.get('install_date','')}")
-                st.write(f"🔁 Cycle: {row.get('cycle','')}")
+                    st.write(f"🏠 Address: {row.get('adress','')}")
+                    st.write(f"📍 Area: {row.get('area','')}")
+                    st.write(f"📅 Install Date: {row.get('install_date','')}")
+                    st.write(f"🔁 Cycle: {row.get('cycle','')} months")
 
-                # زر حذف (مفتاح ثابت لتجنب الأخطاء)
-                if st.button(
-                    "🗑️ Delete Customer",
-                    key=f"del_customer_{row.name}_{row.get('phone','')}"
-                ):
-                    st.warning("Delete logic not activated yet")
+                    # =========================
+                    # PHONES (NO NONE FIX)
+                    # =========================
+                    st.subheader("📞 Phones")
+
+                    phones = [
+                        row.get("phone"),
+                        row.get("phone_1"),
+                        row.get("phone_2"),
+                        row.get("phone_3"),
+                        row.get("phone_4"),
+                    ]
+
+                    clean_phones = [
+                        p for p in phones
+                        if str(p).strip() and str(p).lower() != "none"
+                    ]
+
+                    for ph in clean_phones:
+                        c1, c2 = st.columns([1, 2])
+                        c1.write(f"📱 {ph}")
+                        c2.markdown(
+                            f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})"
+                        )
+
+                    # =========================
+                    # ACTIONS
+                    # =========================
+                    st.subheader("⚙️ Actions")
+
+                    col1, col2 = st.columns(2)
+
+                    # -------------------------
+                    # DELETE CUSTOMER
+                    # -------------------------
+                    with col1:
+
+                        if st.button(
+                            "🗑️ Delete",
+                            key=f"del_{row.name}_{row.get('phone','')}"
+                        ):
+
+                            confirm = st.checkbox(
+                                f"Confirm delete {row.get('name','')}",
+                                key=f"confirm_{row.name}"
+                            )
+
+                            if confirm:
+
+                                success = call_api(
+                                    action="delete",
+                                    sheet="Customers",
+                                    row_index=int(row.get("row_index", 0))
+                                )
+
+                                if success:
+                                    st.success("Customer deleted successfully")
+                                    st.rerun()
+                                else:
+                                    st.error("Delete failed - check row_index")
+
+                    # -------------------------
+                    # EDIT CUSTOMER
+                    # -------------------------
+                    with col2:
+
+                        with st.expander("✏️ Edit Customer"):
+
+                            new_name = st.text_input(
+                                "Name",
+                                value=row.get("name", ""),
+                                key=f"name_{row.name}"
+                            )
+
+                            new_phone = st.text_input(
+                                "Phone",
+                                value=row.get("phone", ""),
+                                key=f"phone_{row.name}"
+                            )
+
+                            new_phone1 = st.text_input(
+                                "Phone 1",
+                                value=row.get("phone_1", ""),
+                                key=f"phone1_{row.name}"
+                            )
+
+                            new_phone2 = st.text_input(
+                                "Phone 2",
+                                value=row.get("phone_2", ""),
+                                key=f"phone2_{row.name}"
+                            )
+
+                            new_phone3 = st.text_input(
+                                "Phone 3",
+                                value=row.get("phone_3", ""),
+                                key=f"phone3_{row.name}"
+                            )
+
+                            new_phone4 = st.text_input(
+                                "Phone 4",
+                                value=row.get("phone_4", ""),
+                                key=f"phone4_{row.name}"
+                            )
+
+                            new_address = st.text_input(
+                                "Address",
+                                value=row.get("adress", ""),
+                                key=f"addr_{row.name}"
+                            )
+
+                            new_area = st.text_input(
+                                "Area",
+                                value=row.get("area", ""),
+                                key=f"area_{row.name}"
+                            )
+
+                            new_location = st.text_input(
+                                "Location URL",
+                                value=row.get("location_url", ""),
+                                key=f"loc_{row.name}"
+                            )
+
+                            new_install = st.text_input(
+                                "Install Date",
+                                value=row.get("install_date", ""),
+                                key=f"inst_{row.name}"
+                            )
+
+                            new_cycle = st.text_input(
+                                "Cycle",
+                                value=row.get("cycle", ""),
+                                key=f"cycle_{row.name}"
+                            )
+
+                            new_status = st.text_input(
+                                "Status",
+                                value=row.get("status", ""),
+                                key=f"status_{row.name}"
+                            )
+
+                            if st.button("💾 Save", key=f"save_{row.name}"):
+    
+                                updated_data = [
+                                    new_name,
+                                    new_phone,
+                                    new_phone1,
+                                    new_phone2,
+                                    new_phone3,
+                                    new_phone4,
+                                    new_address,
+                                    new_area,
+                                    new_location,
+                                    new_install,
+                                    new_cycle,
+                                    new_status,
+                                ]
+
+                                success = call_api(
+                                    action="update",
+                                    sheet="Customers",
+                                    data=updated_data,
+                                    row_index=int(row.get("row_index", 0))
+                                )
+
+                                if success:
+                                    st.success("Updated successfully")
+                                    st.rerun()
+                                else:
+                                    st.error("Update failed")
 
     # -------------------------
     # MAINTENANCE
