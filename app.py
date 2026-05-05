@@ -133,48 +133,138 @@ elif st.session_state.user_type == "admin":
         st.title("📊 Dashboard")
 
     # -------------------------
-    # CUSTOMERS
-    # -------------------------
     elif page == "Customers":
-        st.title("👥 Customer Profiles")
+    st.title("👥 Customer Profiles")
 
-        search = st.text_input("🔍 Search customer")
+    search = st.text_input("🔍 Search by name / phone / area")
 
-        filtered = df_c.copy()
+    filtered = df_c.copy()
 
-        if search:
-            filtered = df_c[df_c.astype(str).apply(
+    if search:
+        filtered = df_c[
+            df_c.astype(str).apply(
                 lambda x: x.str.contains(search, case=False, na=False)
-            ).any(axis=1)]
+            ).any(axis=1)
+        ]
 
-        for _, row in filtered.iterrows():
+    for _, row in filtered.iterrows():
 
-            with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')}"):
+        with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')}"):
 
-                st.write("📞 Phones:")
+            # =========================
+            # BASIC INFO
+            # =========================
+            st.subheader("📄 Customer Info")
 
-                phones = [
-                    row.get("phone"),
-                    row.get("phone_1"),
-                    row.get("phone_2"),
-                    row.get("phone_3"),
-                    row.get("phone_4"),
+            st.write(f"🏠 Address: {row.get('adress','')}")
+            st.write(f"📍 Area: {row.get('area','')}")
+            st.write(f"📅 Install Date: {row.get('install_date','')}")
+            st.write(f"🔁 Cycle: {row.get('cycle','')} months")
+
+            # =========================
+            # PHONES
+            # =========================
+            st.subheader("📞 Phones")
+
+            phones = [
+                row.get("phone"),
+                row.get("phone_1"),
+                row.get("phone_2"),
+                row.get("phone_3"),
+                row.get("phone_4"),
+            ]
+
+            for ph in phones:
+                if str(ph).strip():
+                    c1, c2 = st.columns([1,2])
+                    c1.write(f"📱 {ph}")
+                    c2.markdown(
+                        f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})"
+                    )
+
+            # =========================
+            # MAINTENANCE HISTORY
+            # =========================
+            st.subheader("🔧 Maintenance History")
+
+            cust_hist = df_m[df_m["name"] == row["name"]].copy()
+
+            if not cust_hist.empty:
+
+                cust_hist = cust_hist.sort_values("visit_date", ascending=False)
+
+                # عرض الأعمدة المطلوبة
+                show_cols = [
+                    "visit_date",
+                    "P1","P2","P3",
+                    "membrane","post_carbon","Calcite","infrared",
+                    "other","amount","notes"
                 ]
 
-                for ph in phones:
-                    if str(ph).strip():
-                        c1, c2 = st.columns(2)
-                        c1.write(ph)
-                        c2.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
+                for col in show_cols:
+                    if col not in cust_hist.columns:
+                        cust_hist[col] = ""
 
-                st.write(f"🏠 Address: {row.get('adress','')}")
-                st.write(f"📍 Area: {row.get('area','')}")
-                st.write(f"📅 Install: {row.get('install_date','')}")
-                st.write(f"🔁 Cycle: {row.get('cycle','')}")
+                # تحويل true/false
+                check_cols = ["P1","P2","P3","membrane","post_carbon","Calcite","infrared"]
 
-                # DELETE BUTTON (unique key fixed)
-                if st.button("🗑️ Delete Customer", key=f"del_customer_{row.name}"):
-                    st.warning("Delete logic not activated yet")
+                for col in check_cols:
+                    cust_hist[col] = cust_hist[col].apply(
+                        lambda x: "✅" if str(x).lower() in ["true","1","yes","y","✔","✅"] else "❌"
+                    )
+
+                st.dataframe(
+                    cust_hist[show_cols],
+                    use_container_width=True,
+                    hide_index=True
+                )
+
+                # =========================
+                # NEXT VISIT CALCULATION
+                # =========================
+                try:
+                    last_date = pd.to_datetime(cust_hist.iloc[0]["visit_date"])
+                    cycle = int(row.get("cycle", 0))
+                    next_visit = last_date + timedelta(days=cycle * 30)
+
+                    st.info(f"📅 Next Visit: {next_visit.date()}")
+                except:
+                    st.warning("⚠️ Cannot calculate next visit")
+
+            else:
+                st.warning("No maintenance history found")
+
+            # =========================
+            # ACTION BUTTONS
+            # =========================
+            st.subheader("⚙️ Actions")
+
+            col1, col2, col3 = st.columns(3)
+
+            # ADD MAINTENANCE
+            if col1.button("➕ Add Maintenance", key=f"add_m_{row.name}"):
+                st.session_state.selected_customer = row["name"]
+                st.session_state.page_redirect = "Maintenance"
+                st.rerun()
+
+            # DELETE CUSTOMER
+            if col2.button("🗑️ Delete", key=f"del_{row.name}"):
+
+                confirm = st.warning("Are you sure you want to delete this customer?")
+                if st.button("Yes Delete", key=f"confirm_del_{row.name}"):
+                    call_api("delete", "Customers", row_index=row.get("row_index"))
+                    st.success("Deleted successfully")
+                    st.rerun()
+
+            # SHARE
+            if col3.button("📤 Share", key=f"share_{row.name}"):
+                share_text = f"""
+Customer: {row['name']}
+Phone: {row.get('phone','')}
+Area: {row.get('area','')}
+                """
+                st.code(share_text)
+
 
     # -------------------------
     # MAINTENANCE
