@@ -1,12 +1,11 @@
 import pandas as pd
 
-BASE_SHEET = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid="
+BASE_URL = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid="
 
 def load_data(gid):
     try:
-        url = BASE_SHEET + str(gid)
-        df = pd.read_csv(url)
-        df.columns = df.columns.str.strip()
+        df = pd.read_csv(BASE_URL + gid)
+        df.columns = [str(c).strip() for c in df.columns]
         return df.fillna("")
     except:
         return pd.DataFrame()
