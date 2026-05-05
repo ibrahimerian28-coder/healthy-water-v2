@@ -1,49 +1,50 @@
 import streamlit as st
 import pandas as pd
 import requests
-import base64
-import os
-from datetime import datetime, timedelta
-import plotly.express as px
-import urllib.parse
+from datetime import datetime
 
 # =========================
-# ⚙️ CONFIG (لازم أول سطر فعلي بعد الاستيراد)
+# 🔥 CONFIG
 # =========================
-st.set_page_config(page_title="Healthy Water Pro", layout="wide", page_icon="🚰")
 
-# =========================
-# 🔐 SESSION STATE
-# =========================
-if "user_type" not in st.session_state:
-    st.session_state.user_type = None
+st.set_page_config(page_title="Healthy Water Pro", layout="wide")
 
-if "customer_data" not in st.session_state:
-    st.session_state.customer_data = None
-
-if "cart" not in st.session_state:
-    st.session_state.cart = []
-
-# =========================
-# 🔥 SETTINGS
-# =========================
-BASE_URL = "https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid="
-WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwS0CSCFl0fSQyvefV8X1mn2YaNQ044F6KpFG8XMJsyhcT4VcaeCfPKBtG2dP74mgsq/exec"
-
-COMPANY_PHONE = "01286609535"
-
-ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "1234")
+WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPIG6-S1aOxIL5KvN-XF_zwW0Xu6U9ARLau_R21s_Z9MJafWuPZW8fF8NOCpxEGs0OYA/exec"
 
 LOGO_PATH = "assets/images/logo.png"
 
+ADMIN_PASSWORD = "HgM18082019$&)"
+
+COMPANY_PHONE = "01286609535"
+
 
 # =========================
-# 📊 DATA LOADER (مهم جدًا)
+# 🔥 SHEETS GIDs
 # =========================
-@st.cache_data(ttl=5)
-def load_data(gid):
+
+SHEETS = {
+    "Customers": "0",
+    "Maintenance": "2120582392",
+    "Inventory": "1767710106",
+    "Expenses": "288947510",
+    "Store_Products": "1129472026",
+}
+
+
+# =========================
+# 🔥 HELPERS
+# =========================
+
+def to_num(v):
     try:
-        url = f"{BASE_URL}{gid}"
+        return float(str(v).replace(",", "")) if v not in [None, ""] else 0
+    except:
+        return 0
+
+
+def load_data(gid):
+    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
+    try:
         df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
         return df.fillna("")
@@ -51,117 +52,168 @@ def load_data(gid):
         return pd.DataFrame()
 
 
-# =========================
-# 🔧 SAFE NUMBER
-# =========================
-def to_num(val):
-    try:
-        return int(float(str(val).replace(",", "")))
-    except:
-        return 0
-
-
-# =========================
-# 📡 GOOGLE SHEETS ACTION
-# =========================
-def execute_gsheet_action(action, sheet_name, data=None, row_index=None):
+def execute_gsheet_action(action, sheet, data=None, row_index=None):
     payload = {
         "action": action,
-        "sheet": sheet_name,
+        "sheet": sheet,
         "data": data,
         "row_index": row_index
     }
     try:
-        r = requests.post(WEB_APP_URL, json=payload, timeout=15)
+        r = requests.post(WEB_APP_URL, json=payload, timeout=20)
         return r.status_code == 200
     except:
         return False
 
 
 # =========================
-# 📦 LOAD DATASETS
+# 🔥 SESSION STATE
 # =========================
-df_c = df_m = df_inv = df_exp = df_store = pd.DataFrame()
-df_orders = pd.DataFrame()  # مهم عشان مايحصلش NameError
 
-if st.session_state.user_type:
-    df_c = load_data("0")
-    df_m = load_data("2120582392")
-    df_inv = load_data("1767710106")
-    df_exp = load_data("288947510")
-    df_store = load_data("1168172935")
+if "user_type" not in st.session_state:
+    st.session_state.user_type = None
+
+
+# =========================
+# 🔥 LOAD DATA
+# =========================
+
+df_c = load_data(SHEETS["Customers"])
+df_m = load_data(SHEETS["Maintenance"])
+df_inv = load_data(SHEETS["Inventory"])
+df_exp = load_data(SHEETS["Expenses"])
+df_store = load_data(SHEETS["Store_Products"])
 
 
 # =========================
 # 🔐 LOGIN PAGE
 # =========================
-if st.session_state.user_type:
-    st.session_state.df_c = load_data("0")
-    st.session_state.df_m = load_data("2120582392")
-    st.session_state.df_inv = load_data("1767710106")
-    st.session_state.df_exp = load_data("288947510")
-    st.session_state.df_store = load_data("1168172935")
-else:
-    st.session_state.df_c = pd.DataFrame()
-    st.session_state.df_m = pd.DataFrame()
-    st.session_state.df_inv = pd.DataFrame()
-    st.session_state.df_exp = pd.DataFrame()
-    st.session_state.df_store = pd.DataFrame()
+
+if st.session_state.user_type is None:
+
+    st.title("🚰 Healthy Water System")
+
+    tab1, tab2 = st.tabs(["🔒 Admin", "👤 Customer"])
+
+    with tab1:
+        pwd = st.text_input("Password", type="password")
+        if st.button("Login Admin"):
+            if pwd == ADMIN_PASSWORD:
+                st.session_state.user_type = "admin"
+                st.rerun()
+            else:
+                st.error("Wrong password")
+
+    with tab2:
+        phone = st.text_input("Phone Number")
+        if st.button("Login Customer"):
+            if phone.strip() != "":
+                st.session_state.user_type = "customer"
+                st.session_state.phone = phone
+                st.rerun()
 
 
 # =========================
-# 🔥 NAVIGATION
+# 👑 ADMIN PANEL
 # =========================
-page = st.sidebar.selectbox(
-    "📌 القائمة",
-    ["Dashboard", "Customers", "Maintenance", "Inventory", "Store"]
-)
+
+elif st.session_state.user_type == "admin":
+
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
+
+    page = st.sidebar.selectbox(
+        "📌 Menu",
+        [
+            "Dashboard",
+            "Customers",
+            "Maintenance",
+            "Inventory",
+            "Expenses",
+            "Store"
+        ]
+    )
+
+    # -------------------------
+    # DASHBOARD
+    # -------------------------
+    if page == "Dashboard":
+        st.title("📊 Dashboard")
+
+    # -------------------------
+    # CUSTOMERS
+    # -------------------------
+    elif page == "Customers":
+        st.title("👥 Customers")
+
+        search = st.text_input("Search")
+        if search:
+            df_show = df_c[df_c.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
+        else:
+            df_show = df_c
+
+        st.dataframe(df_show, use_container_width=True)
+
+    # -------------------------
+    # MAINTENANCE
+    # -------------------------
+    elif page == "Maintenance":
+        st.title("🔧 Maintenance")
+
+        st.dataframe(df_m, use_container_width=True)
+
+    # -------------------------
+    # INVENTORY
+    # -------------------------
+    elif page == "Inventory":
+        st.title("📦 Inventory")
+
+        st.dataframe(df_inv, use_container_width=True)
+
+    # -------------------------
+    # EXPENSES
+    # -------------------------
+    elif page == "Expenses":
+        st.title("💵 Expenses")
+
+        st.dataframe(df_exp, use_container_width=True)
+
+    # -------------------------
+    # STORE
+    # -------------------------
+    elif page == "Store":
+        st.title("🛒 Store Products")
+
+        st.dataframe(df_store, use_container_width=True)
 
 
 # =========================
-# 📊 DASHBOARD
+# 👤 CUSTOMER PANEL
 # =========================
-if page == "Dashboard":
-    st.title("📊 Dashboard")
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("👥 العملاء", len(df_c))
-    col2.metric("🔧 الصيانات", len(df_m))
-    col3.metric("📦 المنتجات", len(df_store))
+elif st.session_state.user_type == "customer":
 
-    st.divider()
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
 
-    st.write("📌 الطلبات:", len(df_orders))
-    st.write("📌 المصروفات:", len(df_exp))
+    st.title("👤 Customer Area")
 
+    phone = st.session_state.get("phone")
 
-# =========================
-# 👥 CUSTOMERS (مبدئي)
-# =========================
-elif page == "Customers":
-    st.title("👥 Customers")
-    st.dataframe(df_c)
+    if phone:
+        user_data = df_c[df_c["phone"].astype(str) == str(phone)]
 
+        st.subheader("📄 Your Data")
+        st.dataframe(user_data)
 
-# =========================
-# 🔧 MAINTENANCE
-# =========================
-elif page == "Maintenance":
-    st.title("🔧 Maintenance")
-    st.dataframe(df_m)
+        st.subheader("🔧 Your Maintenance History")
 
+        cust_names = user_data["name"].tolist() if "name" in user_data.columns else []
+        df_hist = df_m[df_m["name"].isin(cust_names)]
 
-# =========================
-# 📦 INVENTORY
-# =========================
-elif page == "Inventory":
-    st.title("📦 Inventory")
-    st.dataframe(df_inv)
+        st.dataframe(df_hist)
 
-
-# =========================
-# 🛒 STORE (مختصر لتجنب التعقيد)
-# =========================
-elif page == "Store":
-    st.title("🛒 Store")
-    st.dataframe(df_store)
+        st.markdown("### 📞 Contact Us")
+        st.markdown(f"""
+        ☎️ {COMPANY_PHONE}  
+        [Call](tel:{COMPANY_PHONE}) | 
+        [WhatsApp](https://wa.me/2{COMPANY_PHONE})
+        """)
