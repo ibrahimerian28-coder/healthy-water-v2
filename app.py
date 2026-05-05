@@ -294,87 +294,87 @@ elif st.session_state.user_type == "admin":
         # EDIT FORM
         # =========================
         # =========================
-# EDIT CUSTOMER (FIXED)
-# =========================
-if st.session_state.get("edit_row") is not None:
+    # EDIT CUSTOMER (FIXED)
+    # =========================
+    if st.session_state.get("edit_row") is not None:
 
-    st.divider()
-    st.subheader("✏️ Edit Customer")
+        st.divider()
+        st.subheader("✏️ Edit Customer")
 
-    er = st.session_state["edit_row"]
-    rid = st.session_state["edit_index"]
+        er = st.session_state["edit_row"]
+        rid = st.session_state["edit_index"]
 
-    with st.form("edit_customer_form"):
+        with st.form("edit_customer_form"):
 
-        name = st.text_input("Name", er.get("name",""))
-        phone = st.text_input("Phone", er.get("phone",""))
-        phone1 = st.text_input("Phone 1", er.get("phone_1",""))
-        phone2 = st.text_input("Phone 2", er.get("phone_2",""))
-        phone3 = st.text_input("Phone 3", er.get("phone_3",""))
-        phone4 = st.text_input("Phone 4", er.get("phone_4",""))
+            name = st.text_input("Name", er.get("name",""))
+            phone = st.text_input("Phone", er.get("phone",""))
+            phone1 = st.text_input("Phone 1", er.get("phone_1",""))
+            phone2 = st.text_input("Phone 2", er.get("phone_2",""))
+            phone3 = st.text_input("Phone 3", er.get("phone_3",""))
+            phone4 = st.text_input("Phone 4", er.get("phone_4",""))
 
-        address = st.text_input("Address", er.get("adress",""))
-        area = st.text_input("Area", er.get("area",""))
-        location_url = st.text_input("Location URL", er.get("location_url",""))
-        install_date = st.text_input("Install Date", er.get("install_date",""))
-        cycle = st.text_input("Cycle", er.get("cycle",""))
-        status = st.text_input("Status", er.get("status",""))
+            address = st.text_input("Address", er.get("adress",""))
+            area = st.text_input("Area", er.get("area",""))
+            location_url = st.text_input("Location URL", er.get("location_url",""))
+            install_date = st.text_input("Install Date", er.get("install_date",""))
+            cycle = st.text_input("Cycle", er.get("cycle",""))
+            status = st.text_input("Status", er.get("status",""))
 
-        save = st.form_submit_button("Save Changes")
+            save = st.form_submit_button("Save Changes")
 
-        if save:
+            if save:
 
-            updated = [
-                er.get("customer_id",""),
-                name, phone, phone1, phone2, phone3, phone4,
-                address, area, location_url,
-                install_date, cycle, status
-            ]
+                updated = [
+                    er.get("customer_id",""),
+                    name, phone, phone1, phone2, phone3, phone4,
+                    address, area, location_url,
+                    install_date, cycle, status
+                ]
 
-            ok = call_api("update", "Customers", updated, row_index=int(rid))
+                ok = call_api("update", "Customers", updated, row_index=int(rid))
 
-            if ok:
-                st.success("Updated successfully")
-                st.session_state.pop("edit_row", None)
-                st.session_state.pop("edit_index", None)
-                st.rerun()
-            else:
-                st.error("Update failed")
+                if ok:
+                    st.success("Updated successfully")
+                    st.session_state.pop("edit_row", None)
+                    st.session_state.pop("edit_index", None)
+                    st.rerun()
+                else:
+                    st.error("Update failed")
 
-                name = st.text_input("Name", er.get("name",""))
-                phone = st.text_input("Phone", er.get("phone",""))
-                phone1 = st.text_input("Phone 1", er.get("phone_1",""))
-                phone2 = st.text_input("Phone 2", er.get("phone_2",""))
-                phone3 = st.text_input("Phone 3", er.get("phone_3",""))
-                phone4 = st.text_input("Phone 4", er.get("phone_4",""))
+                    name = st.text_input("Name", er.get("name",""))
+                    phone = st.text_input("Phone", er.get("phone",""))
+                    phone1 = st.text_input("Phone 1", er.get("phone_1",""))
+                    phone2 = st.text_input("Phone 2", er.get("phone_2",""))
+                    phone3 = st.text_input("Phone 3", er.get("phone_3",""))
+                    phone4 = st.text_input("Phone 4", er.get("phone_4",""))
 
-                address = st.text_input("Address", er.get("adress",""))
-                area = st.text_input("Area", er.get("area",""))
-                location_url = st.text_input("Location URL", er.get("location_url",""))
-                install_date = st.text_input("Install Date", er.get("install_date",""))
-                cycle = st.text_input("Cycle", er.get("cycle",""))
-                status = st.text_input("Status", er.get("status",""))
+                    address = st.text_input("Address", er.get("adress",""))
+                    area = st.text_input("Area", er.get("area",""))
+                    location_url = st.text_input("Location URL", er.get("location_url",""))
+                    install_date = st.text_input("Install Date", er.get("install_date",""))
+                    cycle = st.text_input("Cycle", er.get("cycle",""))
+                    status = st.text_input("Status", er.get("status",""))
 
-                save = st.form_submit_button("Save Changes")
+                    save = st.form_submit_button("Save Changes")
 
-                if save:
+                    if save:
 
-                    updated = [
-                        er.get("customer_id",""),
-                        name, phone, phone1, phone2, phone3, phone4,
-                        address, area, location_url,
-                        install_date, cycle, status
-                    ]
+                        updated = [
+                            er.get("customer_id",""),
+                            name, phone, phone1, phone2, phone3, phone4,
+                            address, area, location_url,
+                            install_date, cycle, status
+                        ]
 
-                    ok = call_api("update", "Customers", updated, row_index=rid)
+                        ok = call_api("update", "Customers", updated, row_index=rid)
 
-                    if ok:
-                        st.success("Updated successfully")
-                        del st.session_state["edit_row"]
-                        del st.session_state["edit_index"]
-                        st.rerun()
-                    else:
-                        st.error("Update failed")
+                        if ok:
+                            st.success("Updated successfully")
+                            del st.session_state["edit_row"]
+                            del st.session_state["edit_index"]
+                            st.rerun()
+                        else:
+                            st.error("Update failed")
     # -------------------------
     # MAINTENANCE
     # -------------------------
