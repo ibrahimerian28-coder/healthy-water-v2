@@ -139,19 +139,22 @@ elif st.session_state.user_type == "admin":
         st.title("👥 Customer Profiles")
 
         # =========================
-        # LOAD & PREPARE
+        # HELPERS
         # =========================
-        df = df_c.copy()
+        def clean_phone(p):
+            if pd.isna(p):
+                return ""
+            p = str(p).strip()
+            if p.lower() == "none":
+                return ""
+            return p
 
-        if "area" in df.columns:
-            df = df.sort_values(by="area")
-
-        search = st.text_input("🔍 Search customer")
-
-        if search:
-            df = df[df.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
-
-        st.markdown("---")
+        def wa_link(phone):
+            phone = clean_phone(phone)
+            phone = phone.replace(" ", "")
+            if phone.startswith("0"):
+                phone = "2" + phone
+            return f"https://wa.me/{phone}"
 
         # =========================
         # ADD NEW CUSTOMER
@@ -168,18 +171,18 @@ elif st.session_state.user_type == "admin":
 
                 address = st.text_input("Address")
                 area = st.text_input("Area")
-                location_url = st.text_input("Location URL (Google Maps)")
-                install_date = st.date_input("Install Date")
+                location_url = st.text_input("Google Maps URL")
+                install_date = st.text_input("Install Date")
                 cycle = st.text_input("Cycle")
-                status = st.text_input("Status")
+                status = st.text_input("Status", value="نشط")
 
-                submitted = st.form_submit_button("💾 Save Customer")
+                submit = st.form_submit_button("Save Customer")
 
-                if submitted and name:
+                if submit:
                     new_row = [
                         name, phone, phone1, phone2, phone3, phone4,
                         address, area, location_url,
-                        str(install_date), cycle, status
+                        install_date, cycle, status
                     ]
 
                     ok = call_api("append", "Customers", new_row)
@@ -190,117 +193,152 @@ elif st.session_state.user_type == "admin":
                     else:
                         st.error("Failed to add customer")
 
-        st.markdown("---")
+        st.divider()
 
         # =========================
-        # DISPLAY CUSTOMERS
+        # SEARCH
+        # =========================
+        search = st.text_input("🔍 Search customer")
+
+        df = df_c.copy()
+
+        if search:
+            df = df[df.astype(str).apply(lambda x: x.str.contains(search, case=False)).any(axis=1)]
+
+        # =========================
+        # SORT BY AREA
+        # =========================
+        if "area" in df.columns:
+            df = df.sort_values(by="area", na_position="last")
+
+        # =========================
+        # CLEAN ROW INDEX (IMPORTANT FIX)
+        # =========================
+        if "row_index" not in df.columns:
+            df["row_index"] = df.index + 2  # fallback safe index
+
+        # =========================
+        # SHOW CUSTOMERS
         # =========================
         for i, row in df.iterrows():
 
-            row_id = row.get("row_index", i + 2)  # fallback مهم
+            row_id = str(row.get("row_index", i))
 
             with st.expander(f"👤 {row.get('name','')} | 📍 {row.get('area','')}"):
 
-                # -------------------------
-                # PHONES (FIX: no None buttons)
-                # -------------------------
+                # ================= PHONE LIST =================
+                st.write("📞 Phones:")
+
                 phones = [
                     row.get("phone"),
                     row.get("phone_1"),
                     row.get("phone_2"),
                     row.get("phone_3"),
-                    row.get("phone_4"),
+                    row.get("phone_4")
                 ]
 
-                st.write("📞 Phones:")
+                for ph in phones:
+                    ph = clean_phone(ph)
 
-                for idx, ph in enumerate(phones):
-                    if ph and str(ph).strip().lower() != "none":
+                    if ph and ph.lower() != "nan":
+                        col1, col2 = st.columns([1, 3])
 
-                        c1, c2 = st.columns([1, 2])
-                        c1.write(ph)
+                        col1.write(ph)
 
-                        c2.markdown(
-                            f"""
-                            [📞 Call](tel:{ph}) |
-                            [💬 WhatsApp](https://wa.me/2{ph})
-                            """
+                        col2.markdown(
+                            f"[📞 Call](tel:{ph}) | [💬 WhatsApp]({wa_link(ph)})"
                         )
 
-                # -------------------------
-                # INFO
-                # -------------------------
-                st.write(f"🏠 Address: {row.get('adress','')}")
-                st.write(f"📍 Area: {row.get('area','')}")
-                st.write(f"📅 Install: {row.get('install_date','')}")
-                st.write(f"🔁 Cycle: {row.get('cycle','')}")
-                st.write(f"📌 Status: {row.get('status','')}")
+                # ================= ADDRESS =================
+                if row.get("adress"):
+                    st.write(f"🏠 Address: {row.get('adress')}")
 
-                # -------------------------
-                # LOCATION (FIX)
-                # -------------------------
-                loc = row.get("location_url", "")
-                if loc and str(loc).strip().lower() != "none":
+                if row.get("area"):
+                    st.write(f"📍 Area: {row.get('area')}")
+
+                if row.get("install_date"):
+                    st.write(f"📅 Install: {row.get('install_date')}")
+
+                if row.get("cycle"):
+                    st.write(f"🔁 Cycle: {row.get('cycle')}")
+
+                if row.get("status"):
+                    st.write(f"📌 Status: {row.get('status')}")
+
+                # ================= LOCATION =================
+                loc = str(row.get("location_url", "")).strip()
+                if loc and loc.lower() != "nan":
                     st.markdown(f"📍 [Open Location in Maps]({loc})")
 
-                st.markdown("---")
+                st.divider()
 
-                # =========================
-                # EDIT CUSTOMER
-                # =========================
-                if st.button("✏️ Edit", key=f"edit_{row_id}"):
+                # ================= ACTIONS =================
+                colA, colB = st.columns(2)
 
-                    st.session_state.editing = row_id
+                # DELETE
+                with colA:
+                    if st.button("🗑️ Delete", key=f"del_{row_id}"):
+                        ok = call_api("delete", "Customers", row_index=int(row_id))
+                        if ok:
+                            st.success("Deleted")
+                            st.rerun()
+                        else:
+                            st.error("Delete failed")
 
-                if st.session_state.get("editing") == row_id:
+                # EDIT (simple inline update)
+                with colB:
+                    if st.button("✏️ Edit", key=f"edit_{row_id}"):
 
-                    with st.form(f"edit_form_{row_id}"):
+                        st.session_state["edit_row"] = row.to_dict()
+                        st.session_state["edit_id"] = row_id
+                        st.rerun()
 
-                        ename = st.text_input("Name", row.get("name",""))
-                        ephone = st.text_input("Phone", row.get("phone",""))
-                        ephone1 = st.text_input("Phone 1", row.get("phone_1",""))
-                        ephone2 = st.text_input("Phone 2", row.get("phone_2",""))
-                        ephone3 = st.text_input("Phone 3", row.get("phone_3",""))
-                        ephone4 = st.text_input("Phone 4", row.get("phone_4",""))
+        # =========================
+        # EDIT FORM
+        # =========================
+        if "edit_row" in st.session_state:
 
-                        eaddress = st.text_input("Address", row.get("adress",""))
-                        earea = st.text_input("Area", row.get("area",""))
-                        elocation = st.text_input("Location URL", row.get("location_url",""))
-                        ecycle = st.text_input("Cycle", row.get("cycle",""))
-                        estatus = st.text_input("Status", row.get("status",""))
+            st.divider()
+            st.subheader("✏️ Edit Customer")
 
-                        save_edit = st.form_submit_button("💾 Update")
-    
-                        if save_edit:
+            er = st.session_state["edit_row"]
+            rid = st.session_state["edit_id"]
 
-                            updated = [
-                                ename, ephone, ephone1, ephone2, ephone3, ephone4,
-                                eaddress, earea, elocation,
-                                row.get("install_date",""),
-                                ecycle, estatus
-                            ]
+            with st.form("edit_form"):
 
-                            ok = call_api("update", "Customers", updated, row_id)
+                name = st.text_input("Name", er.get("name",""))
+                phone = st.text_input("Phone", er.get("phone",""))
+                phone1 = st.text_input("Phone 1", er.get("phone_1",""))
+                phone2 = st.text_input("Phone 2", er.get("phone_2",""))
+                phone3 = st.text_input("Phone 3", er.get("phone_3",""))
+                phone4 = st.text_input("Phone 4", er.get("phone_4",""))
 
-                            if ok:
-                                st.success("Updated successfully")
-                                st.session_state.editing = None
-                                st.rerun()
-                            else:
-                                st.error("Update failed")
+                address = st.text_input("Address", er.get("adress",""))
+                area = st.text_input("Area", er.get("area",""))
+                location_url = st.text_input("Location URL", er.get("location_url",""))
+                install_date = st.text_input("Install Date", er.get("install_date",""))
+                cycle = st.text_input("Cycle", er.get("cycle",""))
+                status = st.text_input("Status", er.get("status",""))
 
-                # =========================
-                # DELETE CUSTOMER (FIX)
-                # =========================
-                if st.button("🗑️ Delete", key=f"del_{row_id}"):
+                save = st.form_submit_button("Save Changes")
 
-                    ok = call_api("delete", "Customers", row_index=row_id)
+                if save:
+
+                    updated = [
+                        name, phone, phone1, phone2, phone3, phone4,
+                        address, area, location_url,
+                        install_date, cycle, status
+                    ]
+
+                    ok = call_api("update", "Customers", updated, row_index=int(rid))
 
                     if ok:
-                        st.success("Deleted successfully")
+                        st.success("Updated successfully")
+                        del st.session_state["edit_row"]
+                        del st.session_state["edit_id"]
                         st.rerun()
                     else:
-                        st.error("Delete failed")
+                        st.error("Update failed")
     # -------------------------
     # MAINTENANCE
     # -------------------------
