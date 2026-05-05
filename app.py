@@ -130,8 +130,9 @@ elif st.session_state.user_type == "admin":
     # -------------------------
     if page == "Dashboard":
         st.title("📊 Dashboard")
-
-    # -------------------------
+st.write("DEBUG:", df_c.shape)
+st.dataframe(df_c.head())
+# -------------------------
 # CUSTOMERS (FINAL FIX AFTER SHEET UPDATE)
 # -------------------------
 elif page == "Customers":
