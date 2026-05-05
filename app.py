@@ -14,9 +14,7 @@ WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPIG6-S1aOxIL5KvN-XF_zwW
 LOGO_PATH = "assets/images/logo.png"
 
 ADMIN_PASSWORD = "HgM18082019$&)"
-
 COMPANY_PHONE = "01286609535"
-
 
 # =========================
 # SHEETS
@@ -30,7 +28,6 @@ SHEETS = {
     "Store_Products": "1129472026",
 }
 
-
 # =========================
 # HELPERS
 # =========================
@@ -41,7 +38,6 @@ def to_num(x):
     except:
         return 0
 
-
 def load_data(gid):
     url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
     try:
@@ -50,7 +46,6 @@ def load_data(gid):
         return df.fillna("")
     except:
         return pd.DataFrame()
-
 
 def call_api(action, sheet, data=None, row_index=None):
     payload = {
@@ -65,14 +60,12 @@ def call_api(action, sheet, data=None, row_index=None):
     except:
         return False
 
-
 # =========================
 # SESSION
 # =========================
 
 if "user_type" not in st.session_state:
     st.session_state.user_type = None
-
 
 # =========================
 # LOAD DATA
@@ -83,7 +76,6 @@ df_m = load_data(SHEETS["Maintenance"])
 df_inv = load_data(SHEETS["Inventory"])
 df_exp = load_data(SHEETS["Expenses"])
 df_store = load_data(SHEETS["Store_Products"])
-
 
 # =========================
 # LOGIN
@@ -112,10 +104,10 @@ if st.session_state.user_type is None:
                 st.session_state.phone = phone
                 st.rerun()
 
-
 # =========================
 # ADMIN PANEL
 # =========================
+
 elif st.session_state.user_type == "admin":
 
     st.sidebar.image(LOGO_PATH, use_container_width=True)
@@ -130,18 +122,14 @@ elif st.session_state.user_type == "admin":
     # -------------------------
     if page == "Dashboard":
         st.title("📊 Dashboard")
-    st.write("DEBUG:", df_c.shape)
-    st.dataframe(df_c.head())
+
     # -------------------------
-    # CUSTOMERS (WORKING FINAL)
+    # CUSTOMERS
     # -------------------------
     elif page == "Customers":
 
         st.title("👥 Customer Management")
 
-        # =========================
-        # LOAD DATA
-        # =========================
         df = df_c.copy()
         df.columns = df.columns.str.strip()
 
@@ -149,13 +137,14 @@ elif st.session_state.user_type == "admin":
         if "name" in df.columns:
             df = df[df["name"].astype(str).str.strip() != ""]
 
+        # ترتيب حسب المنطقة
+        if "area" in df.columns:
+            df = df.sort_values(by="area")
+
         df = df.reset_index(drop=True)
 
         st.write("عدد العملاء:", len(df))
 
-        # =========================
-        # DISPLAY
-        # =========================
         for i in range(len(df)):
 
             row = df.iloc[i]
@@ -185,7 +174,9 @@ elif st.session_state.user_type == "admin":
                         ph = str(ph).strip()
                         if ph and ph.lower() not in ["none", "nan"]:
                             st.write(ph)
-                            st.markdown(f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})")
+                            st.markdown(
+                                f"[📞 Call](tel:{ph}) | [💬 WhatsApp](https://wa.me/2{ph})"
+                            )
 
                 # -------- details --------
                 if row.get("address"):
@@ -207,6 +198,7 @@ elif st.session_state.user_type == "admin":
                 loc = str(row.get("location_url", "")).strip()
                 if loc and loc.lower() != "nan":
                     st.markdown(f"[📍 Open Location]({loc})")
+
     # -------------------------
     # MAINTENANCE
     # -------------------------
@@ -235,36 +227,35 @@ elif st.session_state.user_type == "admin":
         st.title("🛒 Store")
         st.dataframe(df_store)
 
-
 # =========================
 # CUSTOMER PANEL
 # =========================
 
-    elif st.session_state.user_type == "customer":
+elif st.session_state.user_type == "customer":
 
-        st.sidebar.image(LOGO_PATH, use_container_width=True)
+    st.sidebar.image(LOGO_PATH, use_container_width=True)
 
-        st.title("👤 My Account")
+    st.title("👤 My Account")
 
-        phone = st.session_state.get("phone")
+    phone = st.session_state.get("phone")
 
-        if phone:
+    if phone:
 
-            user = df_c[df_c["phone"].astype(str) == str(phone)]
+        user = df_c[df_c["phone"].astype(str) == str(phone)]
 
-            st.subheader("📄 My Data")
-            st.dataframe(user)
+        st.subheader("📄 My Data")
+        st.dataframe(user)
 
-            names = user["name"].tolist() if "name" in user.columns else []
+        names = user["name"].tolist() if "name" in user.columns else []
 
-            history = df_m[df_m["name"].isin(names)]
+        history = df_m[df_m["name"].isin(names)]
 
-            st.subheader("🔧 Maintenance History")
-            st.dataframe(history)
+        st.subheader("🔧 Maintenance History")
+        st.dataframe(history)
 
-            st.markdown("### 📞 Contact")
-            st.markdown(f"""
-            ☎️ {COMPANY_PHONE}  
-            [Call](tel:{COMPANY_PHONE}) | 
-            [WhatsApp](https://wa.me/2{COMPANY_PHONE})
-            """)
+        st.markdown("### 📞 Contact")
+        st.markdown(f"""
+        ☎️ {COMPANY_PHONE}  
+        [Call](tel:{COMPANY_PHONE}) | 
+        [WhatsApp](https://wa.me/2{COMPANY_PHONE})
+        """)
