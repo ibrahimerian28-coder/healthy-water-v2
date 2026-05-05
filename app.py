@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 st.set_page_config(page_title="Healthy Water Pro", layout="wide")
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxETkYjVv1kqyq5V9LZ24IbEAAdClaPFSckx9otXCXRqnWClT3A6o-5uwtYyD691O2c/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlmnwxKm7sq5SrcQMzLx711TQdcBo4KAellUY9gKkOgBM3KudM_sj68-U9LdqkTZcuiw/exec"
 
 WEB_APP_URL = APP_SCRIPT_URL
 
