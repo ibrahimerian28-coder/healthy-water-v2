@@ -201,10 +201,10 @@ elif st.session_state.user_type == "admin":
                     new_uuid = str(uuid.uuid4())[:18]
 
                     new_row = [
-                        new_uuid,
-                        "",   # display_id auto
-                        "",   # customer_id old
-                        name,
+                        name,                 # name
+                        "",                   # customer_id
+                        "",                   # display_id
+                        str(uuid.uuid4()),    # uuid
                         phone,
                         phone1,
                         phone2,
@@ -250,8 +250,15 @@ elif st.session_state.user_type == "admin":
                 continue
 
             area = str(row.get("area", "")).strip()
-            customer_uuid = str(row.get("uuid", ""))
-            display_id = str(row.get("display_id", ""))
+            customer_uuid = str(row.get("uuid", "")).strip()
+
+            if not customer_uuid or customer_uuid.lower() == "nan":
+                customer_uuid = f"temp_{i}"
+
+            display_id = str(row.get("display_id", "")).strip()
+
+            if not display_id or display_id.lower() == "nan":
+                display_id = str(i + 1)
 
             real_row_index = i + 2  # مهم للـ API
 
@@ -305,7 +312,7 @@ elif st.session_state.user_type == "admin":
 
                 # 🗑 DELETE
                 with col1:
-                    if st.button("🗑️ Delete", key=f"del_{customer_uuid}"):
+                    if st.button("🗑️ Delete", key=f"del_{customer_uuid}_{i}"):
 
                         ok = call_api("delete", "Customers", row_index=real_row_index)
 
@@ -317,7 +324,7 @@ elif st.session_state.user_type == "admin":
 
                 # ✏️ EDIT
                 with col2:
-                    if st.button("✏️ Edit", key=f"edit_{customer_uuid}"):
+                    if st.button("✏️ Edit", key=f"edit_{customer_uuid}_{i}"):
 
                         st.session_state["edit_data"] = row.to_dict()
                         st.session_state["edit_index"] = real_row_index
@@ -355,15 +362,17 @@ elif st.session_state.user_type == "admin":
                 if save:
 
                     updated = [
-                        er.get("uuid",""),
-                        er.get("display_id",""),
-                        er.get("customer_id",""),
                         name,
+                        er.get("customer_id",""),
+                        er.get("display_id",""),
+                        er.get("uuid",""),
+
                         phone,
                         phone1,
                         phone2,
                         phone3,
                         phone4,
+
                         address,
                         area,
                         location_url,
