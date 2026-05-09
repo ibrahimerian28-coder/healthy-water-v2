@@ -10,7 +10,7 @@ import uuid
 
 st.set_page_config(page_title="Healthy Water Pro", layout="wide")
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7vRgtzLkGG3AcdnCvAFxgiPRL6jjpHafHxrNESpyJGZYD-cl_BqNrm6EQyuHQVOEtAA/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzH9NgXhbWMTKJv8SKd6t8T75VXVssJlABeMxo_BOGss9vVxighDwW-MuPsxUKcXoxDsA/exec"
 
 WEB_APP_URL = APP_SCRIPT_URL
 
