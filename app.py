@@ -198,8 +198,12 @@ elif st.session_state.user_type == "admin":
                 submit = st.form_submit_button("Save")
 
                 if submit:
+                    new_uuid = str(uuid.uuid4())[:18]
+
                     new_row = [
-                        "",  # customer_id
+                        new_uuid,
+                        "",   # display_id auto
+                        "",   # customer_id old
                         name,
                         phone,
                         phone1,
@@ -246,11 +250,12 @@ elif st.session_state.user_type == "admin":
                 continue
 
             area = str(row.get("area", "")).strip()
-            customer_id = str(row.get("customer_id", f"row_{i}"))
+            customer_uuid = str(row.get("uuid", ""))
+            display_id = str(row.get("display_id", ""))
 
             real_row_index = i + 2  # مهم للـ API
 
-            with st.expander(f"👤 {name} | 📍 {area} | 🆔 {customer_id}"):
+            with st.expander(f"👤 {name} | 📍 {area} | 🆔 {display_id}"):
 
                 # -------- phones --------
                 st.write("📞 Phones:")
@@ -300,7 +305,7 @@ elif st.session_state.user_type == "admin":
 
                 # 🗑 DELETE
                 with col1:
-                    if st.button("🗑️ Delete", key=f"del_{customer_id}_{i}"):
+                    if st.button("🗑️ Delete", key=f"del_{customer_uuid}"):
 
                         ok = call_api("delete", "Customers", row_index=real_row_index)
 
@@ -312,7 +317,7 @@ elif st.session_state.user_type == "admin":
 
                 # ✏️ EDIT
                 with col2:
-                    if st.button("✏️ Edit", key=f"edit_{customer_id}_{i}"):
+                    if st.button("✏️ Edit", key=f"edit_{customer_uuid}"):
 
                         st.session_state["edit_data"] = row.to_dict()
                         st.session_state["edit_index"] = real_row_index
@@ -350,10 +355,21 @@ elif st.session_state.user_type == "admin":
                 if save:
 
                     updated = [
+                        er.get("uuid",""),
+                        er.get("display_id",""),
                         er.get("customer_id",""),
-                        name, phone, phone1, phone2, phone3, phone4,
-                        address, area, location_url,
-                        install_date, cycle, status
+                        name,
+                        phone,
+                        phone1,
+                        phone2,
+                        phone3,
+                        phone4,
+                        address,
+                        area,
+                        location_url,
+                        install_date,
+                        cycle,
+                        status
                     ]
 
                     ok = call_api("update", "Customers", updated, row_index=rid)
