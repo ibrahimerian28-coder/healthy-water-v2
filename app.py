@@ -10,7 +10,7 @@ import uuid
 
 st.set_page_config(page_title="Healthy Water Pro", layout="wide")
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYEtLJNb_ww9WNaJpj_kTluhTLU4CJbbz3nImlB4vNLtogVRu_ysMrTBe1TCfOx3xn/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7vRgtzLkGG3AcdnCvAFxgiPRL6jjpHafHxrNESpyJGZYD-cl_BqNrm6EQyuHQVOEtAA/exec"
 
 WEB_APP_URL = APP_SCRIPT_URL
 
@@ -170,6 +170,8 @@ elif st.session_state.user_type == "admin":
             df = df[df["name"].astype(str).str.strip() != ""]
 
         df = df.reset_index(drop=True)
+        if "status" in df.columns:
+            df = df[df["status"].astype(str).str.lower() != "deleted"]
 
         # ترتيب حسب المنطقة
         if "area" in df.columns:
@@ -246,6 +248,10 @@ elif st.session_state.user_type == "admin":
             row = df.iloc[i]
 
             name = str(row.get("name", "")).strip()
+            customer_uuid = str(row.get("uuid", "")).strip()
+
+            if customer_uuid == "" or customer_uuid.lower() == "nan":
+                customer_uuid = f"{i}_{name}"
             if not name:
                 continue
 
@@ -312,7 +318,7 @@ elif st.session_state.user_type == "admin":
 
                 # 🗑 DELETE
                 with col1:
-                    if st.button("🗑️ Delete", key=f"del_{customer_uuid}_{i}"):
+                    if st.button("🗑️ Delete", key=f"del_{customer_uuid}"):
 
                         ok = call_api("delete", "Customers", row_index=real_row_index)
 
@@ -324,7 +330,7 @@ elif st.session_state.user_type == "admin":
 
                 # ✏️ EDIT
                 with col2:
-                    if st.button("✏️ Edit", key=f"edit_{customer_uuid}_{i}"):
+                    if st.button("✏️ Edit", key=f"edit_{customer_uuid}"):
 
                         st.session_state["edit_data"] = row.to_dict()
                         st.session_state["edit_index"] = real_row_index
