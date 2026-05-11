@@ -7,6 +7,9 @@ from utils.data_service import (
     add_row,
     update_row,
     delete_row
+    AREAS,
+    CUSTOMER_STATUS,
+    DEVICE_TYPES
 )
 
 # =========================
@@ -79,14 +82,57 @@ def app():
             phone4 = st.text_input("Phone 4")
 
             address = st.text_input("Address")
-            area = st.text_input("Area")
+            selected_area = st.selectbox(
+                "Area",
+                AREAS
+            )
+
+            custom_area = ""
+
+            if selected_area == "Other":
+
+                custom_area = st.text_input(
+                "Enter New Area"
+                )
+
+            area = custom_area if custom_area else selected_area
 
             location_url = st.text_input("Google Maps URL")
 
-            install_date = st.text_input("Install Date")
-            cycle = st.text_input("Cycle")
+            install_date = st.date_input(
+                "Install Date",
+                value=None
+            )
 
-            status = st.text_input("Status", value="نشط")
+            if install_date:
+                install_date = str(install_date)
+            else:
+                install_date = ""
+            cycle = st.text_input("Cycle")
+            selected_device = st.selectbox(
+                "Device Type",
+                DEVICE_TYPES
+            )
+
+            custom_device = ""
+
+            if selected_device == "Other":
+
+                custom_device = st.text_input(
+                    "Enter New Device Type"
+                )
+
+            device_type = (
+                custom_device
+                if custom_device
+                else selected_device
+            )
+
+            status = st.selectbox(
+                "Status",
+                CUSTOMER_STATUS,
+                index=0
+            )
 
             submit = st.form_submit_button("Save")
 
@@ -112,6 +158,7 @@ def app():
 
                     install_date,
                     cycle,
+                    device_type,
                     status
                 ]
 
@@ -345,6 +392,7 @@ def app():
 
                     install_date,
                     cycle,
+                    device_type,
                     status
                 ]
 
