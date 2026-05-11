@@ -74,7 +74,9 @@ def app():
 
     with st.expander("➕ Add Customer"):
 
-        with st.form("add_customer"):
+        with st.container():
+
+            with st.form("add_customer"):
 
             name = st.text_input("Name")
 
@@ -323,168 +325,222 @@ def app():
                     st.session_state.edit_index = real_row_index
 
                     st.rerun()
+            # =========================
+            # INLINE EDIT FORM
+            # =========================
 
-    # =========================
-    # EDIT FORM
-    # =========================
+            if (
+                "edit_index" in st.session_state
+                and st.session_state.edit_index == real_row_index
+            ):
 
-    if "edit_data" in st.session_state:
+                st.divider()
 
-        st.divider()
+                st.subheader("✏️ Edit Customer")
 
-        st.subheader("✏️ Edit Customer")
+                with st.form(f"edit_form_{customer_uuid}"):
 
-        er = st.session_state.edit_data
+                    name = st.text_input(
+                        "Name",
+                        row.get("name", "")
+                    )
 
-        rid = st.session_state.edit_index
+                    phone = st.text_input(
+                        "Phone",
+                        row.get("phone", "")
+                    )
 
-        with st.form("edit_form"):
+                    phone1 = st.text_input(
+                        "Phone 1",
+                        row.get("phone_1", "")
+                    )
 
-            name = st.text_input("Name", er.get("name", ""))
+                    phone2 = st.text_input(
+                        "Phone 2",
+                        row.get("phone_2", "")
+                    )
 
-            phone = st.text_input("Phone", er.get("phone", ""))
-            phone1 = st.text_input("Phone 1", er.get("phone_1", ""))
-            phone2 = st.text_input("Phone 2", er.get("phone_2", ""))
-            phone3 = st.text_input("Phone 3", er.get("phone_3", ""))
-            phone4 = st.text_input("Phone 4", er.get("phone_4", ""))
+                    phone3 = st.text_input(
+                        "Phone 3",
+                        row.get("phone_3", "")
+                    )
 
-            address = st.text_input("Address", er.get("address", ""))
+                    phone4 = st.text_input(
+                        "Phone 4",
+                        row.get("phone_4", "")
+                    )
 
-            current_area = er.get("area", "")
+                    address = st.text_input(
+                        "Address",
+                        row.get("address", "")
+                    )
 
-            if current_area not in AREAS:
-                current_area = "Other"
+                    # AREA
 
-            selected_area = st.selectbox(
-                "Area",
-                AREAS,
-                index=AREAS.index(current_area)
-            )
+                    current_area = row.get("area", "")
 
-            custom_area = ""
+                    if current_area not in AREAS:
+                        current_area = "Other"
 
-            if selected_area == "Other":
+                    selected_area = st.selectbox(
+                        "Area",
+                        AREAS,
+                        index=AREAS.index(current_area),
+                        key=f"area_{customer_uuid}"
+                    )
 
-                custom_area = st.text_input(
-                    "Enter New Area",
-                    er.get("area", "")
-                )
+                    custom_area = ""
 
-            area = custom_area if custom_area else selected_area
+                    if selected_area == "Other":
 
-            location_url = st.text_input(
-                "Location URL",
-                er.get("location_url", "")
-            )
+                        custom_area = st.text_input(
+                            "Enter New Area",
+                            row.get("area", "")
+                        )
+    
+                    area = (
+                        custom_area
+                        if custom_area
+                        else selected_area
+                    )
 
-            current_install_date = er.get("install_date", "")
+                    location_url = st.text_input(
+                        "Location URL",
+                        row.get("location_url", "")
+                    )
 
-            if current_install_date:
+                    # INSTALL DATE
 
-                try:
-                    current_install_date = pd.to_datetime(
-                        current_install_date
-                    ).date()
+                    current_install_date = row.get(
+                        "install_date",
+                        ""
+                    )
 
-                except:
-                    current_install_date = None
+                    if current_install_date:
 
-            else:
-                current_install_date = None
+                        try:
+                            current_install_date = pd.to_datetime(
+                                current_install_date
+                            ).date()
 
-            install_date = st.date_input(
-                "Install Date",
-                value=current_install_date
-            )
+                        except:
+                            current_install_date = None
 
-            if install_date:
-                install_date = str(install_date)
-            else:
-                install_date = ""
+                    else:
+                        current_install_date = None
 
-            cycle = st.text_input(
-                "Cycle",
-                er.get("cycle", "")
-            )
-            current_device = er.get("device_type", "")
+                    install_date = st.date_input(
+                        "Install Date",
+                        value=current_install_date
+                    )
 
-            if current_device not in DEVICE_TYPES:
-                current_device = "Other"
+                    if install_date:
+                        install_date = str(install_date)
+                    else:
+                        install_date = ""
 
-            selected_device = st.selectbox(
-                "Device Type",
-                DEVICE_TYPES,
-                index=DEVICE_TYPES.index(current_device)
-            )
+                    cycle = st.text_input(
+                        "Cycle",
+                        row.get("cycle", "")
+                    )
 
-            custom_device = ""
+                    # DEVICE TYPE
 
-            if selected_device == "Other":
+                    current_device = row.get(
+                        "device_type",
+                        ""
+                    )
 
-                custom_device = st.text_input(
-                    "Enter New Device Type",
-                    er.get("device_type", "")
-                )
+                    if current_device not in DEVICE_TYPES:
+                        current_device = "Other"
 
-            device_type = (
-                custom_device
-                if custom_device
-                else selected_device
-            )
+                    selected_device = st.selectbox(
+                        "Device Type",
+                        DEVICE_TYPES,
+                        index=DEVICE_TYPES.index(current_device),
+                        key=f"device_{customer_uuid}"
+                    )
 
-            current_status = er.get("status", "Active")
+                    custom_device = ""
 
-            if current_status not in CUSTOMER_STATUS:
-                current_status = "Active"
+                    if selected_device == "Other":
 
-            status = st.selectbox(
-                "Status",
-                CUSTOMER_STATUS,
-                index=CUSTOMER_STATUS.index(current_status)
-            )
+                        custom_device = st.text_input(
+                            "Enter New Device Type",
+                            row.get("device_type", "")
+                        )
 
-            save = st.form_submit_button("Save Changes")
+                    device_type = (
+                        custom_device
+                        if custom_device
+                        else selected_device
+                    )
 
-            if save:
+                    # STATUS
 
-                updated = [
+                    current_status = row.get(
+                        "status",
+                        "Active"
+                    )
 
-                    name,
-                    er.get("customer_id", ""),
-                    er.get("display_id", ""),
-                    er.get("uuid", ""),
+                    if current_status not in CUSTOMER_STATUS:
+                        current_status = "Active"
 
-                    phone,
-                    phone1,
-                    phone2,
-                    phone3,
-                    phone4,
+                    status = st.selectbox(
+                        "Status",
+                        CUSTOMER_STATUS,
+                        index=CUSTOMER_STATUS.index(
+                            current_status
+                        ),    
+                        key=f"status_{customer_uuid}"
+                    )
 
-                    address,
-                    area,
-                    location_url,
+                    save = st.form_submit_button(
+                        "Save Changes"
+                    )
 
-                    install_date,
-                    cycle,
-                    device_type,
-                    status
-                ]
+                    if save:
 
-                ok = update_row(
-                    "Customers",
-                    rid,
-                    updated
-                )
+                        updated = [
 
-                if ok:
+                            name,
+                            row.get("customer_id", ""),
+                            row.get("display_id", ""),
+                            row.get("uuid", ""),
 
-                    st.success("✅ Updated")
+                            phone,
+                            phone1,
+                            phone2,
+                            phone3,
+                            phone4,
 
-                    del st.session_state.edit_data
-                    del st.session_state.edit_index
+                            address,
+                            area,
+                            location_url,
 
-                    st.rerun()
+                            install_date,
+                            cycle,
+                            device_type,
+                            status
+                        ]
 
-                else:
+                        ok = update_row(
+                            "Customers",
+                            real_row_index,
+                            updated
+                        )
 
-                    st.error("❌ Update Failed")
+                        if ok:
+
+                            st.success("✅ Updated")
+
+                            del st.session_state.edit_index
+
+                            st.rerun()
+
+                        else:
+
+                            st.error("❌ Update Failed")
+
+   
+    
