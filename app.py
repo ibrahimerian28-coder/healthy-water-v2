@@ -79,15 +79,10 @@ def call_api(action, sheet, data=None, row_index=None):
 if "user_type" not in st.session_state:
     st.session_state.user_type = None
 
-# =========================
-# LOAD DATA
-# =========================
-
-df_c = load_data(SHEETS["Customers"])
-df_m = load_data(SHEETS["Maintenance"])
-df_inv = load_data(SHEETS["Inventory"])
-df_exp = load_data(SHEETS["Expenses"])
-df_store = load_data(SHEETS["Store_Products"])
+st.session_state.APP_SCRIPT_URL = APP_SCRIPT_URL
+st.session_state.SHEETS = SHEETS
+st.session_state.COMPANY_PHONE = COMPANY_PHONE
+st.session_state.LOGO_PATH = LOGO_PATH
 
 # =========================
 # LOGIN
