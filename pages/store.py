@@ -1,13 +1,13 @@
 import streamlit as st
-import pandas as pd
+from utils.data_service import load_sheet
 
 def app():
 
     st.title("🛒 Store")
 
     gid = st.session_state.SHEETS["Store_Products"]
-    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
-
-    df = pd.read_csv(url).fillna("")
+    df = load_sheet(gid)
 
     st.dataframe(df)
+
+    st.write("عدد المنتجات:", len(df))
