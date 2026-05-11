@@ -80,11 +80,11 @@ def app():
     
                 name = st.text_input("Name")
     
-                phone = st.text_input("Phone")
-                phone1 = st.text_input("Phone 1")
-                phone2 = st.text_input("Phone 2")
-                phone3 = st.text_input("Phone 3")
-                phone4 = st.text_input("Phone 4")
+                phone = st.text_input("Phone", value="", help="Keep leading zero")
+                phone1 = st.text_input("Phone 1", value="", help="Keep leading zero")
+                phone2 = st.text_input("Phone 2", value="", help="Keep leading zero")
+                phone3 = st.text_input("Phone 3", value="", help="Keep leading zero")
+                phone4 = st.text_input("Phone 4", value="", help="Keep leading zero")
     
                 address = st.text_input("Address")
                 selected_area = st.selectbox(
@@ -151,11 +151,11 @@ def app():
                         "",
                         customer_uuid,
     
-                        phone,
-                        phone1,
-                        phone2,
-                        phone3,
-                        phone4,
+                        phone = str(phone),
+                        phone1 = str(phone 1),
+                        phone2 = str(phone 2),
+                        phone3 = str(phone 3),
+                        phone4 = str(phone 4),
     
                         address,
                         area,
