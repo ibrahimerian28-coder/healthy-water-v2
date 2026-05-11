@@ -298,20 +298,59 @@ def app():
                     key=f"del_{customer_uuid}"
                 ):
 
-                    ok = delete_row(
-                        "Customers",
-                        real_row_index
+                    st.session_state[
+                        f"confirm_delete_{customer_uuid}"
+                    ] = True
+
+                if st.session_state.get(
+                    f"confirm_delete_{customer_uuid}",
+                    False
+                ):
+
+                    st.warning(
+                        "⚠️ Are you sure you want to delete this customer?"
                     )
 
-                    if ok:
+                    col_yes, col_no = st.columns(2)
 
-                        st.success("Deleted")
+                    with col_yes:
 
-                        st.rerun()
+                        if st.button(
+                            "✅ Yes Delete",
+                            key=f"yes_{customer_uuid}"
+                        ):
 
-                    else:
+                            ok = delete_row(
+                                "Customers",
+                            real_row_index
+                            )
 
-                        st.error("Delete Failed")
+                            if ok:
+
+                                st.success("Deleted")
+
+                                del st.session_state[
+                                f"confirm_delete_{customer_uuid}"
+                                ]
+
+                                st.rerun()
+
+                            else:
+
+                                st.error("Delete Failed")
+
+                    with col_no:
+
+                        if st.button(
+                            "❌ Cancel",
+                            key=f"cancel_{customer_uuid}"
+                        ):
+
+                            del st.session_state[
+                                f"confirm_delete_{customer_uuid}"
+                            ]
+
+                            st.rerun()
 
             # EDIT
             with col2:
