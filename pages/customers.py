@@ -151,11 +151,11 @@ def app():
                         "",
                         customer_uuid,
     
-                        phone = str(phone),
-                        phone1 = str(phone 1),
-                        phone2 = str(phone 2),
-                        phone3 = str(phone 3),
-                        phone4 = str(phone 4),
+                        str(phone),
+                        str(phone1),
+                        str(phone2),
+                        str(phone3),
+                        str(phone4),
     
                         address,
                         area,
@@ -361,7 +361,7 @@ def app():
                 ):
 
                     st.session_state.edit_data = row.to_dict()
-                    st.session_state.edit_index = real_row_index
+                    st.session_state.edit_uuid = row.get("uuid")
 
                     st.rerun()
             # =========================
@@ -370,7 +370,7 @@ def app():
 
             if (
                 "edit_index" in st.session_state
-                and st.session_state.edit_index == real_row_index
+                and st.session_state.edit_uuid = row.get("uuid")
             ):
 
                 st.divider()
@@ -546,11 +546,11 @@ def app():
                             "",
                             row.get("uuid", ""),
 
-                            phone,
-                            phone1,
-                            phone2,
-                            phone3,
-                            phone4,
+                            str(phone),
+                            str(phone1),
+                            str(phone2),
+                            str(phone3),
+                            str(phone4),
 
                             address,
                             area,
@@ -561,10 +561,7 @@ def app():
                             device_type,
                             status
                         ]
-                        ok = update_row(
-                            "Customers",
-                            real_row_index,
-                            updated
+                        ok = update_row("Customers", st.session_state.edit_uuid, updated)
                         )
 
                         if ok:
