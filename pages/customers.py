@@ -541,10 +541,9 @@ def app():
                     if save:
 
                         updated = [
-
                             name,
-                            row.get("customer_id", ""),
-                            row.get("display_id", ""),
+                            "",
+                            "",
                             row.get("uuid", ""),
 
                             phone,
@@ -562,7 +561,6 @@ def app():
                             device_type,
                             status
                         ]
-
                         ok = update_row(
                             "Customers",
                             real_row_index,
