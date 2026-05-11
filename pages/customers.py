@@ -350,30 +350,97 @@ def app():
 
             address = st.text_input("Address", er.get("address", ""))
 
-            area = st.text_input("Area", er.get("area", ""))
+            current_area = er.get("area", "")
+
+            if current_area not in AREAS:
+                current_area = "Other"
+
+            selected_area = st.selectbox(
+                "Area",
+                AREAS,
+                index=AREAS.index(current_area)
+            )
+
+            custom_area = ""
+
+            if selected_area == "Other":
+
+                custom_area = st.text_input(
+                    "Enter New Area",
+                    er.get("area", "")
+                )
+
+            area = custom_area if custom_area else selected_area
 
             location_url = st.text_input(
                 "Location URL",
                 er.get("location_url", "")
             )
 
-            install_date = st.text_input(
+            current_install_date = er.get("install_date", "")
+
+            if current_install_date:
+
+                try:
+                    current_install_date = pd.to_datetime(
+                        current_install_date
+                    ).date()
+
+                except:
+                    current_install_date = None
+
+            else:
+                current_install_date = None
+
+            install_date = st.date_input(
                 "Install Date",
-                er.get("install_date", "")
+                value=current_install_date
             )
+
+            if install_date:
+                install_date = str(install_date)
+            else:
+                install_date = ""
 
             cycle = st.text_input(
                 "Cycle",
                 er.get("cycle", "")
             )
-            device_type = st.text_input(
+            current_device = er.get("device_type", "")
+
+            if current_device not in DEVICE_TYPES:
+                current_device = "Other"
+
+            selected_device = st.selectbox(
                 "Device Type",
-                er.get("device_type", "")
+                DEVICE_TYPES,
+                index=DEVICE_TYPES.index(current_device)
             )
 
-            status = st.text_input(
+            custom_device = ""
+
+            if selected_device == "Other":
+
+                custom_device = st.text_input(
+                    "Enter New Device Type",
+                    er.get("device_type", "")
+                )
+
+            device_type = (
+                custom_device
+                if custom_device
+                else selected_device
+            )
+
+            current_status = er.get("status", "Active")
+
+            if current_status not in CUSTOMER_STATUS:
+                current_status = "Active"
+
+            status = st.selectbox(
                 "Status",
-                er.get("status", "")
+                CUSTOMER_STATUS,
+                index=CUSTOMER_STATUS.index(current_status)
             )
 
             save = st.form_submit_button("Save Changes")
