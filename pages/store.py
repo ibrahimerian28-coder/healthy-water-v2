@@ -1,5 +1,13 @@
 import streamlit as st
+import pandas as pd
 
 def app():
-    st.title("🛒 Store Page")
-    st.write("هنا هيتم نقل كود العملاء لاحقًا")
+
+    st.title("🛒 Store")
+
+    gid = st.session_state.SHEETS["Store_Products"]
+    url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
+
+    df = pd.read_csv(url).fillna("")
+
+    st.dataframe(df)
