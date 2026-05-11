@@ -7,6 +7,9 @@ from utils.data_service import (
     add_row,
     update_row,
     delete_row
+)
+
+from utils.constants import (
     AREAS,
     CUSTOMER_STATUS,
     DEVICE_TYPES
@@ -362,6 +365,10 @@ def app():
             cycle = st.text_input(
                 "Cycle",
                 er.get("cycle", "")
+            )
+            device_type = st.text_input(
+                "Device Type",
+                er.get("device_type", "")
             )
 
             status = st.text_input(
