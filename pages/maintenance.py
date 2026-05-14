@@ -191,6 +191,10 @@ def app():
     search = st.text_input(
         "🔍 Search Maintenance"
     )
+    status_filter = st.selectbox(
+        "Filter by Status",
+        ["All", "Pending", "Done", "Cancelled"]
+    )
 
     if search:
 
@@ -204,6 +208,9 @@ def app():
             )
             .any(axis=1)
         ]
+    # STATUS FILTER
+    if status_filter != "All":
+        df_m = df_m[df_m["status"] == status_filter]
 
     # =========================
     # VISITS LIST
@@ -242,6 +249,11 @@ def app():
         with st.expander(
             f"🔧 {customer_name} | 📅 {visit_date} | {visit_type}"
         ):
+            st.write(f"👤 Customer: {row.get('customer_name')}")
+            st.write(f"📞 Phone: {row.get('customer_phone')}")
+            st.write(f"📍 Area: {row.get('customer_area')}")
+            st.write(f"⚙️ Device: {row.get('customer_device_type')}")
+
 
             if row.get("issue"):
                 st.write(
@@ -257,6 +269,11 @@ def app():
                 st.write(
                     f"💰 Cost: {row.get('cost')}"
                 )
+            status = st.selectbox(
+                "Status",
+                ["Pending", "Done", "Cancelled"],
+                key=f"status_{visit_uuid}"
+            )
 
             if row.get("technician"):
                 st.write(
@@ -280,9 +297,9 @@ def app():
                     key=f"del_{visit_uuid}"
                 ):
 
-                    ok = delete_row(
+                    ok = delete_row_by_uuid(
                         "Maintenance",
-                        real_row_index
+                        visit_uuid
                     )
 
                     if ok:
