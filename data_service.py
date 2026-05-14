@@ -1,21 +1,23 @@
 import pandas as pd
-from data import load_data
+from data import load_data, save_data
 
-# غير الرقم ده حسب الشيت بتاعك (GID الخاص بالعملاء)
+# =========================
+# 📌 SHEETS CONFIG
+# =========================
+
 CUSTOMERS_GID = "0"
+MAINTENANCE_GID = "1"  # غيّر الرقم حسب شيت الصيانة عندك
 
 
 # =========================
-# 📌 1. جلب كل العملاء
+# 📌 CUSTOMERS - READ
 # =========================
+
 def get_customers():
     df = load_data(CUSTOMERS_GID)
     return df
 
 
-# =========================
-# 📌 2. جلب عميل بالـ UUID
-# =========================
 def get_customer_by_id(customer_id: str):
     df = load_data(CUSTOMERS_GID)
 
@@ -31,39 +33,85 @@ def get_customer_by_id(customer_id: str):
 
 
 # =========================
-# 📌 3. إضافة عميل (مبدئيًا)
+# 📌 CUSTOMERS - CREATE
 # =========================
+
 def add_customer(data: dict):
-    """
-    data مثال:
-    {
-        "uuid": "123",
-        "name": "Ahmed",
-        "phone": "010..."
-    }
-    """
-    print("➕ Add customer:", data)
-    return True
+    df = load_data(CUSTOMERS_GID)
+
+    if df is None:
+        df = pd.DataFrame()
+
+    df = pd.concat([df, pd.DataFrame([data])], ignore_index=True)
+
+    return save_data(CUSTOMERS_GID, df)
 
 
 # =========================
-# 📌 4. تعديل عميل (مبدئيًا)
+# 📌 CUSTOMERS - UPDATE
 # =========================
+
 def update_customer(customer_id: str, updated_data: dict):
-    print(f"✏️ Update customer {customer_id}:", updated_data)
-    return True
+    df = load_data(CUSTOMERS_GID)
+
+    if "uuid" not in df.columns:
+        return False
+
+    for key, value in updated_data.items():
+        df.loc[df["uuid"] == customer_id, key] = value
+
+    return save_data(CUSTOMERS_GID, df)
 
 
 # =========================
-# 📌 5. حذف عميل (مبدئيًا)
+# 📌 CUSTOMERS - DELETE
 # =========================
+
 def delete_customer(customer_id: str):
-    print(f"🗑️ Delete customer {customer_id}")
-    return True
-def delete_row_by_uuid(sheet_name, uuid_value):
-    df = load_sheet(sheet_name)
+    df = load_data(CUSTOMERS_GID)
+
+    if "uuid" not in df.columns:
+        return False
+
+    df = df[df["uuid"] != customer_id]
+
+    return save_data(CUSTOMERS_GID, df)
+
+
+# =========================
+# 📌 MAINTENANCE - UPDATE
+# =========================
+
+def update_maintenance(uuid_value: str, updated_data: dict):
+    df = load_data(MAINTENANCE_GID)
+
+    if "uuid" not in df.columns:
+        return False
+
+    for key, value in updated_data.items():
+        df.loc[df["uuid"] == uuid_value, key] = value
+
+    return save_data(MAINTENANCE_GID, df)
+
+
+# =========================
+# 📌 MAINTENANCE - DELETE
+# =========================
+
+def delete_maintenance(uuid_value: str):
+    df = load_data(MAINTENANCE_GID)
+
+    if "uuid" not in df.columns:
+        return False
 
     df = df[df["uuid"] != uuid_value]
 
-    # إعادة رفع الداتا بعد الحذف
-    return save_sheet(sheet_name, df)
+    return save_data(MAINTENANCE_GID, df)
+
+
+# =========================
+# 📌 HELPERS
+# =========================
+
+def get_maintenance():
+    return load_data(MAINTENANCE_GID)
