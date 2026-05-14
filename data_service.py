@@ -60,3 +60,10 @@ def update_customer(customer_id: str, updated_data: dict):
 def delete_customer(customer_id: str):
     print(f"🗑️ Delete customer {customer_id}")
     return True
+def delete_row_by_uuid(sheet_name, uuid_value):
+    df = load_sheet(sheet_name)
+
+    df = df[df["uuid"] != uuid_value]
+
+    # إعادة رفع الداتا بعد الحذف
+    return save_sheet(sheet_name, df)
