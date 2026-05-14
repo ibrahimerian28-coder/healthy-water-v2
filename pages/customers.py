@@ -369,8 +369,8 @@ def app():
             # =========================
 
             if (
-                "edit_index" in st.session_state
-                and st.session_state.edit_uuid = row.get("uuid")
+                "edit_uuid" in st.session_state
+                and st.session_state.edit_uuid == row.get("uuid")
             ):
 
                 st.divider()
@@ -561,14 +561,17 @@ def app():
                             device_type,
                             status
                         ]
-                        ok = update_row("Customers", st.session_state.edit_uuid, updated)
+                        ok = update_row(
+                            "Customers",
+                            real_row_index,
+                            updated
                         )
 
                         if ok:
 
                             st.success("✅ Updated")
 
-                            del st.session_state.edit_index
+                            del st.session_state.edit_uuid
 
                             st.rerun()
 
