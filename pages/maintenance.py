@@ -269,11 +269,25 @@ def app():
                 st.write(
                     f"💰 Cost: {row.get('cost')}"
                 )
-            status = st.selectbox(
+            new_status = st.selectbox(
                 "Status",
                 ["Pending", "Done", "Cancelled"],
+                index=["Pending", "Done", "Cancelled"].index(
+                    row.get("status", "Pending")
+                ),
                 key=f"status_{visit_uuid}"
             )
+
+            if new_status != row.get("status"):
+    
+                update_row(
+                    "Maintenance",
+                    visit_uuid,
+                    {"status": new_status}
+                )
+
+                st.success("✅ Status Updated")
+                st.rerun()
 
             if row.get("technician"):
                 st.write(
