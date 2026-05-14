@@ -67,6 +67,8 @@ def app():
         df = df[df["status"].astype(str).str.lower() != "deleted"]
 
     df = df.reset_index(drop=True)
+    if "area" in df.columns:
+        df = df.sort_values(by="area")
 
     # =========================
     # ADD CUSTOMER
