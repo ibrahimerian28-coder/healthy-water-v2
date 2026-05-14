@@ -39,16 +39,33 @@ def app():
     # CUSTOMERS LIST
     # =========================
 
-    customer_names = []
+    customer_options = {}
 
     if "name" in df_c.columns:
 
-        customer_names = (
-            df_c["name"]
-            .dropna()
-            .astype(str)
-            .tolist()
-        )
+        for _, row in df_c.iterrows():
+
+            customer_name = str(
+                row.get("name", "")
+            ).strip()
+
+            if customer_name:
+
+                label = customer_name
+
+                if row.get("phone"):
+                    label += f" | {row.get('phone')}"
+
+                customer_options[label] = {
+                    "uuid": row.get("uuid", ""),
+                    "name": customer_name,
+                    "phone": row.get("phone", ""),
+                    "area": row.get("area", ""),
+                    "device_type": row.get(
+                        "device_type",
+                        ""
+                    )
+                }
 
     # =========================
     # ADD MAINTENANCE
@@ -58,10 +75,26 @@ def app():
 
         with st.form("add_maintenance"):
 
-            customer_name = st.selectbox(
+            selected_customer = st.selectbox(
                 "Customer",
-                customer_names
+                list(customer_options.keys())
             )
+
+            customer_data = customer_options[
+                selected_customer
+            ]
+
+            customer_uuid = customer_data["uuid"]
+
+            customer_name = customer_data["name"]
+
+            customer_phone = customer_data["phone"]
+
+            customer_area = customer_data["area"]
+
+            customer_device = customer_data[
+                "device_type"
+            ]
 
             visit_date = st.date_input(
                 "Visit Date"
@@ -107,16 +140,28 @@ def app():
 
                 new_row = [
 
-                    visit_uuid,
-                    customer_name,
-                    str(visit_date),
-                    visit_type,
-                    issue,
-                    replaced_parts,
-                    cost,
-                    technician,
-                    notes
-                ]
+                visit_uuid,
+
+                customer_uuid,
+                customer_name,
+                customer_phone,
+                customer_area,
+                customer_device,
+
+                str(visit_date),
+
+                visit_type,
+
+                issue,
+
+                replaced_parts,
+
+                cost,
+
+                technician,
+
+                notes
+            ]
 
                 ok = add_row(
                     "Maintenance",
