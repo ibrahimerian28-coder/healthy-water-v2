@@ -340,12 +340,23 @@ def app():
                 st.write(
                     f"💰 Cost: {row.get('cost')}"
                 )
+            status_options = [
+                "Pending",
+                "Done",
+                "Cancelled"
+            ]
+
+            current_status = str(
+                row.get("status", "Pending")
+            ).strip()
+
+            if current_status not in status_options:
+                current_status = "Pending"
+
             new_status = st.selectbox(
                 "Status",
-                ["Pending", "Done", "Cancelled"],
-                index=["Pending", "Done", "Cancelled"].index(
-                    row.get("status", "Pending")
-                ),
+                status_options,
+                index=status_options.index(current_status),
                 key=f"status_{visit_uuid}"
             )
 
