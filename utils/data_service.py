@@ -90,7 +90,7 @@ def update_row(sheet, uuid_value, data):
 # 📌 DELETE BY UUID (NEW SYSTEM)
 # =========================
 
-def delete_row(sheet, uuid_value):
+def delete_row_by_uuid(sheet, uuid_value):
     return call_api(
         action="delete",
         sheet=sheet,
