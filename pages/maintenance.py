@@ -114,9 +114,56 @@ def app():
                 "Problem Description"
             )
 
-            replaced_parts = st.text_area(
-                "Replaced Parts"
+            # =========================
+            # PARTS USED
+            # =========================
+
+            st.subheader("🧩 Parts Used")
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                p1 = st.checkbox("P1")
+                p2 = st.checkbox("P2")
+                p3 = st.checkbox("P3")
+
+            with col2:
+                membrane = st.checkbox("Membrane")
+                post_carbon = st.checkbox("Post Carbon")
+                calcite = st.checkbox("Calcite")
+
+            with col3:
+                infrared = st.checkbox("Infrared")
+
+            # =========================
+            # LOAD INVENTORY
+            # =========================
+
+            inventory_gid = st.session_state.SHEETS["Inventory"]
+
+            df_inventory = load_sheet(inventory_gid)
+
+            inventory_items = []
+
+            if "name" in df_inventory.columns:
+
+                inventory_items = (
+                    df_inventory["name"]
+                    .dropna()
+                    .astype(str)
+                    .tolist()
+                )
+
+            other = st.selectbox(
+                "Other Part",
+                [""] + inventory_items
             )
+
+            # =========================
+            # NOTES
+            # =========================
+
+            notes = st.text_area("Notes")
 
             cost = st.text_input(
                 "Cost"
@@ -154,7 +201,14 @@ def app():
 
                 issue,
 
-                replaced_parts,
+                str(p1),
+                str(p2),
+                str(p3),
+                str(membrane),
+                str(post_carbon),
+                str(calcite),
+                str(infrared),
+                other,
 
                 cost,
 
