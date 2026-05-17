@@ -190,6 +190,12 @@ def app():
 
                 updated_at = created_at
 
+                created_at = datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+
+                updated_at = created_at
+
                 new_row = [
 
                     # uuid
@@ -210,33 +216,45 @@ def app():
                     # status
                     "Pending",
 
-                    # parts
+                    # P1
                     str(p1),
+
+                    # P2
                     str(p2),
+
+                    # P3
                     str(p3),
+
+                    # membrane
                     str(membrane),
+
+                    # post_carbon
                     str(post_carbon),
-                    str(calcite),
-                    str(infrared),
 
-                    # other
-                    other,
+                   # calcite
+                   str(calcite),
 
-                    # amount
-                    cost,
+                  # infrared
+                  str(infrared),
 
-                    # notes
-                    notes,
+                  # other
+                  other,
 
-                    # technician
-                    technician,
+                  # amount
+                  cost,
 
-                    # created_at
-                    created_at,
+                  # notes
+                  notes,
 
-                    # updated_at
-                    updated_at
-                ]
+                  # technician
+                  technician,
+
+                  # created_at
+                  created_at,
+
+                  # updated_at
+                  updated_at
+              ]
                 ok = add_row(
                     "Maintenance",
                     new_row
