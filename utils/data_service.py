@@ -78,6 +78,7 @@ def add_row(sheet, data):
 # =========================
 
 def update_row(sheet, uuid_value, data):
+
     return call_api(
         action="update",
         sheet=sheet,
