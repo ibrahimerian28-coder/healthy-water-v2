@@ -318,7 +318,7 @@ def app():
         row = df_m.iloc[i]
 
         customer_name = str(
-            row.get("customer_name", "")
+            row.get("name")
         )
 
         visit_date = str(
