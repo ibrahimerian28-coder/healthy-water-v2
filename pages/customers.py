@@ -6,7 +6,7 @@ from utils.data_service import (
     load_sheet,
     add_row,
     update_row,
-    delete_row
+    delete_row_by_uuid
 )
 
 from utils.constants import (
@@ -322,7 +322,7 @@ def app():
                             key=f"yes_{customer_uuid}"
                         ):
 
-                            ok = delete_row(
+                            ok = delete_row_by_uuid(
                                 "Customers",
                                 real_row_index
                             )
