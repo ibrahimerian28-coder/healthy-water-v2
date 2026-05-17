@@ -255,6 +255,39 @@ def app():
                     col2.markdown(
                         f"[📞 Call](tel:{ph}) | [💬 WhatsApp]({wa_link(ph)})"
                     )
+            # =========================
+            # LOAD MAINTENANCE VISITS FOR THIS CUSTOMER
+            # =========================
+
+            maintenance_gid = st.session_state.SHEETS["Maintenance"]
+            df_m = load_sheet(maintenance_gid)
+
+            df_m.columns = df_m.columns.str.strip()
+
+            customer_visits = df_m[
+                df_m["customer_uuid"] == customer_uuid
+            ]
+
+            st.subheader("🔧 Maintenance Visits")
+
+            if customer_visits.empty:
+                st.info("No maintenance visits yet")
+            else:
+                for _, v in customer_visits.iterrows():
+
+                    st.markdown(
+                        f"""
+                        ### 🔧 Visit
+                        - 📅 Date: {v.get('visit_date', '')}
+                        - 📌 Status: {v.get('status', '')}
+                        - ⚙️ Type: {v.get('visit_type', '')}
+                        - 🧩 Parts: P1:{v.get('P1')} P2:{v.get('P2')} P3:{v.get('P3')}
+                        - 💰 Cost: {v.get('amount', '')}
+                        - 🧑‍🔧 Technician: {v.get('technician', '')}
+                        """
+                    )
+
+                    st.divider()
 
             # =========================
             # DETAILS
