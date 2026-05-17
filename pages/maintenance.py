@@ -7,7 +7,7 @@ from utils.data_service import (
     load_sheet,
     add_row,
     update_row,
-    delete_row
+    delete_row_by_uuid
 )
 
 # =========================
@@ -163,7 +163,6 @@ def app():
             # NOTES
             # =========================
 
-            notes = st.text_area("Notes")
 
             cost = st.text_input(
                 "Cost"
@@ -185,38 +184,59 @@ def app():
 
                 visit_uuid = str(uuid.uuid4())
 
+                created_at = datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+
+                updated_at = created_at
+
                 new_row = [
 
-                visit_uuid,
+                    # uuid
+                    visit_uuid,
 
-                customer_uuid,
-                customer_name,
-                customer_phone,
-                customer_area,
-                customer_device,
+                    # customer_uuid
+                    customer_uuid,
 
-                str(visit_date),
+                    # name
+                    customer_name,
 
-                visit_type,
+                    # visit_date
+                    str(visit_date),
 
-                issue,
+                    # special_date
+                    "",
 
-                str(p1),
-                str(p2),
-                str(p3),
-                str(membrane),
-                str(post_carbon),
-                str(calcite),
-                str(infrared),
-                other,
+                    # status
+                    "Pending",
 
-                cost,
+                    # parts
+                    str(p1),
+                    str(p2),
+                    str(p3),
+                    str(membrane),
+                    str(post_carbon),
+                    str(calcite),
+                    str(infrared),
 
-                technician,
+                    # other
+                    other,
 
-                notes
-            ]
+                    # amount
+                    cost,
 
+                    # notes
+                    notes,
+
+                    # technician
+                    technician,
+
+                    # created_at
+                    created_at,
+
+                    # updated_at
+                    updated_at
+                ]
                 ok = add_row(
                     "Maintenance",
                     new_row
@@ -303,10 +323,7 @@ def app():
         with st.expander(
             f"🔧 {customer_name} | 📅 {visit_date} | {visit_type}"
         ):
-            st.write(f"👤 Customer: {row.get('customer_name')}")
-            st.write(f"📞 Phone: {row.get('customer_phone')}")
-            st.write(f"📍 Area: {row.get('customer_area')}")
-            st.write(f"⚙️ Device: {row.get('customer_device_type')}")
+            st.write(f"👤 Customer: {row.get('name')}")
 
 
             if row.get("issue"):
