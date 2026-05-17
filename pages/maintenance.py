@@ -71,210 +71,98 @@ def app():
     # ADD MAINTENANCE
     # =========================
 
-    with st.expander("➕ Add Maintenance Visit"):
+    with st.form("add_maintenance"):
 
-        with st.form("add_maintenance"):
+        selected_customer = st.selectbox(
+            "Customer",
+            list(customer_options.keys())
+        )
 
-            selected_customer = st.selectbox(
-                "Customer",
-                list(customer_options.keys())
-            )
+        customer_data = customer_options[selected_customer]
 
-            customer_data = customer_options[
-                selected_customer
+        customer_uuid = customer_data["uuid"]
+        customer_name = customer_data["name"]
+        customer_phone = customer_data["phone"]
+        customer_area = customer_data["area"]
+        customer_device = customer_data["device_type"]
+    
+        visit_date = st.date_input("Visit Date")
+    
+        visit_type = st.selectbox(
+            "Visit Type",
+            ["Maintenance", "Installation", "Emergency", "Inspection"]
+        )
+    
+        issue = st.text_area("Problem Description")
+    
+        st.subheader("🧩 Parts Used")
+    
+        col1, col2, col3 = st.columns(3)
+    
+        with col1:
+            p1 = st.checkbox("P1")
+            p2 = st.checkbox("P2")
+            p3 = st.checkbox("P3")
+    
+        with col2:
+            membrane = st.checkbox("Membrane")
+            post_carbon = st.checkbox("Post Carbon")
+            calcite = st.checkbox("Calcite")
+    
+        with col3:
+            infrared = st.checkbox("Infrared")
+    
+        inventory_gid = st.session_state.SHEETS["Inventory"]
+        df_inventory = load_sheet(inventory_gid)
+    
+        inventory_items = df_inventory["name"].dropna().astype(str).tolist() if "name" in df_inventory.columns else []
+    
+        other = st.selectbox(
+            "Other Part",
+            [""] + inventory_items
+        )
+    
+        cost = st.text_input("Cost")
+        technician = st.text_input("Technician")
+        notes = st.text_area("Notes")
+    
+        # 🔥 لازم يكون موجود داخل الفورم 100%
+        save = st.form_submit_button("Save Visit")
+    
+        if save:
+            visit_uuid = str(uuid.uuid4())
+    
+            created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+            new_row = [
+                visit_uuid,
+                customer_uuid,
+                customer_name,
+                str(visit_date),
+                "",
+                "Pending",
+                str(p1),
+                str(p2),
+                str(p3),
+                str(membrane),
+                str(post_carbon),
+                str(calcite),
+                str(infrared),
+                other,
+                cost,
+                notes,
+                technician,
+                created_at,
+                created_at
             ]
-
-            customer_uuid = customer_data["uuid"]
-
-            customer_name = customer_data["name"]
-
-            customer_phone = customer_data["phone"]
-
-            customer_area = customer_data["area"]
-
-            customer_device = customer_data[
-                "device_type"
-            ]
-
-            visit_date = st.date_input(
-                "Visit Date"
-            )
-
-            visit_type = st.selectbox(
-                "Visit Type",
-                [
-                    "Maintenance",
-                    "Installation",
-                    "Emergency",
-                    "Inspection"
-                ]
-            )
-
-            issue = st.text_area(
-                "Problem Description"
-            )
-
-            # =========================
-            # PARTS USED
-            # =========================
-
-            st.subheader("🧩 Parts Used")
-
-            col1, col2, col3 = st.columns(3)
-
-            with col1:
-                p1 = st.checkbox("P1")
-                p2 = st.checkbox("P2")
-                p3 = st.checkbox("P3")
-
-            with col2:
-                membrane = st.checkbox("Membrane")
-                post_carbon = st.checkbox("Post Carbon")
-                calcite = st.checkbox("Calcite")
-
-            with col3:
-                infrared = st.checkbox("Infrared")
-
-            # =========================
-            # LOAD INVENTORY
-            # =========================
-
-            inventory_gid = st.session_state.SHEETS["Inventory"]
-
-            df_inventory = load_sheet(inventory_gid)
-
-            inventory_items = []
-
-            if "name" in df_inventory.columns:
-
-                inventory_items = (
-                    df_inventory["name"]
-                    .dropna()
-                    .astype(str)
-                    .tolist()
-                )
-
-            other = st.selectbox(
-                "Other Part",
-                [""] + inventory_items
-            )
-
-            # =========================
-            # NOTES
-            # =========================
-
-
-            cost = st.text_input(
-                "Cost"
-            )
-
-            technician = st.text_input(
-                "Technician"
-            )
-
-            notes = st.text_area(
-                "Notes"
-            )
-
-            save = st.form_submit_button(
-                "Save Visit"
-            )
-
-            if save:
-
-                visit_uuid = str(uuid.uuid4())
-
-                created_at = datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-
-                updated_at = created_at
-
-                created_at = datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-
-                updated_at = created_at
-
-                new_row = [
-
-                    # uuid
-                    visit_uuid,
-
-                    # customer_uuid
-                    customer_uuid,
-
-                    # name
-                    customer_name,
-
-                    # visit_date
-                    str(visit_date),
-
-                    # special_date
-                    "",
-
-                    # status
-                    "Pending",
-
-                    # P1
-                    str(p1),
-
-                    # P2
-                    str(p2),
-
-                    # P3
-                    str(p3),
-
-                    # membrane
-                    str(membrane),
-
-                    # post_carbon
-                    str(post_carbon),
-
-                   # calcite
-                   str(calcite),
-
-                  # infrared
-                  str(infrared),
-
-                  # other
-                  other,
-
-                  # amount
-                  cost,
-
-                  # notes
-                  notes,
-
-                  # technician
-                  technician,
-
-                  # created_at
-                  created_at,
-
-                  # updated_at
-                  updated_at
-              ]
-                ok = add_row(
-                    "Maintenance",
-                    new_row
-                )
-
-                if ok:
-
-                    st.success(
-                        "✅ Maintenance Visit Added"
-                    )
-
-                    st.rerun()
-
-                else:
-
-                    st.error(
-                        "❌ Failed To Save"
-                    )
-
-    st.divider()
+    
+            ok = add_row("Maintenance", new_row)
+    
+            if ok:
+                st.success("✅ Maintenance Visit Added")
+                st.rerun()
+            else:
+                st.error("❌ Failed To Save")
 
     # =========================
     # SEARCH
