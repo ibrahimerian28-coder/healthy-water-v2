@@ -324,7 +324,7 @@ def app():
 
                             ok = delete_row_by_uuid(
                                 "Customers",
-                                real_row_index
+                                customer_uuid
                             )
 
                             if ok:
@@ -542,30 +542,31 @@ def app():
 
                     if save:
 
-                        updated = [
-                            name,
-                            "",
-                            "",
-                            row.get("uuid", ""),
+                        updated = {
 
-                            str(phone),
-                            str(phone1),
-                            str(phone2),
-                            str(phone3),
-                            str(phone4),
+                            "name": name,
 
-                            address,
-                            area,
-                            location_url,
+                            "phone": str(phone),
+                            "phone_1": str(phone1),
+                            "phone_2": str(phone2),
+                            "phone_3": str(phone3),
+                            "phone_4": str(phone4),
 
-                            install_date,
-                            cycle,
-                            device_type,
-                            status
-                        ]
+                            "address": address,
+                            "area": area,
+                            "location_url": location_url,
+
+                            "install_date": install_date,
+
+                            "cycle": cycle,
+
+                            "device_type": device_type,
+
+                            "status": status
+                        }
                         ok = update_row(
                             "Customers",
-                            real_row_index,
+                            customer_uuid,
                             updated
                         )
 
