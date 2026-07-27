@@ -50,20 +50,24 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
             json=payload,
             timeout=20
         )
-        print("REQUEST URL:", APP_SCRIPT_URL)
-        print("RAW RESPONSE:", r.text)
 
         response = r.text.strip()
 
+        print("REQUEST URL:", APP_SCRIPT_URL)
+        print("Status Code:", r.status_code)
+        print("RAW RESPONSE:", response)
+
         import streamlit as st
 
-        st.error(f"Status Code: {r.status_code}")
-        st.error(f"Response: {response}")
+        st.write("REQUEST URL:", APP_SCRIPT_URL)
+        st.write("Status Code:", r.status_code)
+        st.write("RAW RESPONSE:", response)
 
         return response.startswith("OK")
-        return response.startswith("OK")
+
     except Exception as e:
         print("API ERROR:", e)
+        st.error(e)
         return False
 
 
