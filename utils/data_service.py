@@ -50,6 +50,8 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
             json=payload,
             timeout=20
         )
+        print("REQUEST URL:", APP_SCRIPT_URL)
+        print("RAW RESPONSE:", r.text)
 
         response = r.text.strip()
 
