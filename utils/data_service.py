@@ -52,9 +52,12 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
 
         response = r.text.strip()
 
-        print("STATUS:", r.status_code)
-        print("RESPONSE:", response)
+        import streamlit as st
 
+        st.error(f"Status Code: {r.status_code}")
+        st.error(f"Response: {response}")
+
+        return response.startswith("OK")
         return response.startswith("OK")
     except Exception as e:
         print("API ERROR:", e)
