@@ -7,7 +7,7 @@ import requests
 
 SHEET_ID = "1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc"
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzH9NgXhbWMTKJv8SKd6t8T75VXVssJlABeMxo_BOGss9vVxighDwW-MuPsxUKcXoxDsA/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzksKYGIuN41Pszdy3Bs_0UQa6kV9XV3lZe41o2_qmcSEAlcADF0TN0qcBhRXCYXjBc1A/exec"
 
 BASE_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
 
