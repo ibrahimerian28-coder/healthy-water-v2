@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+print("######## USING utils/data_service.py ########")
 
 # =========================
 # CONFIG
@@ -7,7 +8,7 @@ import requests
 
 SHEET_ID = "1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc"
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzksKYGIuN41Pszdy3Bs_0UQa6kV9XV3lZe41o2_qmcSEAlcADF0TN0qcBhRXCYXjBc1A/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2ZijzCzTSjUKJ9CtoMXxBv3vX3sq5J0rod3y12XVlHl2vGx_RVAdJaSYIK_1qPnr-wg/exec"
 
 BASE_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
 
