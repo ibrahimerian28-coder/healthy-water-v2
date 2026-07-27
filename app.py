@@ -33,7 +33,6 @@ section[data-testid="stSidebar"] > div{
 </style>
 """, unsafe_allow_html=True)
 APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_f11I0-vcixhydWuATnAJdrn8z14Feo3FAjhLIrajBZyNJ4U_vI6FiTve-ZAYs8f5xw/exec"
-
 WEB_APP_URL = APP_SCRIPT_URL
 LOGO_PATH = "assets/images/logo.png"
 
