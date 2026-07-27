@@ -17,7 +17,21 @@ section[data-testid="stSidebarNav"] {
 </style>
 """
 
+
 st.markdown(hide_streamlit_pages, unsafe_allow_html=True)
+st.markdown("""
+<style>
+section[data-testid="stSidebar"]{
+    overflow-y: auto !important;
+    height: 100vh;
+}
+
+section[data-testid="stSidebar"] > div{
+    overflow-y: auto !important;
+    height: 100vh;
+}
+</style>
+""", unsafe_allow_html=True)
 APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzksKYGIuN41Pszdy3Bs_0UQa6kV9XV3lZe41o2_qmcSEAlcADF0TN0qcBhRXCYXjBc1A/exec"
 
 WEB_APP_URL = APP_SCRIPT_URL
@@ -125,12 +139,19 @@ if st.session_state.user_type is None:
 
 elif st.session_state.user_type == "admin":
 
-    st.sidebar.image(LOGO_PATH, use_container_width=True)
+    st.sidebar.image(LOGO_PATH, width=150)
 
-    page = st.sidebar.selectbox(
-        "Menu",
-        ["Dashboard", "Customers", "Maintenance", "Inventory", "Expenses", "Store"]
-    )
+    page = st.sidebar.radio(
+    "Menu",
+    [
+        "Dashboard",
+        "Customers",
+        "Maintenance",
+        "Inventory",
+        "Expenses",
+        "Store"
+    ]
+)
 
     if page == "Dashboard":
         import modules.dashboard as dashboard
