@@ -8,7 +8,7 @@ print("######## USING utils/data_service.py ########")
 
 SHEET_ID = "1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc"
 
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_f11I0-vcixhydWuATnAJdrn8z14Feo3FAjhLIrajBZyNJ4U_vI6FiTve-ZAYs8f5xw/exec"
+APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl-pbbFkqngGlP-WOzHJdOu3NZhnjWQUFw_zFxodqwNFXZC6EdrrSuIJItyIjU-pzw/exec"
 
 BASE_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
 
