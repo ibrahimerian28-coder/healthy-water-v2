@@ -133,25 +133,25 @@ elif st.session_state.user_type == "admin":
     )
 
     if page == "Dashboard":
-        import pages.dashboard as dashboard
+        import modules.dashboard as dashboard
         dashboard.app()
 
     elif page == "Customers":
-        import pages.customers as customers
+        import modules.customers as customers
         customers.app()
 
     elif page == "Maintenance":
-        import pages.maintenance as maintenance
+        import modules.maintenance as maintenance
         maintenance.app()
 
     elif page == "Inventory":
-        import pages.inventory as inventory
+        import modules.inventory as inventory
         inventory.app()
 
     elif page == "Expenses":
-        import pages.expenses as expenses
+        import modules.expenses as expenses
         expenses.app()
 
     elif page == "Store":
-        import pages.store as store
+        import modules.store as store
         store.app()
