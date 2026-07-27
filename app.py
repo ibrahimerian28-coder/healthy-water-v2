@@ -32,8 +32,7 @@ section[data-testid="stSidebar"] > div{
 }
 </style>
 """, unsafe_allow_html=True)
-APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzksKYGIuN41Pszdy3Bs_0UQa6kV9XV3lZe41o2_qmcSEAlcADF0TN0qcBhRXCYXjBc1A/exec"
-
+https://script.google.com/macros/s/AKfycbzksKYGIuN41Pszdy3Bs_0UQa6kV9XV3lZe41o2_qmcSEAlcADF0TN0qcBhRXCYXjBc1A/exec
 WEB_APP_URL = APP_SCRIPT_URL
 
 LOGO_PATH = "assets/images/logo.png"
