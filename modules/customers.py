@@ -266,46 +266,38 @@ def app():
             df_m.columns = df_m.columns.str.strip()
 
             customer_visits = df_m[
-                df_m["customer_uuid"] == customer_uuid
+                df_m["customer_uuid"].astype(str).str.strip() ==
+                str(customer_uuid).strip()
             ].copy()
-            st.write("Customer UUID =", customer_uuid)
 
-            st.write(df_m["customer_uuid"].head(10))
-
-            st.write("عدد السجلات =", len(df_m))
-
-            st.subheader("🛠 سجل الصيانات")
-
-            if customer_visits.empty:
-
-                st.info("لا توجد زيارات صيانة لهذا العميل")
-
-            else:
+            if not customer_visits.empty:
 
                 customer_visits["visit_date"] = pd.to_datetime(
                     customer_visits["visit_date"],
                     errors="coerce"
                 )
 
-                customer_visits = customer_visits.sort_values(
-                    "visit_date",
-                    ascending=False
-                )
+    customer_visits = customer_visits.sort_values(
+        by="visit_date",
+        ascending=False
+    )
+          
+            st.subheader("🛠 سجل الصيانات")
 
-                def mark(x):
+            if customer_visits.empty:
 
-                    if str(x).strip().lower() in [
-                        "true",
-                        "1",
-                        "yes",
-                        "done",
-                        "✓"
-                    ]:
+                st.info("لا توجد زيارات صيانة")
+
+            else:
+
+                def mark(v):
+
+                    if str(v).strip() in ["1", "TRUE", "True", "true", "✓"]:
                         return "✅"
 
                     return "❌"
 
-                history = pd.DataFrame({
+                table = pd.DataFrame({
 
                     "📅 التاريخ":
                         customer_visits["visit_date"].dt.strftime("%Y-%m-%d"),
@@ -329,12 +321,18 @@ def app():
                         customer_visits["calcite"].apply(mark),
 
                     "Infrared":
-                        customer_visits["infrared"].apply(mark)
-    
+                        customer_visits["infrared"].apply(mark),
+
+                    "👨‍🔧 الفني":
+                        customer_visits["technician"],
+
+                    "💰 التكلفة":
+                        customer_visits["amount"]
+
                 })
-        
+
                 st.dataframe(
-                    history,
+                    table,
                     use_container_width=True,
                     hide_index=True
                 )
