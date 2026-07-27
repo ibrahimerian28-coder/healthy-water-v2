@@ -12,6 +12,7 @@ APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzksKYGIuN41Pszdy3Bs_0
 BASE_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
 
 
+
 # =========================
 # 📌 LOAD SHEET (READ ONLY)
 # =========================
