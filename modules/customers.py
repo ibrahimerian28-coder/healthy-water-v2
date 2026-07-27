@@ -597,6 +597,8 @@ def app():
 
                             "status": status
                         }
+                        st.write(customer_uuid)
+                        st.write(updated)
                         ok = update_row(
                             "Customers",
                             customer_uuid,
