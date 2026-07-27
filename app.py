@@ -64,6 +64,7 @@ def to_num(x):
 
 def load_data(gid):
     url = f"https://docs.google.com/spreadsheets/d/1RGDGJaP_lo2Fp2beLqAQvLulqMk2WDJKqLv2g34-ycc/export?format=csv&gid={gid}"
+    
     try:
         df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
