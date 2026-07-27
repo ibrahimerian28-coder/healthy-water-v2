@@ -266,28 +266,72 @@ def app():
 
             customer_visits = df_m[
                 df_m["customer_uuid"] == customer_uuid
-            ]
+            ].copy()
 
-            st.subheader("🔧 Maintenance Visits")
+            st.subheader("🛠 سجل الصيانات")
 
             if customer_visits.empty:
-                st.info("No maintenance visits yet")
+
+                st.info("لا توجد زيارات صيانة لهذا العميل")
+
             else:
-                for _, v in customer_visits.iterrows():
 
-                    st.markdown(
-                        f"""
-                        ### 🔧 Visit
-                        - 📅 Date: {v.get('visit_date', '')}
-                        - 📌 Status: {v.get('status', '')}
-                        - ⚙️ Type: {v.get('visit_type', '')}
-                        - 🧩 Parts: P1:{v.get('P1')} P2:{v.get('P2')} P3:{v.get('P3')}
-                        - 💰 Cost: {v.get('amount', '')}
-                        - 🧑‍🔧 Technician: {v.get('technician', '')}
-                        """
-                    )
+                customer_visits["visit_date"] = pd.to_datetime(
+                    customer_visits["visit_date"],
+                    errors="coerce"
+                )
 
-                    st.divider()
+                customer_visits = customer_visits.sort_values(
+                    "visit_date",
+                    ascending=False
+                )
+
+                def mark(x):
+
+                    if str(x).strip().lower() in [
+                        "true",
+                        "1",
+                        "yes",
+                        "done",
+                        "✓"
+                    ]:
+                        return "✅"
+
+                    return "❌"
+
+                history = pd.DataFrame({
+
+                    "📅 التاريخ":
+                        customer_visits["visit_date"].dt.strftime("%Y-%m-%d"),
+
+                    "P1":
+                        customer_visits["P1"].apply(mark),
+
+                    "P2":
+                        customer_visits["P2"].apply(mark),
+
+                    "P3":
+                        customer_visits["P3"].apply(mark),
+
+                    "Membrane":
+                        customer_visits["membrane"].apply(mark),
+
+                    "Post Carbon":
+                        customer_visits["post_carbon"].apply(mark),
+
+                    "Calcite":
+                        customer_visits["calcite"].apply(mark),
+
+                    "Infrared":
+                        customer_visits["infrared"].apply(mark)
+    
+                })
+        
+                st.dataframe(
+                    history,
+                    use_container_width=True,
+                    hide_index=True
+                )
 
             # =========================
             # DETAILS
