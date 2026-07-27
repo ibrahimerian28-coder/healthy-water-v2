@@ -268,6 +268,11 @@ def app():
             customer_visits = df_m[
                 df_m["customer_uuid"] == customer_uuid
             ].copy()
+            st.write("Customer UUID =", customer_uuid)
+
+            st.write(df_m["customer_uuid"].head(10))
+
+            st.write("عدد السجلات =", len(df_m))
 
             st.subheader("🛠 سجل الصيانات")
 
