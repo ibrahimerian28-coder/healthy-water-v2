@@ -52,14 +52,9 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
 
         response = r.text.strip()
 
-        print("================================")
-        print("ACTION :", action)
-        print("SHEET  :", sheet)
-        print("UUID   :", uuid)
-        print("DATA   :", data)
-        print("RESPONSE :", response)
-        print("================================")
-        print("API RESPONSE =", response)
+        print("STATUS:", r.status_code)
+        print("RESPONSE:", response)
+
         return response.startswith("OK")
     except Exception as e:
         print("API ERROR:", e)
