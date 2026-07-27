@@ -277,10 +277,10 @@ def app():
                     errors="coerce"
                 )
 
-    customer_visits = customer_visits.sort_values(
-        by="visit_date",
-        ascending=False
-    )
+                customer_visits = customer_visits.sort_values(
+                    by="visit_date",
+                    ascending=False
+                )
           
             st.subheader("🛠 سجل الصيانات")
 
