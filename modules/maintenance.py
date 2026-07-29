@@ -127,14 +127,44 @@ def app():
         with col3:
             infrared = st.checkbox("Infrared")
     
+        # =========================
+        # LOAD INVENTORY ITEMS
+        # =========================
+
         inventory_gid = st.session_state.SHEETS["Inventory"]
         df_inventory = load_sheet(inventory_gid)
-    
-        inventory_items = df_inventory["name"].dropna().astype(str).tolist() if "name" in df_inventory.columns else []
-    
-        other = st.selectbox(
-            "Other Part",
-            [""] + inventory_items
+
+        excluded_items = [
+            "P1",
+            "P2",
+            "P3",
+            "Membrane",
+            "Post Carbon",
+            "Calcite",
+            "Infrared"
+        ]
+
+        inventory_items = []
+
+        if "name" in df_inventory.columns:
+
+            inventory_items = (
+                df_inventory["name"]
+                .dropna()
+                .astype(str)
+                .str.strip()
+                .tolist()
+            )
+
+            inventory_items = [
+                item
+                for item in inventory_items
+                if item not in excluded_items
+            ]
+
+        other_parts = st.multiselect(
+            "Other Parts",
+            sorted(inventory_items)
         )
     
         cost = st.text_input("Cost")
