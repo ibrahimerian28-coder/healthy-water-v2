@@ -146,10 +146,10 @@ def app():
 
         inventory_items = []
 
-        if "name" in df_inventory.columns:
+        if "item_name" in df_inventory.columns:
 
             inventory_items = (
-                df_inventory["name"]
+                df_inventory["item_name"]
                 .dropna()
                 .astype(str)
                 .str.strip()
