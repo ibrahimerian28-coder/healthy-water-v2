@@ -11,6 +11,14 @@ from utils.constants import (
     DEVICE_TYPES,
     CUSTOMER_STATUS
 )
+def customer_actions(
+    row,
+    customer_uuid,
+    AREAS,
+    CUSTOMER_STATUS,
+    DEVICE_TYPES
+):
+    pass
 # =========================
             # ACTIONS
             # =========================
