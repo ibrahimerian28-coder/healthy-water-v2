@@ -20,6 +20,7 @@ from modules.components.customer_helpers import (
     wa_link
 )
 from modules.components.customer_data import load_customers
+from modules.components.customer_search import search_customers
 # =========================
 # APP
 # =========================
