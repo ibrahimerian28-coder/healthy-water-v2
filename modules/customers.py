@@ -349,6 +349,17 @@ def app():
 
                     visit_status = "On Schedule"
                     visit_icon = "🟢"
+            status_message = ""
+
+            if days_remaining is not None:
+
+                if days_remaining < 0:
+
+                    status_message = f"{abs(days_remaining)} Days Late"
+
+                else:
+
+                    status_message = f"{days_remaining} Days Remaining"
             # =========================
             # CUSTOMER SUMMARY
             # =========================
@@ -383,7 +394,7 @@ def app():
                     st.metric(
                         f"{visit_icon} {visit_status}",
                         next_visit.strftime("%Y-%m-%d"),
-                        f"{days_remaining} Days"
+                        status_message
                     )
 
                 else:
