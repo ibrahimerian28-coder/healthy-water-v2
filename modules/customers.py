@@ -315,29 +315,37 @@ def app():
                 st.write("Cycle:", cycle)
                 st.write("Next Visit:", next_visit)
 
-            # عدد الزيارات
+            # =========================
+            # CUSTOMER SUMMARY DATA
+            # =========================
+
             visits_count = len(customer_visits)
 
-            # آخر زيارة
             if visits_count > 0:
+
                 last_visit = customer_visits.iloc[0]["visit_date"]
+
             else:
-                last_visit = None
-            # موعد الزيارة القادمة
+
+                last_visit = pd.to_datetime(
+                    row.get("install_date", ""),
+                    errors="coerce"
+                )
+
             next_visit = None
 
             try:
 
-                cycle_months = int(str(row.get("cycle", "0")).strip())
+                cycle_months = int(float(str(row.get("cycle", "0")).strip()))
 
-                if last_visit is not None and cycle_months > 0:
+                if pd.notna(last_visit) and cycle_months > 0:
 
                     next_visit = (
                         last_visit +
                         pd.DateOffset(months=cycle_months)
                     )
 
-            except:
+            except Exception:
                 pass
             # =========================
             # CUSTOMER SUMMARY
