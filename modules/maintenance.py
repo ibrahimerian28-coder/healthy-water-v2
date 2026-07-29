@@ -156,10 +156,20 @@ def app():
                 .tolist()
             )
 
+            excluded_items = {
+                "p1",
+                "p2",
+                "p3",
+                "membrane",
+                "post carbon",
+                "calcite",
+                "infrared"
+            }
+
             inventory_items = [
                 item
                 for item in inventory_items
-                if item not in excluded_items
+                if item.strip().lower() not in excluded_items
             ]
       
 
