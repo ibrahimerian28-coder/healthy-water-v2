@@ -454,6 +454,15 @@ def app():
 
             if row.get("cycle"):
                 st.write(f"🔁 Cycle: {row.get('cycle')}")
+            # =========================
+            # NEXT VISIT
+            # =========================
+
+            if next_visit is not None:
+
+                st.info(
+                    f"🗓 Next Visit: {next_visit.strftime('%Y-%m-%d')}"
+                )
 
             status = str(row.get("status", "")).strip()
 
