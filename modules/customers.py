@@ -310,6 +310,10 @@ def app():
             if pd.notna(last_visit):
 
                 next_visit = last_visit + pd.DateOffset(months=cycle)
+                st.write("Install Date:", row.get("install_date"))
+                st.write("Last Visit:", last_visit)
+                st.write("Cycle:", cycle)
+                st.write("Next Visit:", next_visit)
 
             # عدد الزيارات
             visits_count = len(customer_visits)
