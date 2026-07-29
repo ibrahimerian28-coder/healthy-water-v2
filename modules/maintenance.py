@@ -194,7 +194,7 @@ def app():
                 str(post_carbon),
                 str(calcite),
                 str(infrared),
-                other,
+                ", ".join(other_parts),
                 cost,
                 notes,
                 technician,
