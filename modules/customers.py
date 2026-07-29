@@ -394,10 +394,22 @@ def app():
                 })
 
                 st.dataframe(
-                    table,
-                    use_container_width=True,
-                    hide_index=True
-                )
+                table,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "📅 التاريخ": st.column_config.DateColumn(
+                        width="small"
+                    ),
+                    "💰 التكلفة": st.column_config.NumberColumn(
+                        format="%.0f ج.م",
+                        width="small"
+                    ),
+                    "👨‍🔧 الفني": st.column_config.TextColumn(
+                        width="medium"
+                    ),
+                }
+            )
 
             # =========================
             # DETAILS
