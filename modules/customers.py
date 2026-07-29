@@ -47,7 +47,7 @@ def wa_link(phone):
 # =========================
 
 def app():
-    st.error("CUSTOMERS FILE VERSION 777")
+    
 
     st.title("👥 Customers")
 
