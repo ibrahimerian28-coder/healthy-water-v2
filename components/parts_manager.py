@@ -48,6 +48,7 @@ def render_parts_manager(df_inventory):
     # =========================
 
     st.markdown("### Other Parts")
+    st.success("وصلنا إلى Other Parts")
 
     excluded_items = {
         "p1",
@@ -76,7 +77,7 @@ def render_parts_manager(df_inventory):
             for item in inventory_items
             if item.lower() not in excluded_items
         ]
-
+        st.write(inventory_items)
 
     if "other_parts_list" not in st.session_state:
 
