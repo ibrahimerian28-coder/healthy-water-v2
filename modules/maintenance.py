@@ -82,13 +82,19 @@ def app():
                         ""
                     )
                 }
-
+   
     # =========================
     # ADD MAINTENANCE
     # =========================
 
     with st.form("add_maintenance"):
+        # =========================
+        # LOAD INVENTORY
+        # =========================
 
+        inventory_gid = st.session_state.SHEETS["Inventory"]
+        df_inventory = load_sheet(inventory_gid)
+        used_parts = render_parts_manager(df_inventory)
         selected_customer = st.selectbox(
             "Customer",
             list(customer_options.keys())
@@ -216,11 +222,8 @@ def app():
         # =========================
         # LOAD INVENTORY ITEMS
         # =========================
-
-        inventory_gid = st.session_state.SHEETS["Inventory"]
-        df_inventory = load_sheet(inventory_gid)
-        used_parts = render_parts_manager(df_inventory)
-
+        
+       
         excluded_items = [
             "P1",
             "P2",
