@@ -177,6 +177,35 @@ def app():
     
         if save:
             visit_uuid = str(uuid.uuid4())
+            # =========================
+            # USED PARTS
+            # =========================
+
+            used_parts = []
+
+            if p1:
+                used_parts.append("P1")
+
+            if p2:
+                used_parts.append("P2")
+
+            if p3:
+                used_parts.append("P3")
+
+            if membrane:
+                used_parts.append("Membrane")
+
+            if post_carbon:
+                used_parts.append("Post Carbon")
+
+            if calcite:
+                used_parts.append("Calcite")
+
+            if infrared:
+                used_parts.append("Infrared")
+
+            used_parts.extend(other_parts)
+            st.write(used_parts)
     
             created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
