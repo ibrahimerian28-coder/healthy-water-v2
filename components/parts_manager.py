@@ -26,8 +26,7 @@ def render_parts_manager(df_inventory):
             part,
             key=f"chk_{part}"
         )
-        st.write(part, selected)
-
+        
         if selected:
             st.success(f"{part} Selected")
 
