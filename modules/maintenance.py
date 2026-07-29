@@ -117,6 +117,7 @@ def app():
         with col1:
 
             p1 = st.checkbox("P1")
+            st.write("P1 =", p1)
 
             if p1:
                 p1_qty = st.number_input(
