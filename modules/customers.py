@@ -15,7 +15,10 @@ from utils.constants import (
     DEVICE_TYPES
 )
 
-
+from modules.components.customer_helpers import (
+    clean_phone,
+    wa_link
+)
 # =========================
 # APP
 # =========================
