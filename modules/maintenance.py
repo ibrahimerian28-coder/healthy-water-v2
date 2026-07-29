@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import uuid
 from datetime import datetime
-
+import json
 from utils.data_service import (
     load_sheet,
     add_row,
@@ -278,31 +278,59 @@ def app():
 
             used_parts = []
 
+            # Parts الأساسية
             if p1:
-                used_parts.append("P1")
+                used_parts.append({
+                    "item": "P1",
+                    "qty": 1
+                })
 
             if p2:
-                used_parts.append("P2")
+                used_parts.append({
+                    "item": "P2",
+                    "qty": 1
+                })
 
             if p3:
-                used_parts.append("P3")
+                used_parts.append({
+                    "item": "P3",
+                    "qty": 1
+                })
 
             if membrane:
-                used_parts.append("Membrane")
+                used_parts.append({
+                    "item": "Membrane",
+                    "qty": 1
+                })
 
             if post_carbon:
-                used_parts.append("Post Carbon")
+                used_parts.append({
+                    "item": "Post Carbon",
+                    "qty": 1
+                })
 
             if calcite:
-                used_parts.append("Calcite")
+                used_parts.append({
+                    "item": "Calcite",
+                    "qty": 1
+                })
 
             if infrared:
-                used_parts.append("Infrared")
+                used_parts.append({
+                    "item": "Infrared",
+                    "qty": 1
+                })
 
-            used_parts.extend(other_parts)
+            # Other Parts
+            for part in other_parts:
+
+                used_parts.append({
+                    "item": part,
+                    "qty": 1
+                })
+
             st.write(used_parts)
-    
-            created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
     
             new_row = [
                 visit_uuid,
@@ -323,7 +351,8 @@ def app():
                 notes,
                 technician,
                 created_at,
-                created_at
+                created_at,
+                ""
             ]
     
             ok = add_row("Maintenance", new_row)
