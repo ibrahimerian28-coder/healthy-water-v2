@@ -87,87 +87,91 @@ def app():
     # ADD MAINTENANCE
     # =========================
 
-    with st.form("add_maintenance"):
+    
+    # =========================
+    # LOAD INVENTORY
+    # =========================
+
+    inventory_gid = st.session_state.SHEETS["Inventory"]
+    df_inventory = load_sheet(inventory_gid)
+    
+    selected_customer = st.selectbox(
+        "Customer",
+        list(customer_options.keys())
+    )
+
+    customer_data = customer_options[selected_customer]
+
+    customer_uuid = customer_data["uuid"]
+    customer_name = customer_data["name"]
+    customer_phone = customer_data["phone"]
+    customer_area = customer_data["area"]
+    customer_device = customer_data["device_type"]
+
+    visit_date = st.date_input("Visit Date")
+
+    visit_type = st.selectbox(
+        "Visit Type",
+        ["Maintenance", "Installation", "Emergency", "Inspection"]
+    )
+
+    issue = st.text_area("Problem Description")
+    used_parts = render_parts_manager(df_inventory)
+    
+
+    cost = st.text_input("Cost")
+    technician = st.text_input("Technician")
+    notes = st.text_area("Notes")
+
+    # 🔥 لازم يكون موجود داخل الفورم 100%
+    save = st.button(
+        "💾 Save Visit",
+        type="primary",
+        use_container_width=True
+    )
+
+    if save:
+        visit_uuid = str(uuid.uuid4())
         # =========================
-        # LOAD INVENTORY
+        # USED PARTS
         # =========================
 
-        inventory_gid = st.session_state.SHEETS["Inventory"]
-        df_inventory = load_sheet(inventory_gid)
-        
-        selected_customer = st.selectbox(
-            "Customer",
-            list(customer_options.keys())
+       
+        st.write(used_parts)
+        created_at = datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
         )
 
-        customer_data = customer_options[selected_customer]
+        new_row = [
+            visit_uuid,
+            customer_uuid,
+            customer_name,
+            str(visit_date),
+            "",
+            "Pending",
+            str(p1),
+            str(p2),
+            str(p3),
+            str(membrane),
+            str(post_carbon),
+            str(calcite),
+            str(infrared),
+            ", ".join(other_parts),
+            cost,
+            notes,
+            technician,
+            created_at,
+            created_at,
+            ""
+        ]
 
-        customer_uuid = customer_data["uuid"]
-        customer_name = customer_data["name"]
-        customer_phone = customer_data["phone"]
-        customer_area = customer_data["area"]
-        customer_device = customer_data["device_type"]
-    
-        visit_date = st.date_input("Visit Date")
-    
-        visit_type = st.selectbox(
-            "Visit Type",
-            ["Maintenance", "Installation", "Emergency", "Inspection"]
-        )
-    
-        issue = st.text_area("Problem Description")
-        used_parts = render_parts_manager(df_inventory)
-        
-    
-        cost = st.text_input("Cost")
-        technician = st.text_input("Technician")
-        notes = st.text_area("Notes")
-    
-        # 🔥 لازم يكون موجود داخل الفورم 100%
-        save = st.form_submit_button("Save Visit")
-    
-        if save:
-            visit_uuid = str(uuid.uuid4())
-            # =========================
-            # USED PARTS
-            # =========================
+        ok = add_row("Maintenance", new_row)
 
-           
-            st.write(used_parts)
-            created_at = datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-    
-            new_row = [
-                visit_uuid,
-                customer_uuid,
-                customer_name,
-                str(visit_date),
-                "",
-                "Pending",
-                str(p1),
-                str(p2),
-                str(p3),
-                str(membrane),
-                str(post_carbon),
-                str(calcite),
-                str(infrared),
-                ", ".join(other_parts),
-                cost,
-                notes,
-                technician,
-                created_at,
-                created_at,
-                ""
-            ]
-    
-            ok = add_row("Maintenance", new_row)
-    
-            if ok:
-                st.success("✅ Maintenance Visit Added")
-                st.rerun()
-            else:
-                st.error("❌ Failed To Save")
+        if ok:
+            st.success("✅ Maintenance Visit Added")
+            st.rerun()
+        else:
+            st.error("❌ Failed To Save")
 
     # =========================
     # SEARCH
