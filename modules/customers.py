@@ -270,17 +270,50 @@ def app():
                 str(customer_uuid).strip()
             ].copy()
 
-            if not customer_visits.empty:
+            customer_visits["visit_date"] = pd.to_datetime(
+                customer_visits["visit_date"],
+                errors="coerce"
+            )
 
-                customer_visits["visit_date"] = pd.to_datetime(
-                    customer_visits["visit_date"],
-                    errors="coerce"
+            customer_visits = customer_visits.sort_values(
+                by="visit_date",
+                ascending=False
+            )
+
+            # عدد الزيارات
+            visits_count = len(customer_visits)
+
+            # آخر زيارة
+            if visits_count > 0:
+                last_visit = customer_visits.iloc[0]["visit_date"]
+            else:
+                last_visit = None
+            # =========================
+            # CUSTOMER SUMMARY
+            # =========================
+
+            st.subheader("📊 Customer Summary")
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.metric(
+                    "🔧 Total Visits",
+                    visits_count
                 )
 
-                customer_visits = customer_visits.sort_values(
-                    by="visit_date",
-                    ascending=False
-                )
+            with col2:
+
+                if last_visit is not None:
+                    st.metric(
+                        "📅 Last Visit",
+                        last_visit.strftime("%Y-%m-%d")
+                    )
+                else:
+                    st.metric(
+                        "📅 Last Visit",
+                        "-"
+                    )
           
             st.subheader("🛠 سجل الصيانات")
 
