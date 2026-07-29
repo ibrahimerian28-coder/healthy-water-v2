@@ -110,7 +110,7 @@ def app():
         )
     
         issue = st.text_area("Problem Description")
-        used_parts = render_parts_manager(df_inventory)
+        
     
         st.subheader("🧩 Parts Used")
 
@@ -219,6 +219,7 @@ def app():
 
         inventory_gid = st.session_state.SHEETS["Inventory"]
         df_inventory = load_sheet(inventory_gid)
+        used_parts = render_parts_manager(df_inventory)
 
         excluded_items = [
             "P1",
