@@ -366,7 +366,7 @@ def app():
 
             st.subheader("📊 Customer Summary")
 
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3, col4 = st.columns(4)
 
             with col1:
                 st.metric(
@@ -401,6 +401,21 @@ def app():
 
                     st.metric(
                         "⏳ Next Visit",
+                        "-"
+                    )
+            with col4:
+
+                if visit_status:
+
+                    st.metric(
+                        "📌 Status",
+                        f"{visit_icon} {visit_status}"
+                    )
+
+                else:
+
+                    st.metric(
+                        "📌 Status",
                         "-"
                     )
           
