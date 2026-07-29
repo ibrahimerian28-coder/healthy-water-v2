@@ -19,35 +19,17 @@ from modules.components.customer_helpers import (
     clean_phone,
     wa_link
 )
+from modules.components.customer_data import load_customers
 # =========================
 # APP
 # =========================
 
 def app():
-    st.error("CUSTOMERS FILE VERSION 777")
-
+    
     st.title("👥 Customers")
+    df = load_customers()
 
-    gid = st.session_state.SHEETS["Customers"]
-
-    df = load_sheet(gid)
-
-    # =========================
-    # CLEAN DATA
-    # =========================
-
-    df.columns = df.columns.str.strip()
-
-    if "name" in df.columns:
-        df = df[df["name"].astype(str).str.strip() != ""]
-
-    if "status" in df.columns:
-        df = df[df["status"].astype(str).str.lower() != "deleted"]
-
-    df = df.reset_index(drop=True)
-    if "area" in df.columns:
-        df = df.sort_values(by="area")
-
+    
     # =========================
     # ADD CUSTOMER
     # =========================
