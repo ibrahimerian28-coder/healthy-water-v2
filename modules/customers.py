@@ -310,7 +310,7 @@ def app():
 
             st.subheader("📊 Customer Summary")
 
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
 
             with col1:
                 st.metric(
@@ -330,13 +330,19 @@ def app():
                         "📅 Last Visit",
                         "-"
                     )
-    
-            if next_visit is not None:
 
-                st.metric(
-                    "⏳ Next Visit",
-                    next_visit.strftime("%Y-%m-%d")
-                )
+            with col3:
+
+                if next_visit is not None:
+                    st.metric(
+                        "⏳ Next Visit",
+                        next_visit.strftime("%Y-%m-%d")
+                    )
+                else:
+                    st.metric(
+                        "⏳ Next Visit",
+                        "-"
+                    )
           
             st.subheader("🛠 سجل الصيانات")
 
