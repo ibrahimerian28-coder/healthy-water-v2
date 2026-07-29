@@ -142,20 +142,13 @@ def app():
                         st.error("❌ Failed")
 
     st.divider()
-
     # =========================
-    # SEARCH
+    # search
     # =========================
 
-    search = st.text_input("🔍 Search")
+   search = st.text_input("🔍 Search")
 
-    if search:
-
-        df = df[
-            df.astype(str)
-            .apply(lambda x: x.str.contains(search, case=False))
-            .any(axis=1)
-        ]
+   df = search_customers(df, search)
 
     # =========================
     # CUSTOMERS LIST
