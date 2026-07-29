@@ -424,8 +424,16 @@ def app():
             if row.get("cycle"):
                 st.write(f"🔁 Cycle: {row.get('cycle')}")
 
-            if row.get("status"):
-                st.write(f"📌 {row.get('status')}")
+            status = str(row.get("status", "")).strip()
+
+            if status == "Active":
+                st.success("🟢 Active")
+
+            elif status == "Inactive":
+                st.error("🔴 Inactive")
+
+            else:
+                st.info(status)
 
             # =========================
             # LOCATION
