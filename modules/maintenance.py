@@ -33,6 +33,21 @@ def app():
     # =========================
 
     df_m.columns = df_m.columns.str.strip()
+    # =========================
+    # SORT VISITS
+    # =========================
+
+    if "visit_date" in df_m.columns:
+
+        df_m["visit_date"] = pd.to_datetime(
+            df_m["visit_date"],
+            errors="coerce"
+        )
+
+        df_m = df_m.sort_values(
+            by="visit_date",
+            ascending=False
+        ).reset_index(drop=True)
     df_c.columns = df_c.columns.str.strip()
 
     # =========================
