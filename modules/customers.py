@@ -279,38 +279,7 @@ def app():
                 by="visit_date",
                 ascending=False
             )
-
-            # =========================
-            # NEXT VISIT DATE
-            # =========================
-
-            next_visit = None
-
-            cycle = row.get("cycle", "")
-
-            try:
-                cycle = int(float(cycle))
-            except:
-                cycle = 6
-
-            if not customer_visits.empty:
-
-                last_visit = customer_visits.iloc[0]["visit_date"]
-
-            else:
-
-                try:
-                    last_visit = pd.to_datetime(
-                        row.get("install_date", ""),
-                        errors="coerce"
-                    )
-                except:
-                    last_visit = None
-
-            if pd.notna(last_visit):
-
-                next_visit = last_visit + pd.DateOffset(months=cycle)
-               
+            
 
             # =========================
             # CUSTOMER SUMMARY DATA
