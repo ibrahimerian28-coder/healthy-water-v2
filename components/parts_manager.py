@@ -22,26 +22,20 @@ def render_parts_manager(df_inventory):
 
     for part in standard_parts:
 
-        c1, c2 = st.columns([3, 1])
+        selected = st.checkbox(
+            part,
+            key=f"chk_{part}"
+        )
 
-        with c1:
-            selected = st.checkbox(
-                part,
-                key=f"chk_{part}"
-            )
-
-        with c2:
+        if selected:
 
             qty = st.number_input(
-                "Qty",
+                f"{part} Qty",
                 min_value=1,
                 value=1,
                 step=1,
-                key=f"qty_{part}",
-                label_visibility="collapsed"
+                key=f"qty_{part}"
             )
-
-        if selected:
 
             used_parts.append({
                 "item": part,
