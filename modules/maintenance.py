@@ -330,7 +330,9 @@ def app():
                 })
 
             st.write(used_parts)
-            
+            created_at = datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
     
             new_row = [
                 visit_uuid,
