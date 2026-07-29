@@ -110,6 +110,7 @@ def app():
         )
     
         issue = st.text_area("Problem Description")
+        used_parts = render_parts_manager(df_inventory)
     
         st.subheader("🧩 Parts Used")
 
