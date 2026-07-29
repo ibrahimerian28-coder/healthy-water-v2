@@ -15,23 +15,62 @@ from utils.constants import (
     DEVICE_TYPES
 )
 
-from modules.components.customer_helpers import (
-    clean_phone,
-    wa_link
-)
-from modules.components.customer_data import load_customers
-from modules.components.customer_search import search_customers
-from modules.components.customer_actions import customer_actions
+# =========================
+# HELPERS
+# =========================
+
+def clean_phone(p):
+
+    if pd.isna(p):
+        return ""
+
+    p = str(p).strip()
+
+    if p.lower() in ["nan", "none"]:
+        return ""
+
+    return p
+
+def wa_link(phone):
+
+    phone = clean_phone(phone)
+
+    phone = phone.replace(" ", "")
+
+    if phone.startswith("0"):
+        phone = "2" + phone
+
+    return f"https://wa.me/{phone}"
+
 # =========================
 # APP
 # =========================
 
 def app():
-    
-    st.title("👥 Customers")
-    df = load_customers()
+    st.error("CUSTOMERS FILE VERSION 777")
 
-    
+    st.title("👥 Customers")
+
+    gid = st.session_state.SHEETS["Customers"]
+
+    df = load_sheet(gid)
+
+    # =========================
+    # CLEAN DATA
+    # =========================
+
+    df.columns = df.columns.str.strip()
+
+    if "name" in df.columns:
+        df = df[df["name"].astype(str).str.strip() != ""]
+
+    if "status" in df.columns:
+        df = df[df["status"].astype(str).str.lower() != "deleted"]
+
+    df = df.reset_index(drop=True)
+    if "area" in df.columns:
+        df = df.sort_values(by="area")
+
     # =========================
     # ADD CUSTOMER
     # =========================
@@ -144,13 +183,20 @@ def app():
                         st.error("❌ Failed")
 
     st.divider()
+
     # =========================
-    # search
+    # SEARCH
     # =========================
 
     search = st.text_input("🔍 Search")
 
-    df = search_customers(df, search)
+    if search:
+
+        df = df[
+            df.astype(str)
+            .apply(lambda x: x.str.contains(search, case=False))
+            .any(axis=1)
+        ]
 
     # =========================
     # CUSTOMERS LIST
@@ -320,12 +366,8 @@ def app():
                 )
 
             st.divider()
-            customer_actions(
-                row,
-                customer_uuid
-            )
 
-# =========================
+            # =========================
             # ACTIONS
             # =========================
 
@@ -622,7 +664,6 @@ def app():
                         else:
 
                             st.error("❌ Update Failed")
-           
 
    
     
