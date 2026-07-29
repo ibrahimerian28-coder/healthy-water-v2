@@ -161,6 +161,8 @@ def app():
                 for item in inventory_items
                 if item not in excluded_items
             ]
+            st.write(df_inventory.columns.tolist())
+            st.write(inventory_items)
 
         other_parts = st.multiselect(
             "Other Parts",
