@@ -94,7 +94,7 @@ def app():
 
         inventory_gid = st.session_state.SHEETS["Inventory"]
         df_inventory = load_sheet(inventory_gid)
-        used_parts = render_parts_manager(df_inventory)
+        
         selected_customer = st.selectbox(
             "Customer",
             list(customer_options.keys())
@@ -116,6 +116,7 @@ def app():
         )
     
         issue = st.text_area("Problem Description")
+        used_parts = render_parts_manager(df_inventory)
         
     
         st.subheader("🧩 Parts Used")
