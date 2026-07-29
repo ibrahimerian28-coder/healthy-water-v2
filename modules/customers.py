@@ -288,6 +288,22 @@ def app():
                 last_visit = customer_visits.iloc[0]["visit_date"]
             else:
                 last_visit = None
+            # موعد الزيارة القادمة
+            next_visit = None
+
+            try:
+
+                cycle_months = int(str(row.get("cycle", "0")).strip())
+
+                if last_visit is not None and cycle_months > 0:
+
+                    next_visit = (
+                        last_visit +
+                        pd.DateOffset(months=cycle_months)
+                    )
+
+            except:
+                pass
             # =========================
             # CUSTOMER SUMMARY
             # =========================
@@ -314,6 +330,13 @@ def app():
                         "📅 Last Visit",
                         "-"
                     )
+    
+            if next_visit is not None:
+
+                st.metric(
+                    "⏳ Next Visit",
+                    next_visit.strftime("%Y-%m-%d")
+                )
           
             st.subheader("🛠 سجل الصيانات")
 
