@@ -1,4 +1,3 @@
-import pandas as pd
 def search_customers(df, search):
 
     if not search:
