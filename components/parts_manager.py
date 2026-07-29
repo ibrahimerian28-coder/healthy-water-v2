@@ -28,8 +28,7 @@ def render_parts_manager(df_inventory):
         )
         
         if selected:
-            st.success(f"{part} Selected")
-
+            
             qty = st.number_input(
                 f"{part} Qty",
                 min_value=1,
