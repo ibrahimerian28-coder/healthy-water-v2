@@ -314,6 +314,19 @@ def app():
             except Exception:
                 pass
             # =========================
+            # DAYS REMAINING
+            # =========================
+
+            days_remaining = None
+
+            if pd.notna(next_visit):
+
+                today = pd.Timestamp.today().normalize()
+
+                days_remaining = (
+                    next_visit.normalize() - today
+                ).days
+            # =========================
             # CUSTOMER SUMMARY
             # =========================
 
@@ -341,6 +354,7 @@ def app():
                     )
 
             with col3:
+                st.write("Days Remaining:", days_remaining)
 
                 if pd.notna(next_visit):
                     st.metric(
