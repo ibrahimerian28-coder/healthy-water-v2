@@ -111,21 +111,104 @@ def app():
         issue = st.text_area("Problem Description")
     
         st.subheader("🧩 Parts Used")
-    
-        col1, col2, col3 = st.columns(3)
-    
+
+        col1, col2 = st.columns(2)
+
         with col1:
+
             p1 = st.checkbox("P1")
+
+            if p1:
+                p1_qty = st.number_input(
+                    "P1 Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="p1_qty"
+                )
+            else:
+                p1_qty = 0
+
             p2 = st.checkbox("P2")
+
+            if p2:
+                p2_qty = st.number_input(
+                    "P2 Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="p2_qty"
+                )
+            else:
+                p2_qty = 0
+
             p3 = st.checkbox("P3")
-    
+
+            if p3:
+                p3_qty = st.number_input(
+                    "P3 Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="p3_qty"
+                )
+            else:
+                p3_qty = 0
+
+
         with col2:
+
             membrane = st.checkbox("Membrane")
+
+            if membrane:
+                membrane_qty = st.number_input(
+                    "Membrane Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="membrane_qty"
+                )
+            else:
+                membrane_qty = 0
+
             post_carbon = st.checkbox("Post Carbon")
+
+            if post_carbon:
+                post_carbon_qty = st.number_input(
+                    "Post Carbon Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="post_carbon_qty"
+                )
+            else:
+                post_carbon_qty = 0
+
             calcite = st.checkbox("Calcite")
-    
-        with col3:
+
+            if calcite:
+                calcite_qty = st.number_input(
+                    "Calcite Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="calcite_qty"
+                )
+            else:
+                calcite_qty = 0
+
             infrared = st.checkbox("Infrared")
+
+            if infrared:
+                infrared_qty = st.number_input(
+                    "Infrared Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key="infrared_qty"
+                )
+            else:
+                infrared_qty = 0
     
         # =========================
         # LOAD INVENTORY ITEMS
