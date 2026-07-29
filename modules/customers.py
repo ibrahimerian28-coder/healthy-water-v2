@@ -147,9 +147,9 @@ def app():
     # search
     # =========================
 
-   search = st.text_input("🔍 Search")
+    search = st.text_input("🔍 Search")
 
-   df = search_customers(df, search)
+    df = search_customers(df, search)
 
     # =========================
     # CUSTOMERS LIST
