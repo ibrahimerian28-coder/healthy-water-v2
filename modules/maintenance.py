@@ -3,6 +3,7 @@ import pandas as pd
 import uuid
 from datetime import datetime
 import json
+from components.parts_manager import render_parts_manager
 from utils.data_service import (
     load_sheet,
     add_row,
