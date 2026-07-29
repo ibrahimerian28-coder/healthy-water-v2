@@ -366,7 +366,7 @@ def app():
 
             st.subheader("📊 Customer Summary")
 
-            col1, col2, col3, col4 = st.columns(4)
+            col1, col2, col3 = st.columns(3)
 
             with col1:
                 st.metric(
@@ -392,10 +392,10 @@ def app():
                 if pd.notna(next_visit):
 
                     st.metric(
-                        f"{visit_icon} {visit_status}",
-                        next_visit.strftime("%Y-%m-%d"),
-                        status_message
-                    )
+                    "⏳ Next Visit",
+                    next_visit.strftime("%Y-%m-%d"),
+                    status_message
+                )
 
                 else:
 
@@ -403,21 +403,22 @@ def app():
                         "⏳ Next Visit",
                         "-"
                     )
-            with col4:
+            # =========================
+            # STATUS ALERT
+            # =========================
 
-                if visit_status:
+            if visit_status == "On Schedule":
 
-                    st.metric(
-                        "📌 Status",
-                        f"{visit_icon} {visit_status}"
-                    )
+                st.success(f"{visit_icon} {visit_status}")
 
-                else:
+            elif visit_status == "Due Soon":
 
-                    st.metric(
-                        "📌 Status",
-                        "-"
-                    )
+                st.warning(f"{visit_icon} {visit_status}")
+
+            elif visit_status == "Overdue":
+
+                st.error(f"{visit_icon} {visit_status}")
+           
           
             st.subheader("🛠 سجل الصيانات")
 
