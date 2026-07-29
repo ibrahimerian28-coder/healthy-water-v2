@@ -327,6 +327,29 @@ def app():
                     next_visit.normalize() - today
                 ).days
             # =========================
+            # NEXT VISIT STATUS
+            # =========================
+
+            visit_status = ""
+            visit_icon = ""
+
+            if days_remaining is not None:
+
+                if days_remaining < 0:
+
+                    visit_status = "Overdue"
+                    visit_icon = "🔴"
+
+                elif days_remaining <= 30:
+
+                    visit_status = "Due Soon"
+                    visit_icon = "🟡"
+
+                else:
+
+                    visit_status = "On Schedule"
+                    visit_icon = "🟢"
+            # =========================
             # CUSTOMER SUMMARY
             # =========================
 
@@ -354,14 +377,17 @@ def app():
                     )
 
             with col3:
-                st.write("Days Remaining:", days_remaining)
 
                 if pd.notna(next_visit):
+
                     st.metric(
-                        "⏳ Next Visit",
-                        next_visit.strftime("%Y-%m-%d")
+                        f"{visit_icon} {visit_status}",
+                        next_visit.strftime("%Y-%m-%d"),
+                        f"{days_remaining} Days"
                     )
+
                 else:
+
                     st.metric(
                         "⏳ Next Visit",
                         "-"
