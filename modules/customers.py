@@ -364,28 +364,28 @@ def app():
             with col2:
 
                 if pd.notna(last_visit):
-                st.metric(
-                    "📅 Last Visit",
-                    last_visit.strftime("%Y-%m-%d")
-                )
-            else:
-                st.metric(
-                    "📅 Last Visit",
-                    "-"
-                )
+                    st.metric(
+                        "📅 Last Visit",
+                        last_visit.strftime("%Y-%m-%d")
+                    )
+                else:
+                    st.metric(
+                        "📅 Last Visit",
+                        "-"
+                    )
 
             with col3:
 
                 if pd.notna(next_visit):
-                st.metric(
-                    "⏳ Next Visit",
-                    next_visit.strftime("%Y-%m-%d")
-                )
-            else:
-                st.metric(
-                    "⏳ Next Visit",
-                    "-"
-                )
+                    st.metric(
+                        "⏳ Next Visit",
+                        next_visit.strftime("%Y-%m-%d")
+                    )
+                else:
+                    st.metric(
+                        "⏳ Next Visit",
+                        "-"
+                    )
           
             st.subheader("🛠 سجل الصيانات")
 
