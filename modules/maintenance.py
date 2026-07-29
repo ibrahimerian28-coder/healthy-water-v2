@@ -171,7 +171,7 @@ def app():
                 for item in inventory_items
                 if item.strip().lower() not in excluded_items
             ]
-            st.write(inventory_items)
+            
       
 
         other_parts = st.multiselect(
