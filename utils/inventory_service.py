@@ -98,7 +98,7 @@ def deduct_inventory(parts_used, inventory_gid):
 
         new_qty = current_qty - qty_used
 
-        update_row(
+       update_row(
             "Inventory",
             row["uuid"],
             {
