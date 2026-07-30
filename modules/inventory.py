@@ -62,9 +62,50 @@ def app():
                         "date",
                         ascending=False
                     )
-    
-                    st.dataframe(
-                        history,
-                        hide_index=True,
-                    use_container_width=True
-                )
+                    
+                    for _, h in history.iterrows():
+                    
+                        movement = str(h.get("movement", "")).upper()
+                    
+                        if movement == "OUT":
+                            color = "#ffe5e5"
+                            title = "🟥 خصم من المخزون"
+                    
+                        elif movement == "IN":
+                            color = "#e8ffe8"
+                            title = "🟩 إضافة للمخزون"
+                    
+                        else:
+                            color = "#fff8d9"
+                            title = "🟨 تعديل بالمخزون"
+                    
+                        date = str(h.get("date", ""))[:10]
+                    
+                        with st.container(border=True):
+                    
+                            st.markdown(
+                                f"""
+                    <div style="
+                    background:{color};
+                    padding:12px;
+                    border-radius:10px;
+                    ">
+                    
+                    <h4>{title}</h4>
+                    
+                    <b>📅 التاريخ:</b> {date}<br>
+                    
+                    <b>📦 الصنف:</b> {h.get("item_name","")}<br>
+                    
+                    <b>🔢 الكمية:</b> {h.get("quantity","")}<br>
+                    
+                    <b>👨‍🔧 الفني:</b> {h.get("technician","")}<br>
+                    
+                    <b>🔗 المرجع:</b> {h.get("reference","")}<br>
+                    
+                    <b>📝 الملاحظات:</b> {h.get("notes","")}
+                    
+                    </div>
+                    """,
+                                unsafe_allow_html=True
+                            )
