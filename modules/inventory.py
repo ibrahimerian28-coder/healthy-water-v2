@@ -78,13 +78,41 @@ def app():
     st.write("عدد الأصناف:", len(df))
     
     for _, row in df.iterrows():
+        qty = int(pd.to_numeric(row["quantity"], errors="coerce") or 0)
+        min_qty = int(pd.to_numeric(row["min_limit"], errors="coerce") or 0)
+        
+        if qty < min_qty:
+            card_color = "#ffe5e5"
+            status_icon = "🔴"
+        
+        elif qty == min_qty:
+            card_color = "#fff8d9"
+            status_icon = "🟡"
+        
+        else:
+            card_color = "#e8ffe8"
+            status_icon = "🟢"
     
-        with st.container(border=True):
+       with st.container(border=True):
+
+           st.markdown(
+               f"""
+       <div style="
+       background:{card_color};
+       padding:12px;
+       border-radius:10px;
+       margin-bottom:10px;
+       ">
+       """,
+               unsafe_allow_html=True
+           )
     
-            col1, col2, col3 = st.columns([4,2,2])
+           col1, col2, col3 = st.columns([4,2,2])
     
-            with col1:
-                st.markdown(f"### 📦 {row['item_name']}")
+           with col1:
+               st.markdown(
+                   f"### {status_icon} {row['item_name']}"
+               )
     
             with col2:
                 st.metric(
