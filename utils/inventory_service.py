@@ -98,10 +98,13 @@ def deduct_inventory(parts_used, inventory_gid):
 
         new_qty = current_qty - qty_used
 
-       update_row(
-            "Inventory",
-            row["uuid"],
-            {
-                "quantity": new_qty
-            }
-        )
+       # تحديث الكمية مباشرة داخل DataFrame
+       df.loc[
+           df["item_name"].str.strip().str.lower() == item,
+           "quantity"
+       ] = new_qty
+
+       # حفظ الشيت بالكامل
+       from utils.data_service import save_sheet
+
+       save_sheet("Inventory", df)
