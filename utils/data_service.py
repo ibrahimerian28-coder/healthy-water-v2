@@ -67,11 +67,21 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
 # =========================
 
 def add_row(sheet, data):
-    return call_api(
+
+    import streamlit as st
+
+    st.write("APPEND TO:", sheet)
+    st.write("DATA:", data)
+
+    result = call_api(
         action="append",
         sheet=sheet,
         data=data
     )
+
+    st.write("RESULT:", result)
+
+    return result
 
 
 # =========================
