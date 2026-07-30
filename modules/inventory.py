@@ -96,37 +96,56 @@ def app():
         qty = int(row["quantity"])
         min_qty = int(row["min_limit"])
         ideal_stock = int(row["ideal_stock"])
+        cost_price = float(row["cost_price"])
+        item_value = qty * cost_price
 
-        if qty < min_qty:
-            status = "🔴"
+        if qty <= min_qty:
+
+            status = "🔴 حرج"
+        
             card_color = "#ffe5e5"
-
-        elif qty == min_qty:
-            status = "🟡"
+        
+        elif ideal_stock > 0 and qty < ideal_stock * 0.5:
+        
+            status = "🟡 منخفض"
+        
             card_color = "#fff8d9"
-
+        
         else:
-            status = "🟢"
+        
+            status = "🟢 جيد"
+        
             card_color = "#e8ffe8"
 
         with st.container(border=True):
 
             st.markdown(
                 f"""
-<div style="
-background:{card_color};
-padding:18px;
-border-radius:14px;
-margin-bottom:12px;
-border-left:8px solid #2E86C1;
-">
-
-<h3 style="margin-bottom:15px;">
-{status} {row['item_name']}
-</h3>
-
-</div>
-""",
+            <div style="
+            background:{card_color};
+            padding:18px;
+            border-radius:14px;
+            margin-bottom:12px;
+            border-left:8px solid #2E86C1;
+            ">
+            
+            <h3 style="
+            margin:0;
+            padding:0;
+            ">
+            📦 {row['item_name']}
+            </h3>
+            
+            <div style="
+            margin-top:8px;
+            font-size:16px;
+            font-weight:bold;
+            ">
+            {status}
+            </div>
+            
+            </div>
+            """,
                 unsafe_allow_html=True
             )
 
@@ -151,8 +170,8 @@ border-left:8px solid #2E86C1;
             with c3:
 
                 st.metric(
-                    "💰 سعر الشراء",
-                    f"{row['cost_price']} ج.م"
+                    "💰 سعر الوحدة",
+                    f"{cost_price:,.0f} ج.م"
                 )
 
             with c4:
@@ -161,6 +180,10 @@ border-left:8px solid #2E86C1;
                     "📜 History",
                     key=f"history_{row['item_name']}",
                     use_container_width=True
+                )
+                st.metric(
+                    "💵 قيمة الصنف",
+                    f"{item_value:,.0f} ج.م"
                 )
 
             # =========================
