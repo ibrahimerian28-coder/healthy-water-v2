@@ -425,67 +425,83 @@ def app():
             if customer_visits.empty:
 
                 st.info("لا توجد زيارات صيانة")
-
+            
             else:
-
-                def mark(v):
-
-                    if str(v).strip() in ["1", "TRUE", "True", "true", "✓"]:
-                        return "✅"
-
-                    return "❌"
-
-                table = pd.DataFrame({
-
-                    "📅 التاريخ":
-                        customer_visits["visit_date"].dt.strftime("%Y-%m-%d"),
-
-                    "P1":
-                        customer_visits["P1"].apply(mark),
-
-                    "P2":
-                        customer_visits["P2"].apply(mark),
-
-                    "P3":
-                        customer_visits["P3"].apply(mark),
-
-                    "Membrane":
-                        customer_visits["membrane"].apply(mark),
-
-                    "Post Carbon":
-                        customer_visits["post_carbon"].apply(mark),
-
-                    "Calcite":
-                        customer_visits["calcite"].apply(mark),
-
-                    "Infrared":
-                        customer_visits["infrared"].apply(mark),
-
-                    "👨‍🔧 الفني":
-                        customer_visits["technician"],
-
-                    "💰 التكلفة":
-                        customer_visits["amount"]
-
-                })
-
-                st.dataframe(
-                table,
-                use_container_width=True,
-                hide_index=True,
-                column_config={
-                    "📅 التاريخ": st.column_config.DateColumn(
-                        width="small"
-                    ),
-                    "💰 التكلفة": st.column_config.NumberColumn(
-                        format="%.0f ج.م",
-                        width="small"
-                    ),
-                    "👨‍🔧 الفني": st.column_config.TextColumn(
-                        width="medium"
-                    ),
-                }
-            )
+            
+                customer_visits = customer_visits.sort_values(
+                    "visit_date",
+                    ascending=False
+                )
+            
+                for _, visit in customer_visits.iterrows():
+            
+                    visit_date = ""
+            
+                    if pd.notna(visit["visit_date"]):
+                        visit_date = visit["visit_date"].strftime("%Y-%m-%d")
+            
+                    with st.container(border=True):
+            
+                        col1, col2, col3 = st.columns(3)
+            
+                        with col1:
+                            st.markdown(f"**📅 التاريخ**")
+                            st.write(visit_date)
+            
+                        with col2:
+                            st.markdown("**👨‍🔧 الفني**")
+                            st.write(visit.get("technician", "-"))
+            
+                        with col3:
+                            st.markdown("**💰 التكلفة**")
+                            st.write(f"{visit.get('amount', 0)} ج.م")
+            
+                        st.markdown("### 🧩 قطع الغيار المستخدمة")
+            
+                        used_parts = []
+            
+                        try:
+            
+                            if pd.notna(visit.get("used_parts")):
+            
+                                import json
+            
+                                used_parts = json.loads(
+                                    visit["used_parts"]
+                                )
+            
+                        except Exception:
+            
+                            used_parts = []
+            
+                        if used_parts:
+            
+                            parts_table = pd.DataFrame(used_parts)
+            
+                            parts_table.columns = [
+                                "Part",
+                                "Qty"
+                            ]
+            
+                            st.dataframe(
+                                parts_table,
+                                hide_index=True,
+                                use_container_width=True
+                            )
+            
+                        else:
+            
+                            st.info("لم يتم استخدام قطع غيار")
+            
+                        if str(visit.get("notes", "")).strip():
+            
+                            st.markdown("### 📝 ملاحظات")
+            
+                            st.write(
+                                visit["notes"]
+                            )
+            
+                        st.divider()
 
             # =========================
             # DETAILS
