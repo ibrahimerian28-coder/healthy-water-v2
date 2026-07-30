@@ -66,22 +66,22 @@ def app():
     c1, c2, c3, c4 = st.columns(4)
 
     c1.metric(
-        "📦 الأصناف",
+        "📦 Items",
         total_items
     )
 
     c2.metric(
-        "⚠️ منخفض المخزون",
+        "⚠️ Low Stock",
         low_stock
     )
 
     c3.metric(
-        "📊 إجمالي الكميات",
+        "📊 Total Quantity",
         total_quantity
     )
 
     c4.metric(
-        "💰 قيمة المخزون",
+        "💰  Inventory Value",
         f"{inventory_value:,.0f} ج.م"
     )
 
