@@ -133,8 +133,7 @@ def app():
         type="primary",
         use_container_width=True
     )
-    st.write("used_parts =", used_parts)
-
+    
     if save:
 
         visit_uuid = str(uuid.uuid4())
