@@ -167,6 +167,7 @@ def app():
                 used_parts,
                 ensure_ascii=False
         ]
+        st.write("Used Parts:", used_parts)
 
         ok = add_row("Maintenance", new_row)
 
