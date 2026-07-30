@@ -10,6 +10,10 @@ from utils.data_service import (
     update_row,
     delete_row_by_uuid
 )
+from utils.inventory_service import (
+    check_inventory,
+    deduct_inventory
+)
 
 # =========================
 # APP
@@ -177,6 +181,19 @@ def app():
     
             else:
                 other_parts.append(part["item"])
+        errors = check_inventory(
+            used_parts,
+            inventory_gid
+        )
+        
+        if errors:
+        
+            st.error("❌ لا يمكن حفظ الزيارة")
+        
+            for err in errors:
+                st.warning(err)
+        
+            st.stop()
     
         new_row = [
     
@@ -215,8 +232,14 @@ def app():
         )
     
         if ok:
-    
+
+            deduct_inventory(
+                used_parts,
+                inventory_gid
+            )
+        
             st.success("✅ Maintenance Visit Added")
+        
             st.rerun()
     
         else:
