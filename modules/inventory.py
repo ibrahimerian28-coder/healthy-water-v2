@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from utils.data_service import load_sheet
 from datetime import datetime
 
