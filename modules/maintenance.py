@@ -131,50 +131,96 @@ def app():
     )
 
     if save:
-        visit_uuid = str(uuid.uuid4())
-        # =========================
-        # USED PARTS
-        # =========================
 
-       
-        st.write(used_parts)
+        visit_uuid = str(uuid.uuid4())
+    
         created_at = datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S"
         )
-
+    
+        # القيم الافتراضية
+        new_p1 = ""
+        new_p2 = ""
+        new_p3 = ""
+        new_membrane = ""
+        new_post_carbon = ""
+        new_calcite = ""
+        new_infrared = ""
+    
+        other_parts = []
+    
+        # استخراج البيانات من used_parts
+        for part in used_parts:
+    
+            name = part["item"].strip().lower()
+    
+            if name == "p1":
+                new_p1 = "TRUE"
+    
+            elif name == "p2":
+                new_p2 = "TRUE"
+    
+            elif name == "p3":
+                new_p3 = "TRUE"
+    
+            elif name == "membrane":
+                new_membrane = "TRUE"
+    
+            elif name == "post carbon":
+                new_post_carbon = "TRUE"
+    
+            elif name == "calcite":
+                new_calcite = "TRUE"
+    
+            elif name == "infrared":
+                new_infrared = "TRUE"
+    
+            else:
+                other_parts.append(part["item"])
+    
         new_row = [
+    
             visit_uuid,
             customer_uuid,
             customer_name,
             str(visit_date),
             "",
             "Pending",
-            json.dumps(used_parts, ensure_ascii=False),
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+    
+            new_p1,
+            new_p2,
+            new_p3,
+            new_membrane,
+            new_post_carbon,
+            new_calcite,
+            new_infrared,
+    
+            ", ".join(other_parts),
+    
             cost,
             notes,
             technician,
             created_at,
             created_at,
-            ""
-             json.dumps(
+    
+            json.dumps(
                 used_parts,
                 ensure_ascii=False
+            )
         ]
-        st.write("Used Parts:", used_parts)
-
-        ok = add_row("Maintenance", new_row)
-
+    
+        ok = add_row(
+            "Maintenance",
+            new_row
+        )
+    
         if ok:
+    
             st.success("✅ Maintenance Visit Added")
             st.rerun()
+    
         else:
+    
             st.error("❌ Failed To Save")
 
     # =========================
