@@ -36,7 +36,10 @@ def check_inventory(parts_used, inventory_gid):
             continue
 
         available = int(
-            match.iloc[0]["quantity"]
+            pd.to_numeric(
+                match.iloc[0]["quantity"],
+                errors="coerce"
+            ) or 0
         )
 
         if available < qty_needed:
