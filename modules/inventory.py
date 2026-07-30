@@ -26,20 +26,21 @@ def app():
     if not df_history.empty:
         df_history.columns = df_history.columns.str.strip()
 
-    df["quantity"] = pd.to_numeric(
-        df["quantity"],
-        errors="coerce"
-    ).fillna(0)
+    numeric_columns = [
+        "quantity",
+        "min_limit",
+        "cost_price",
+        "ideal_stock"
+    ]
 
-    df["min_limit"] = pd.to_numeric(
-        df["min_limit"],
-        errors="coerce"
-    ).fillna(0)
+    for col in numeric_columns:
 
-    df["cost_price"] = pd.to_numeric(
-        df["cost_price"],
-        errors="coerce"
-    ).fillna(0)
+        if col in df.columns:
+
+            df[col] = pd.to_numeric(
+                df[col],
+                errors="coerce"
+            ).fillna(0)
 
     # =========================
     # DASHBOARD
@@ -92,79 +93,97 @@ def app():
 
     for _, row in df.iterrows():
 
-        qty = int(pd.to_numeric(
-            row["quantity"],
-            errors="coerce"
-        ) or 0)
-        
-        min_qty = int(pd.to_numeric(
-            row["min_limit"],
-            errors="coerce"
-        ) or 0)
-        
-        ideal_stock = int(pd.to_numeric(
-            row["ideal_stock"],
-            errors="coerce"
-        ) or 0)
+        qty = int(row["quantity"])
+        min_qty = int(row["min_limit"])
+        ideal_stock = int(row["ideal_stock"])
+
         if qty < min_qty:
             status = "🔴"
-            color = "#ffe5e5"
+            card_color = "#ffe5e5"
 
         elif qty == min_qty:
             status = "🟡"
-            color = "#fff8d9"
+            card_color = "#fff8d9"
 
         else:
             status = "🟢"
-            color = "#e8ffe8"
+            card_color = "#e8ffe8"
 
         with st.container(border=True):
 
-            c1, c2 = st.columns([5, 1])
-        
+            st.markdown(
+                f"""
+<div style="
+background:{card_color};
+padding:18px;
+border-radius:14px;
+margin-bottom:12px;
+border-left:8px solid #2E86C1;
+">
+
+<h3 style="margin-bottom:15px;">
+{status} {row['item_name']}
+</h3>
+
+</div>
+""",
+                unsafe_allow_html=True
+            )
+
+            c1, c2, c3, c4 = st.columns(
+                [2, 2, 2, 2]
+            )
+
             with c1:
-        
-                st.markdown(
-                    f"""
-        ### {status} {row['item_name']}
-        
-        📦 **الكمية الحالية:** {int(row['quantity'])}
-        
-        ⚠️ **الحد الأدنى:** {int(row['min_limit'])}
-        
-        💰 **سعر الشراء:** {row['cost_price']} ج.م
-        """
+
+                st.metric(
+                    "📦 الكمية",
+                    qty
                 )
-        
+
             with c2:
-        
+
+                st.metric(
+                    "⚠️ الحد الأدنى",
+                    min_qty
+                )
+
+            with c3:
+
+                st.metric(
+                    "💰 سعر الشراء",
+                    f"{row['cost_price']} ج.م"
+                )
+
+            with c4:
+
                 show = st.button(
                     "📜 History",
                     key=f"history_{row['item_name']}",
                     use_container_width=True
                 )
-        # =========================
-        # Stock Level
-        # =========================
-            
-        if ideal_stock > 0:
-            
-            percent = min(
-                qty / ideal_stock,
-                1.0
-             )
-            
-         else:
-            
-            percent = 1.0
-            
-        st.progress(percent)
-            
-        st.caption(
-            f"المخزون الحالي: {qty} من {ideal_stock}"
-        )
 
-            
+            # =========================
+            # STOCK LEVEL
+            # =========================
+
+            if ideal_stock > 0:
+
+                percent = min(
+                    qty / ideal_stock,
+                    1.0
+                )
+
+            else:
+
+                percent = 1.0
+
+            st.progress(percent)
+
+            st.caption(
+                f"المخزون الحالي : {qty} من {ideal_stock}"
+            )
+
             # =========================
             # HISTORY
             # =========================
@@ -202,44 +221,68 @@ def app():
                         if movement == "OUT":
                             title = "🟥 خصم من المخزون"
                             bg = "#ffe5e5"
+                            icon = "➖"
 
                         elif movement == "IN":
                             title = "🟩 إضافة للمخزون"
                             bg = "#e8ffe8"
+                            icon = "➕"
 
                         else:
                             title = "🟨 تعديل بالمخزون"
                             bg = "#fff8d9"
+                            icon = "✏️"
 
                         date = str(
                             h.get("date", "")
                         )[:10]
 
-                        with st.expander(
-                            f"{title} | {date}"
-                        ):
+                        technician = h.get(
+                            "technician",
+                            ""
+                        )
+
+                        reference = h.get(
+                            "reference",
+                            ""
+                        )
+
+                        notes = h.get(
+                            "notes",
+                            ""
+                        )
+
+                        quantity = h.get(
+                            "quantity",
+                            ""
+                        )
+
+                        with st.container(border=True):
 
                             st.markdown(
                                 f"""
 <div style="
 background:{bg};
-padding:15px;
-border-radius:10px;
+padding:14px;
+border-radius:12px;
+margin-bottom:8px;
 ">
 
-<b>📅 التاريخ:</b> {date}<br>
+### {icon} {title}
 
-<b>📦 الصنف:</b> {h.get("item_name","")}<br>
+📅 **التاريخ:** {date}
 
-<b>🔢 الكمية:</b> {h.get("quantity","")}<br>
+📦 **الكمية:** {quantity}
 
-<b>👨‍🔧 الفني:</b> {h.get("technician","")}<br>
+👨‍🔧 **الفني:** {technician if technician else "-"}
 
-<b>🔗 المرجع:</b> {h.get("reference","")}<br>
+🔗 **المرجع:** {reference if reference else "-"}
 
-<b>📝 الملاحظات:</b> {h.get("notes","")}
+📝 **ملاحظات:** {notes if notes else "-"}
 
 </div>
 """,
                                 unsafe_allow_html=True
                             )
+
+                    st.divider()
