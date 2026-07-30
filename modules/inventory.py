@@ -143,26 +143,26 @@ def app():
                     key=f"history_{row['item_name']}",
                     use_container_width=True
                 )
-           # =========================
-           # Stock Level
-           # =========================
+        # =========================
+        # Stock Level
+        # =========================
             
-           if ideal_stock > 0:
+        if ideal_stock > 0:
             
-               percent = min(
-                   qty / ideal_stock,
-                   1.0
-               )
+            percent = min(
+                qty / ideal_stock,
+                1.0
+             )
             
-           else:
+         else:
             
-               percent = 1.0
+            percent = 1.0
             
-           st.progress(percent)
+        st.progress(percent)
             
-           st.caption(
-               f"المخزون الحالي: {qty} من {ideal_stock}"
-           )
+        st.caption(
+            f"المخزون الحالي: {qty} من {ideal_stock}"
+        )
 
             
             # =========================
