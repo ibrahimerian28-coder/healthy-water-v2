@@ -46,3 +46,38 @@ def check_inventory(parts_used, inventory_gid):
             )
 
     return errors
+    def deduct_inventory(parts_used, inventory_gid):
+
+    df = load_sheet(inventory_gid)
+
+    df.columns = df.columns.str.strip()
+
+    for part in parts_used:
+
+        item = part["item"].strip().lower()
+        qty_used = int(part["qty"])
+
+        match = df[
+            df["item_name"]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+            == item
+        ]
+
+        if match.empty:
+            continue
+
+        row = match.iloc[0]
+
+        current_qty = int(row["quantity"])
+
+        new_qty = current_qty - qty_used
+
+        update_row(
+            "Inventory",
+            row["uuid"],
+            {
+                "quantity": new_qty
+            }
+        )
