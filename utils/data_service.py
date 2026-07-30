@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import streamlit as st
 
 # =========================
 # CONFIG
@@ -57,7 +58,7 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
 
     except Exception as e:
         print("API ERROR:", e)
-        st.error(e)
+        
         return False
 
 
