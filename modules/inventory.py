@@ -112,7 +112,7 @@ def app():
             st.markdown(
                 f"""
         <div style="
-        background:{card_color};
+        background:{color};
         padding:18px;
         border-radius:15px;
         border-left:8px solid #2E86C1;
@@ -120,7 +120,7 @@ def app():
         ">
         
         <h3 style="margin:0;">
-        {status_icon} {row['item_name']}
+        {status} {row['item_name']}
         </h3>
         
         </div>
@@ -156,8 +156,7 @@ def app():
                     key=f"history_{row['item_name']}"
                 )
 
-            st.markdown("</div>", unsafe_allow_html=True)
-
+            
             # =========================
             # HISTORY
             # =========================
