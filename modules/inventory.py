@@ -136,13 +136,28 @@ def app():
             📦 {row['item_name']}
             </h3>
             
-            <div style="
-            margin-top:8px;
-            font-size:16px;
+            <div style="margin-top:10px;">
+
+            <span style="
+            padding:6px 14px;
+            border-radius:20px;
+            font-size:14px;
             font-weight:bold;
+            color:white;
+            
+            background:
+            {
+            '#28a745'
+            if 'جيد' in status
+            else '#ffc107'
+            if 'منخفض' in status
+            else '#dc3545'
+            };
             ">
+            
             {status}
-            </div>
+            
+            </span>
             
             </div>
             """,
