@@ -111,34 +111,48 @@ def app():
 
             st.markdown(
                 f"""
-<div style="
-background:{color};
-padding:12px;
-border-radius:10px;
-">
-""",
+        <div style="
+        background:{card_color};
+        padding:18px;
+        border-radius:15px;
+        border-left:8px solid #2E86C1;
+        margin-bottom:12px;
+        ">
+        
+        <h3 style="margin:0;">
+        {status_icon} {row['item_name']}
+        </h3>
+        
+        </div>
+        """,
                 unsafe_allow_html=True
             )
-
-            col1, col2, col3 = st.columns([4,2,2])
-
-            with col1:
-
-                st.markdown(
-                    f"### {status} {row['item_name']}"
-                )
-
-            with col2:
-
+        
+            c1, c2, c3, c4 = st.columns([2,2,2,2])
+        
+            with c1:
                 st.metric(
-                    "الكمية",
-                    qty
+                    "📦 الكمية",
+                    int(row["quantity"])
                 )
-
-            with col3:
-
+        
+            with c2:
+                st.metric(
+                    "⚠️ الحد الأدنى",
+                    int(row["min_limit"])
+                )
+        
+            with c3:
+                st.metric(
+                    "💰 سعر الشراء",
+                    f"{row['cost_price']} ج.م"
+                )
+        
+            with c4:
+        
                 show = st.button(
                     "📜 History",
+                    use_container_width=True,
                     key=f"history_{row['item_name']}"
                 )
 
