@@ -53,7 +53,10 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
         )
 
         response = r.text.strip()
+        print(response)
                     
+        print("Response =", repr(response))
+
         return response.startswith("OK")
 
     except Exception as e:
