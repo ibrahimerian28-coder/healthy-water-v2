@@ -36,12 +36,15 @@ def check_inventory(parts_used, inventory_gid):
 
             continue
 
-        available = int(
-            pd.to_numeric(
-                match.iloc[0]["quantity"],
-                errors="coerce"
-            ) or 0
+        available = pd.to_numeric(
+            match.iloc[0]["quantity"],
+            errors="coerce"
         )
+        
+        if pd.isna(available):
+            available = 0
+        
+        available = int(available)
 
         if available < qty_needed:
 
@@ -89,12 +92,15 @@ def deduct_inventory(parts_used, inventory_gid):
 
         row = match.iloc[0]
 
-        current_qty = int(
-            pd.to_numeric(
-                row["quantity"],
-                errors="coerce"
-            ) or 0
+        current_qty = pd.to_numeric(
+            row["quantity"],
+            errors="coerce"
         )
+        
+        if pd.isna(current_qty):
+            current_qty = 0
+        
+        current_qty = int(current_qty)
 
         new_qty = current_qty - qty_used
 
