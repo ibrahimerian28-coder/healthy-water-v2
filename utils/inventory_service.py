@@ -5,6 +5,7 @@ from utils.data_service import (
 )
 
 import pandas as pd
+from utils.history_service import add_inventory_history
 
 
 def check_inventory(parts_used, inventory_gid):
@@ -101,4 +102,12 @@ def deduct_inventory(parts_used, inventory_gid):
                 "item_name": row["item_name"],
                 "quantity": new_qty
             }
+        )
+        add_inventory_history(
+            movement="OUT",
+            item_name=row["item_name"],
+            quantity=qty_used,
+            reference="",
+            technician="",
+            notes="Maintenance Visit"
         )
