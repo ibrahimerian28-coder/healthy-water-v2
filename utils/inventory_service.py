@@ -52,15 +52,7 @@ def check_inventory(parts_used, inventory_gid):
                 f"{part['item']} : المتوفر {available} - المطلوب {qty_needed}"
             )
 
-    st.write("===== INVENTORY =====")
-    st.write(df)
-
-    st.write("===== USED PARTS =====")
-    st.write(parts_used)
-
-    st.write("===== ERRORS =====")
-    st.write(errors)
-
+    
     return errors
 
 
@@ -72,7 +64,6 @@ def deduct_inventory(parts_used, inventory_gid):
 
     for part in parts_used:
 
-        st.write("خصم:", part["item"], part["qty"])
 
         item = part["item"].strip().lower()
         qty_used = int(part["qty"])
@@ -85,8 +76,7 @@ def deduct_inventory(parts_used, inventory_gid):
             == item
         ]
 
-        st.write(match)
-
+        
         if match.empty:
             continue
 
