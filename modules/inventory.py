@@ -101,21 +101,33 @@ def app():
 
         if qty <= min_qty:
 
-            status = "🔴 حرج"
+            status = "🔴 Critical"
         
             card_color = "#ffe5e5"
         
         elif ideal_stock > 0 and qty < ideal_stock * 0.5:
         
-            status = "🟡 منخفض"
+            status = "🟡 Low"
         
             card_color = "#fff8d9"
         
         else:
         
-            status = "🟢 جيد"
+            status = "🟢 Good"
         
             card_color = "#e8ffe8"
+        # =========================
+        # Badge Color
+        # =========================
+        
+        if "Good" in status:
+            badge_color = "#28A745"
+        
+        elif "Low" in status:
+            badge_color = "#FFC107"
+        
+        else:
+            badge_color = "#DC3545"
 
         with st.container(border=True):
 
@@ -138,26 +150,24 @@ def app():
             
             <div style="margin-top:10px;">
 
-            <span style="
+            <div style="margin-top:10px;">
+
+            <span
+            style="
+            background:{badge_color};
+            color:white;
             padding:6px 14px;
             border-radius:20px;
             font-size:14px;
             font-weight:bold;
-            color:white;
-            
-            background:
-            {
-            '#28a745'
-            if 'جيد' in status
-            else '#ffc107'
-            if 'منخفض' in status
-            else '#dc3545'
-            };
+            display:inline-block;
             ">
             
             {status}
             
             </span>
+            
+            </div>
             
             </div>
             """,
@@ -171,21 +181,21 @@ def app():
             with c1:
 
                 st.metric(
-                    "📦 الكمية",
+                    "📦 Quantity",
                     qty
                 )
 
             with c2:
 
                 st.metric(
-                    "⚠️ الحد الأدنى",
+                    "⚠️Minimum",
                     min_qty
                 )
 
             with c3:
 
                 st.metric(
-                    "💰 سعر الوحدة",
+                    "💰 Unit Cost",
                     f"{cost_price:,.0f} ج.م"
                 )
 
@@ -197,7 +207,7 @@ def app():
                     use_container_width=True
                 )
                 st.metric(
-                    "💵 قيمة الصنف",
+                    "💵 Item Value",
                     f"{item_value:,.0f} ج.م"
                 )
 
@@ -219,7 +229,7 @@ def app():
             st.progress(percent)
 
             st.caption(
-                f"المخزون الحالي : {qty} من {ideal_stock}"
+                f"Current Stock : {qty} من {ideal_stock}"
             )
 
             # =========================
