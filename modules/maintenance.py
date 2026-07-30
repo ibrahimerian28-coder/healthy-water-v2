@@ -163,6 +163,9 @@ def app():
             created_at,
             created_at,
             ""
+             json.dumps(
+                used_parts,
+                ensure_ascii=False
         ]
 
         ok = add_row("Maintenance", new_row)
