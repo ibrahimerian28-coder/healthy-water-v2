@@ -1,3 +1,4 @@
+import streamlit as st
 from utils.data_service import (
     load_sheet,
     update_row
@@ -48,14 +49,27 @@ def check_inventory(parts_used, inventory_gid):
                 f"{part['item']} : المتوفر {available} - المطلوب {qty_needed}"
             )
 
+    st.write("===== INVENTORY =====")
+    st.write(df)
+
+    st.write("===== USED PARTS =====")
+    st.write(parts_used)
+
+    st.write("===== ERRORS =====")
+    st.write(errors)
+
     return errors
-    def deduct_inventory(parts_used, inventory_gid):
+
+
+def deduct_inventory(parts_used, inventory_gid):
 
     df = load_sheet(inventory_gid)
 
     df.columns = df.columns.str.strip()
 
     for part in parts_used:
+
+        st.write("خصم:", part["item"], part["qty"])
 
         item = part["item"].strip().lower()
         qty_used = int(part["qty"])
@@ -67,6 +81,8 @@ def check_inventory(parts_used, inventory_gid):
             .str.lower()
             == item
         ]
+
+        st.write(match)
 
         if match.empty:
             continue
