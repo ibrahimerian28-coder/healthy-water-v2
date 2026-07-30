@@ -1,10 +1,17 @@
 import streamlit as st
-import pandas as pd
 
 
 def render_parts_manager(df_inventory):
 
     st.subheader("🧩 Parts Used")
+
+    used_parts = []
+
+    # =========================
+    # STANDARD FILTERS
+    # =========================
+
+    st.markdown("### 📦 Standard Filters")
 
     standard_parts = [
         "P1",
@@ -16,41 +23,49 @@ def render_parts_manager(df_inventory):
         "Infrared"
     ]
 
-    used_parts = []
-
-    st.markdown("### Standard Filters")
-
     for part in standard_parts:
 
-        selected = st.checkbox(
-            part,
-            key=f"chk_{part}"
-        )
-        
-        if selected:
-            
-            qty = st.number_input(
-                f"{part} Qty",
-                min_value=1,
-                value=1,
-                step=1,
-                key=f"qty_{part}"
+        col1, col2 = st.columns([3, 1])
+
+        with col1:
+            checked = st.checkbox(
+                part,
+                key=f"chk_{part}"
             )
 
-            used_parts.append({
-                "item": part,
-                "qty": qty
-            })
+        qty = 1
+
+        with col2:
+
+            if checked:
+
+                qty = st.number_input(
+                    "Qty",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key=f"qty_{part}",
+                    label_visibility="collapsed"
+                )
+
+        if checked:
+
+            used_parts.append(
+                {
+                    "item": part,
+                    "qty": qty
+                }
+            )
 
     st.divider()
+
     # =========================
     # OTHER PARTS
     # =========================
 
-    st.markdown("### Other Parts")
-    st.success("وصلنا إلى Other Parts")
+    st.markdown("### 🔩 Other Parts")
 
-    excluded_items = {
+    excluded = {
         "p1",
         "p2",
         "p3",
@@ -73,32 +88,28 @@ def render_parts_manager(df_inventory):
         )
 
         inventory_items = [
-            item
-            for item in inventory_items
-            if item.lower() not in excluded_items
+            x
+            for x in inventory_items
+            if x.lower() not in excluded
         ]
-        st.write(inventory_items)
 
     if "other_parts_list" not in st.session_state:
 
         st.session_state.other_parts_list = []
 
+    c1, c2 = st.columns([3, 1])
 
-    col1, col2 = st.columns([3,1])
+    with c1:
 
-
-    with col1:
-
-        selected_part = st.selectbox(
-            "Select Part",
+        selected = st.selectbox(
+            "Part",
             [""] + sorted(inventory_items),
-            key="selected_other_part"
+            key="other_part_name"
         )
 
+    with c2:
 
-    with col2:
-
-        part_qty = st.number_input(
+        qty = st.number_input(
             "Qty",
             min_value=1,
             value=1,
@@ -106,67 +117,55 @@ def render_parts_manager(df_inventory):
             key="other_part_qty"
         )
 
-
     if st.button(
-        "➕ Add Part",
-        key="add_other_part"
+        "➕ Add",
+        key="btn_add_other_part"
     ):
 
-        if selected_part:
+        if selected:
 
-            exists = False
+            found = False
 
             for item in st.session_state.other_parts_list:
 
-                if item["item"] == selected_part:
+                if item["item"] == selected:
 
-                    item["qty"] += part_qty
-                    exists = True
+                    item["qty"] += qty
+                    found = True
+                    break
 
-
-            if not exists:
+            if not found:
 
                 st.session_state.other_parts_list.append(
                     {
-                        "item": selected_part,
-                        "qty": part_qty
+                        "item": selected,
+                        "qty": qty
                     }
                 )
 
-
-    # عرض القطع المختارة
+            st.rerun()
 
     if st.session_state.other_parts_list:
 
         st.markdown("#### Selected Parts")
 
-        for index, item in enumerate(
-            st.session_state.other_parts_list
-        ):
+        for i, item in enumerate(st.session_state.other_parts_list):
 
-            c1, c2, c3 = st.columns([3,1,1])
+            a, b, c = st.columns([4, 1, 1])
 
-            with c1:
-                st.write(item["item"])
+            a.write(item["item"])
 
-            with c2:
-                st.write(
-                    f"Qty: {item['qty']}"
-                )
+            b.write(f"x {item['qty']}")
 
-            with c3:
+            if c.button(
+                "🗑️",
+                key=f"remove_{i}"
+            ):
 
-                if st.button(
-                    "🗑️",
-                    key=f"delete_part_{index}"
-                ):
+                st.session_state.other_parts_list.pop(i)
 
-                    st.session_state.other_parts_list.pop(index)
-                    st.rerun()
+                st.rerun()
 
-
-        used_parts.extend(
-            st.session_state.other_parts_list
-        )
+    used_parts.extend(st.session_state.other_parts_list)
 
     return used_parts
