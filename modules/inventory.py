@@ -81,7 +81,9 @@ def app():
                     
                         date = str(h.get("date", ""))[:10]
                     
-                        with st.container(border=True):
+                        with st.expander(
+                            f"{title} | {h.get('item_name','')} | {date}"
+                        ):
                     
                             st.markdown(
                                 f"""
@@ -91,8 +93,7 @@ def app():
                     border-radius:10px;
                     ">
                     
-                    <h4>{title}</h4>
-                    
+                                        
                     <b>📅 التاريخ:</b> {date}<br>
                     
                     <b>📦 الصنف:</b> {h.get("item_name","")}<br>
