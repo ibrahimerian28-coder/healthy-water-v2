@@ -132,6 +132,26 @@ def app():
                     key=f"history_{row['item_name']}",
                     use_container_width=True
                 )
+            # =========================
+            # Stock Level Progress Bar
+            # =========================
+    
+            if min_qty > 0:
+    
+                percent = min(
+                    (qty / min_qty) * 100,
+                    100
+                )
+    
+            else:
+    
+                percent = 100
+    
+            st.progress(percent / 100)
+    
+            st.caption(
+                f"نسبة المخزون: {percent:.0f}%"
+            )
 
             
             # =========================
