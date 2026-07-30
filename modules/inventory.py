@@ -8,6 +8,65 @@ def app():
 
     gid = st.session_state.SHEETS["Inventory"]
     df = load_sheet(gid)
+    # =========================
+    # Inventory Statistics
+    # =========================
+    
+    df["quantity"] = pd.to_numeric(
+        df["quantity"],
+        errors="coerce"
+    ).fillna(0)
+    
+    df["min_limit"] = pd.to_numeric(
+        df["min_limit"],
+        errors="coerce"
+    ).fillna(0)
+    
+    df["cost_price"] = pd.to_numeric(
+        df["cost_price"],
+        errors="coerce"
+    ).fillna(0)
+    
+    total_items = len(df)
+    
+    low_stock = len(
+        df[
+            df["quantity"] <= df["min_limit"]
+        ]
+    )
+    
+    total_quantity = int(
+        df["quantity"].sum()
+    )
+    
+    inventory_value = (
+        df["quantity"] *
+        df["cost_price"]
+    ).sum()
+    
+    c1, c2, c3, c4 = st.columns(4)
+    
+    c1.metric(
+        "📦 الأصناف",
+        total_items
+    )
+    
+    c2.metric(
+        "⚠️ منخفض المخزون",
+        low_stock
+    )
+    
+    c3.metric(
+        "📊 إجمالي الكميات",
+        total_quantity
+    )
+    
+    c4.metric(
+        "💰 قيمة المخزون",
+        f"{inventory_value:,.0f} ج.م"
+    )
+    
+    st.divider()
 
     history_gid = st.session_state.SHEETS["Inventory_History"]
     df_history = load_sheet(history_gid)
