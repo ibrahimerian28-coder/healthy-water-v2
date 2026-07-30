@@ -98,11 +98,11 @@ def deduct_inventory(parts_used, inventory_gid):
 
         new_qty = current_qty - qty_used
 
-       update_row(
-           "Inventory",
-           "",
-           {
-               "item_name": row["item_name"],
-               "quantity": new_qty
-           }
-       )
+        update_row(
+            "Inventory",
+            "",
+            {
+                "item_name": row["item_name"],
+                "quantity": new_qty
+            }
+        )
