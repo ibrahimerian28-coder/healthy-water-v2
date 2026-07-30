@@ -5,7 +5,7 @@ from utils.data_service import (
 )
 
 import pandas as pd
-from utils.history_service import add_inventory_history
+from utils.inventory_history_service import add_inventory_history
 
 
 def check_inventory(parts_used, inventory_gid):
