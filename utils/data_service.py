@@ -94,9 +94,8 @@ def update_row(sheet, uuid_value, data):
         action="update",
         sheet=sheet,
         data=data,
-        uuid=uuid_value
+        uuid=uuid_value if uuid_value else None
     )
-
 
 # =========================
 # 📌 DELETE BY UUID (NEW SYSTEM)
