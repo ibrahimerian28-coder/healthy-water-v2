@@ -73,7 +73,12 @@ def check_inventory(parts_used, inventory_gid):
 
         row = match.iloc[0]
 
-        current_qty = int(row["quantity"])
+        current_qty = int(
+            pd.to_numeric(
+                row["quantity"],
+                errors="coerce"
+            ) or 0
+        )
 
         new_qty = current_qty - qty_used
 
