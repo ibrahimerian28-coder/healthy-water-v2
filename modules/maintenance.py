@@ -195,6 +195,8 @@ def app():
                 st.warning(err)
         
             st.stop()
+        st.write("RETURN USED PARTS")
+        st.json(used_parts)
     
         new_row = [
     
