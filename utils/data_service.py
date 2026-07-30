@@ -1,6 +1,5 @@
 import pandas as pd
 import requests
-print("######## USING utils/data_service.py ########")
 
 # =========================
 # CONFIG
@@ -53,17 +52,7 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
         )
 
         response = r.text.strip()
-
-        print("REQUEST URL:", APP_SCRIPT_URL)
-        print("Status Code:", r.status_code)
-        print("RAW RESPONSE:", response)
-
-        import streamlit as st
-
-        st.write("REQUEST URL:", APP_SCRIPT_URL)
-        st.write("Status Code:", r.status_code)
-        st.write("RAW RESPONSE:", response)
-
+                    
         return response.startswith("OK")
 
     except Exception as e:
