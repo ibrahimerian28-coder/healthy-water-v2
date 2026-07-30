@@ -167,6 +167,5 @@ def render_parts_manager(df_inventory):
                 st.rerun()
 
     used_parts.extend(st.session_state.other_parts_list)
-    st.write("RETURN USED PARTS")
-    st.write(used_parts)
+    
     return used_parts
