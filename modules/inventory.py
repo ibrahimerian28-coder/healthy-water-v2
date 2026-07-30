@@ -92,9 +92,20 @@ def app():
 
     for _, row in df.iterrows():
 
-        qty = int(row["quantity"])
-        min_qty = int(row["min_limit"])
-
+        qty = int(pd.to_numeric(
+            row["quantity"],
+            errors="coerce"
+        ) or 0)
+        
+        min_qty = int(pd.to_numeric(
+            row["min_limit"],
+            errors="coerce"
+        ) or 0)
+        
+        ideal_stock = int(pd.to_numeric(
+            row["ideal_stock"],
+            errors="coerce"
+        ) or 0)
         if qty < min_qty:
             status = "🔴"
             color = "#ffe5e5"
@@ -132,26 +143,26 @@ def app():
                     key=f"history_{row['item_name']}",
                     use_container_width=True
                 )
-            # =========================
-            # Stock Level Progress Bar
-            # =========================
-    
-            if min_qty > 0:
-    
-                percent = min(
-                    (qty / min_qty) * 100,
-                    100
-                )
-    
-            else:
-    
-                percent = 100
-    
-            st.progress(percent / 100)
-    
-            st.caption(
-                f"نسبة المخزون: {percent:.0f}%"
-            )
+           # =========================
+           # Stock Level
+           # =========================
+            
+           if ideal_stock > 0:
+            
+               percent = min(
+                   qty / ideal_stock,
+                   1.0
+               )
+            
+           else:
+            
+               percent = 1.0
+            
+           st.progress(percent)
+            
+           st.caption(
+               f"المخزون الحالي: {qty} من {ideal_stock}"
+           )
 
             
             # =========================
