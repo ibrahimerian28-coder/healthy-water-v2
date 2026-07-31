@@ -94,6 +94,15 @@ def app():
         "🔍 Search Item",
         placeholder="Type item name..."
     )
+    status_filter = st.selectbox(
+        "📌 Stock Status",
+        [
+            "All",
+            "Good",
+            "Low",
+            "Critical"
+        ]
+    )
 
     # =========================
     # INVENTORY CARDS
@@ -107,6 +116,15 @@ def app():
             ).lower():
         
                 continue
+    # =========================
+    # STATUS FILTER
+    # =========================
+    
+    if status_filter != "All":
+    
+        if status_filter not in status:
+    
+            continue
 
         qty = int(row["quantity"])
         min_qty = int(row["min_limit"])
