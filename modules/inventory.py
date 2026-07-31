@@ -116,15 +116,15 @@ def app():
             ).lower():
         
                 continue
-    # =========================
-    # STATUS FILTER
-    # =========================
-    
-    if status_filter != "All":
-    
-        if status_filter not in status:
-    
-            continue
+        # =========================
+        # STATUS FILTER
+        # =========================
+        
+        if status_filter != "All":
+        
+            if status_filter not in status:
+        
+                continue
 
         qty = int(row["quantity"])
         min_qty = int(row["min_limit"])
