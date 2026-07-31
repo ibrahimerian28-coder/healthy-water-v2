@@ -30,6 +30,33 @@ def app():
 
     if not df_history.empty:
         df_history.columns = df_history.columns.str.strip()
+    # =========================
+    # LAST MOVEMENT CACHE
+    # =========================
+    
+    last_history = {}
+    
+    if not df_history.empty:
+    
+        df_history["item_name"] = (
+            df_history["item_name"]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+        )
+    
+        df_history = df_history.sort_values(
+            "date",
+            ascending=False
+        )
+    
+        for _, h in df_history.iterrows():
+    
+            item = h["item_name"]
+    
+            if item not in last_history:
+    
+                last_history[item] = h
 
     numeric_columns = [
         "quantity",
@@ -186,25 +213,15 @@ def app():
         # Last Inventory Movement
         # =========================
         
-        item_history = df_history[
-            df_history["item_name"]
-            .astype(str)
-            .str.strip()
-            .str.lower()
-            ==
+        item_key = (
             str(row["item_name"])
             .strip()
             .lower()
-        ]
+        )
         
-        if not item_history.empty:
+        if item_key in last_history:
         
-            item_history = item_history.sort_values(
-                "date",
-                ascending=False
-            )
-        
-            last_move = item_history.iloc[0]
+            last_move = last_history[item_key]
         
             last_movement = str(
                 last_move.get("movement", "")
@@ -225,6 +242,8 @@ def app():
             last_date = "-"
         
             last_technician = "-"
+        
+        
         if qty <= min_qty:
 
             status = "🔴 Critical"
