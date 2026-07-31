@@ -98,7 +98,49 @@ def app():
         ideal_stock = int(row["ideal_stock"])
         cost_price = float(row["cost_price"])
         item_value = qty * cost_price
-
+        # =========================
+        # Last Inventory Movement
+        # =========================
+        
+        item_history = df_history[
+            df_history["item_name"]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+            ==
+            str(row["item_name"])
+            .strip()
+            .lower()
+        ]
+        
+        if not item_history.empty:
+        
+            item_history = item_history.sort_values(
+                "date",
+                ascending=False
+            )
+        
+            last_move = item_history.iloc[0]
+        
+            last_movement = str(
+                last_move.get("movement", "")
+            ).upper()
+        
+            last_date = str(
+                last_move.get("date", "")
+            )[:10]
+        
+            last_technician = str(
+                last_move.get("technician", "")
+            )
+        
+        else:
+        
+            last_movement = "-"
+        
+            last_date = "-"
+        
+            last_technician = "-"
         if qty <= min_qty:
 
             status = "🔴 Critical"
