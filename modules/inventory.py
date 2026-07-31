@@ -358,12 +358,39 @@ def app():
                     )
             
                 with b2:
-            
-                    add_stock = st.button(
+
+                    with st.popover(
                         "➕ Add",
-                        key=f"add_{row['item_name']}",
                         use_container_width=True
-                    )
+                    ):
+                
+                        add_qty = st.number_input(
+                            "Quantity",
+                            min_value=1,
+                            step=1,
+                            key=f"add_qty_{row['item_name']}"
+                        )
+                
+                        add_technician = st.text_input(
+                            "Technician",
+                            key=f"add_tech_{row['item_name']}"
+                        )
+                
+                        add_reference = st.text_input(
+                            "Reference",
+                            key=f"add_ref_{row['item_name']}"
+                        )
+                
+                        add_notes = st.text_area(
+                            "Notes",
+                            key=f"add_notes_{row['item_name']}"
+                        )
+                
+                        confirm_add = st.button(
+                            "✅ Confirm",
+                            key=f"confirm_add_{row['item_name']}",
+                            use_container_width=True
+                        )
             
                 with b3:
             
