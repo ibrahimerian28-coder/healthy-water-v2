@@ -210,19 +210,26 @@ def app():
             </div>
             
             <div style="
+            display:flex;
+            justify-content:space-between;
             margin-top:15px;
-            line-height:1.8;
             font-size:14px;
+            font-weight:500;
             ">
             
-            🕒 <b>Last Movement:</b> {last_movement}<br>
-            
-            📅 <b>Last Date:</b> {last_date}<br>
-            
-            👨‍🔧 <b>Last Technician:</b> {last_technician}
-            
+            <div>
+            🕒 <b>{last_movement}</b>
             </div>
             
+            <div>
+            📅 <b>{last_date}</b>
+            </div>
+            
+            <div>
+            👨‍🔧 <b>{last_technician if last_technician else '-'}</b>
+            </div>
+            
+            </div>
             </div>
             """,
                 unsafe_allow_html=True
