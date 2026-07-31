@@ -86,12 +86,27 @@ def app():
     )
 
     st.divider()
+    # =========================
+    # SEARCH
+    # =========================
+    
+    search = st.text_input(
+        "🔍 Search Item",
+        placeholder="Type item name..."
+    )
 
     # =========================
     # INVENTORY CARDS
     # =========================
 
     for _, row in df.iterrows():
+        if search:
+
+            if search.lower() not in str(
+                row["item_name"]
+            ).lower():
+        
+                continue
 
         qty = int(row["quantity"])
         min_qty = int(row["min_limit"])
