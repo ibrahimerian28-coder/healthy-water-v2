@@ -403,6 +403,18 @@ def app():
                             key=f"confirm_add_{row['item_name']}",
                             use_container_width=True
                         )
+                        if confirm_add:
+
+                            new_quantity = qty + add_qty
+                        
+                            df.loc[
+                                df["item_name"] == row["item_name"],
+                                "quantity"
+                            ] = new_quantity
+                        
+                            st.success(
+                                f"{row['item_name']} updated to {new_quantity}"
+                            )
             
                 with b3:
             
