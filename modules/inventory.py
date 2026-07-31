@@ -191,9 +191,7 @@ def app():
             </h3>
             
             <div style="margin-top:10px;">
-
-            <div style="margin-top:10px;">
-
+            
             <span
             style="
             background:{badge_color};
@@ -208,6 +206,20 @@ def app():
             {status}
             
             </span>
+            
+            </div>
+            
+            <div style="
+            margin-top:15px;
+            line-height:1.8;
+            font-size:14px;
+            ">
+            
+            🕒 <b>Last Movement:</b> {last_movement}<br>
+            
+            📅 <b>Last Date:</b> {last_date}<br>
+            
+            👨‍🔧 <b>Last Technician:</b> {last_technician}
             
             </div>
             
