@@ -445,6 +445,44 @@ def app():
                         if confirm_add:
 
                             new_quantity = qty + add_qty
+                                update_data = {
+
+                                    "item_name": row["item_name"],
+                            
+                                    "quantity": new_quantity,
+                            
+                                    "min_limit": min_qty,
+                            
+                                    "cost_price": cost_price,
+                            
+                                    "ideal_stock": ideal_stock
+                            
+                                }
+                                result = update_row(
+
+                                    "Inventory",
+                            
+                                    None,
+                            
+                                    update_data
+                            
+                                )
+                                if result:
+
+                                    st.success(
+                                        "Inventory Updated Successfully"
+                                    )
+                            
+                                    st.rerun()
+                            
+                                else:
+                            
+                                    st.error(
+                                        "Failed To Update Inventory"
+                                    )
+                        if confirm_add:
+
+                            new_quantity = qty + add_qty
                         
                             df.loc[
                                 df["item_name"] == row["item_name"],
