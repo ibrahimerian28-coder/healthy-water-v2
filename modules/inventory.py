@@ -116,15 +116,7 @@ def app():
             ).lower():
         
                 continue
-        # =========================
-        # STATUS FILTER
-        # =========================
         
-        if status_filter != "All":
-        
-            if status_filter not in status:
-        
-                continue
 
         qty = int(row["quantity"])
         min_qty = int(row["min_limit"])
@@ -191,6 +183,15 @@ def app():
             status = "🟢 Good"
         
             card_color = "#e8ffe8"
+        # =========================
+        # STATUS FILTER
+        # =========================
+        
+        if status_filter != "All":
+        
+            if status_filter not in status:
+        
+                continue
         # =========================
         # Badge Color
         # =========================
