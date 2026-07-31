@@ -371,7 +371,7 @@ def app():
             
             with footer_buttons:
 
-                b1, b2, b3 = st.columns(3)
+                b1, b2, b3, b4 = st.columns(4)
             
                 with b1:
             
@@ -478,6 +478,21 @@ def app():
                         key=f"remove_{row['item_name']}",
                         use_container_width=True
                     )
+                with b4:
+
+                    with st.popover(
+                        "⚙️ Manage",
+                        use_container_width=True
+                    ):
+                
+                        st.subheader("Inventory Management")
+                
+                        st.info(
+                            "This window will contain:\n\n"
+                            "• Add Stock\n"
+                            "• Remove Stock\n"
+                            "• Movement History"
+                        )
 
             # =========================
             # HISTORY
