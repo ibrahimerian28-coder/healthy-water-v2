@@ -82,7 +82,7 @@ def app():
 
     c4.metric(
         "💰  Inventory Value",
-        f"{inventory_value:,.0f} ج.م"
+        f"{inventory_value:,.0f} EGP"
     )
 
     st.divider()
@@ -218,7 +218,7 @@ def app():
 
                 st.metric(
                     "💰 Unit Cost",
-                    f"{cost_price:,.0f} ج.م"
+                    f"{cost_price:,.0f} EGP"
                 )
 
             with c4:
