@@ -172,48 +172,48 @@ def app():
             badge_color = "#DC3545"
 
         with st.container(border=True):
+            # =========================
+            # Card Header
+            # =========================
+            
+            header_left, header_right = st.columns([4, 1])
+            
+            with header_left:
+            
+                st.subheader(f"📦 {row['item_name']}")
+            
+            with header_right:
+            
+                if "Critical" in status:
+                    st.error("🔴 Critical")
+            
+                elif "Low" in status:
+                    st.warning("🟡 Low")
+            
+                else:
+                    st.success("🟢 Good")
+            
+            
+            info1, info2, info3 = st.columns(3)
+            
+            with info1:
+            
+                st.caption("🕒 Last Movement")
+                st.write(last_movement)
+            
+            with info2:
+            
+                st.caption("📅 Last Date")
+                st.write(last_date)
+            
+            with info3:
+            
+                st.caption("👨 Technician")
+                st.write(last_technician if last_technician else "-")
+            
+            st.divider()
 
-            st.markdown(
-                f"""
-            <div style="
-            background:{card_color};
-            padding:18px;
-            border-radius:14px;
-            margin-bottom:12px;
-            border-left:8px solid #2E86C1;
-            ">
             
-            <h3 style="
-            margin:0;
-            padding:0;
-            ">
-            📦 {row['item_name']}
-            </h3>
-            
-            <div style="margin-top:10px;">
-            
-            <span
-            style="
-            background:{badge_color};
-            color:white;
-            padding:6px 14px;
-            border-radius:20px;
-            font-size:14px;
-            font-weight:bold;
-            display:inline-block;
-            ">
-            
-            {status}
-            
-            </span>
-            
-            </div>
-            
-            
-            </div>
-            """,
-                unsafe_allow_html=True
-            )
             info1, info2, info3 = st.columns(3)
 
             with info1:
