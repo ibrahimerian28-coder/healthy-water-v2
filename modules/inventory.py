@@ -194,26 +194,7 @@ def app():
                     st.success("🟢 Good")
             
             
-            info1, info2, info3 = st.columns(3)
-            
-            with info1:
-            
-                st.caption("🕒 Last Movement")
-                st.write(last_movement)
-            
-            with info2:
-            
-                st.caption("📅 Last Date")
-                st.write(last_date)
-            
-            with info3:
-            
-                st.caption("👨 Technician")
-                st.write(last_technician if last_technician else "-")
-            
-            st.divider()
-
-            
+                        
             
             c1, c2, c3, c4 = st.columns(
                 [2, 2, 2, 2]
@@ -242,16 +223,10 @@ def app():
 
             with c4:
 
-                show = st.button(
-                    "📜 History",
-                    key=f"history_{row['item_name']}",
-                    use_container_width=True
-                )
                 st.metric(
                     "💵 Item Value",
-                    f"{item_value:,.0f} ج.م"
+                    f"{item_value:,.0f} EGP"
                 )
-
             # =========================
             # STOCK LEVEL
             # =========================
@@ -272,6 +247,23 @@ def app():
             st.caption(
                 f"Current Stock : {qty} من {ideal_stock}"
             )
+            footer_left, footer_right = st.columns([4, 1])
+
+            with footer_left:
+            
+                movement_icon = "➕" if last_movement == "IN" else "➖"
+            
+                st.caption(
+                    f"{movement_icon} {last_movement}    •    📅 {last_date}    •    👨 {last_technician if last_technician else '-'}"
+                )
+            
+            with footer_right:
+            
+                show = st.button(
+                    "📜 History",
+                    key=f"history_{row['item_name']}",
+                    use_container_width=True
+                )
 
             # =========================
             # HISTORY
