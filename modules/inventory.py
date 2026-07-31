@@ -380,6 +380,7 @@ def app():
                         key=f"history_{row['item_name']}",
                         use_container_width=True
                     )
+
                 with b2:
                     with st.popover(
                         "➕ Add",
@@ -468,6 +469,7 @@ def app():
                                 st.error(
                                     "Failed To Update Inventory"
                                 )                                     
+
                 with b3:
             
                     remove_stock = st.button(
@@ -475,6 +477,7 @@ def app():
                         key=f"remove_{row['item_name']}",
                         use_container_width=True
                     )
+
                 with b4:
 
                     with st.popover(
@@ -483,18 +486,18 @@ def app():
                     ):
                 
                         st.subheader("Inventory Management")
+
                         st.info(
-                            "This window will contain:
+                            """
+                            This window will contain:
                 
                             • Add Stock
                 
                             • Remove Stock
                 
-                            • Movement History"
+                            • Movement History
+                            """
                         )
-                
-                            
-
             # =========================
             # HISTORY
             # =========================
