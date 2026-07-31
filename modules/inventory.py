@@ -46,41 +46,7 @@ def app():
                 df[col],
                 errors="coerce"
             ).fillna(0)
-    # =========================
-    # CREATE UUID IF MISSING
-    # =========================
-    
-    if "uuid" in df.columns:
-    
-        for index, row in df.iterrows():
-    
-            current_uuid = str(
-                row["uuid"]
-            ).strip()
-    
-            if current_uuid == "":
-    
-                new_uuid = str(
-                    uuid.uuid4()
-                )
-    
-                df.at[
-                    index,
-                    "uuid"
-                ] = new_uuid
-    
-                update_row(
-                    "Inventory",
-                    new_uuid,
-                    {
-                        "uuid": new_uuid,
-                        "item_name": row["item_name"],
-                        "quantity": row["quantity"],
-                        "min_limit": row["min_limit"],
-                        "cost_price": row["cost_price"],
-                        "ideal_stock": row["ideal_stock"]
-                    }
-                )
+   
     # =========================
     # DASHBOARD
     # =========================
