@@ -103,7 +103,56 @@ def app():
             "Critical"
         ]
     )
-
+    sort_by = st.selectbox(
+        "↕️ Sort By",
+        [
+            "Name (A-Z)",
+            "Quantity (High → Low)",
+            "Quantity (Low → High)",
+            "Value (High → Low)",
+            "Value (Low → High)"
+        ]
+    )
+    # =========================
+    # SORT
+    # =========================
+    
+    df["item_value"] = (
+        df["quantity"] *
+        df["cost_price"]
+    )
+    
+    if sort_by == "Name (A-Z)":
+    
+        df = df.sort_values(
+            "item_name"
+        )
+    
+    elif sort_by == "Quantity (High → Low)":
+    
+        df = df.sort_values(
+            "quantity",
+            ascending=False
+        )
+    
+    elif sort_by == "Quantity (Low → High)":
+    
+        df = df.sort_values(
+            "quantity"
+        )
+    
+    elif sort_by == "Value (High → Low)":
+    
+        df = df.sort_values(
+            "item_value",
+            ascending=False
+        )
+    
+    elif sort_by == "Value (Low → High)":
+    
+        df = df.sort_values(
+            "item_value"
+        )
     # =========================
     # INVENTORY CARDS
     # =========================
