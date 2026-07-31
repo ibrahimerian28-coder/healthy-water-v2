@@ -254,7 +254,7 @@ def app():
                 movement_icon = "➕" if last_movement == "IN" else "➖"
             
                 st.caption(
-                    f"{movement_icon} {last_movement}    •    📅 {last_date}    •    👨 {last_technician if last_technician else '-'}"
+                    f"{movement_icon} {last_movement}      📅 {last_date}      👨 {last_technician}"
                 )
             
             with footer_right:
