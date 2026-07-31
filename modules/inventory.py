@@ -424,9 +424,10 @@ def app():
                                 "Inventory Adjustment",
                                 "Transfer From Warehouse",
                                 "Other"
-                                ],
-                                key=f"reason_{row['item_name']}"
-                            )
+                            ],
+                            key=f"reason_{row['item_name']}"
+                        )
+                
                         invoice_no = st.text_input(
                             "Invoice / Reference No.",
                             key=f"invoice_{row['item_name']}"
@@ -442,44 +443,48 @@ def app():
                             key=f"confirm_add_{row['item_name']}",
                             use_container_width=True
                         )
+                
                         if confirm_add:
-
+                
                             new_quantity = qty + add_qty
+                
                             update_data = {
-
+                
                                 "item_name": row["item_name"],
-                        
+                
                                 "quantity": new_quantity,
-                        
+                
                                 "min_limit": min_qty,
-                        
+                
                                 "cost_price": cost_price,
-                        
+                
                                 "ideal_stock": ideal_stock
-                        
+                
                             }
-                                result = update_row(
-
-                                    "Inventory",
-                            
-                                    None,
-                            
-                                    update_data
-                            
+                
+                            result = update_row(
+                
+                                "Inventory",
+                
+                                None,
+                
+                                update_data
+                
+                            )
+                
+                            if result:
+                
+                                st.success(
+                                    "Inventory Updated Successfully"
                                 )
-                                if result:
-
-                                    st.success(
-                                        "Inventory Updated Successfully"
-                                    )
-                            
-                                    st.rerun()
-                            
-                                else:
-                            
-                                    st.error(
-                                        "Failed To Update Inventory"
-                                    )
+                
+                                st.rerun()
+                
+                            else:
+                
+                                st.error(
+                                    "Failed To Update Inventory"
+                                )
                                     
                 with b3:
             
