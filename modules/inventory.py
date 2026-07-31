@@ -381,95 +381,7 @@ def app():
                         use_container_width=True
                     )
             
-                with b2:
-
-                    with st.popover(
-                        "➕ Add",
-                        use_container_width=True
-                    ):
                 
-                        add_qty = st.number_input(
-                            "Quantity",
-                            min_value=1,
-                            step=1,
-                            key=f"add_qty_{row['item_name']}"
-                        )
-                
-                        add_technician = st.text_input(
-                            "Technician",
-                            key=f"add_tech_{row['item_name']}"
-                        )
-                
-                        movement_reason = st.selectbox(
-                            "Movement Reason",
-                            [
-                                "Purchase",
-                                "Supplier Delivery",
-                                "Customer Return",
-                                "Inventory Adjustment",
-                                "Transfer From Warehouse",
-                                "Other"
-                            ],
-                            key=f"reason_{row['item_name']}"
-                        )
-                
-                        invoice_no = st.text_input(
-                            "Invoice / Reference No.",
-                            key=f"invoice_{row['item_name']}"
-                        )
-                
-                        add_notes = st.text_area(
-                            "Notes",
-                            key=f"add_notes_{row['item_name']}"
-                        )
-                
-                        confirm_add = st.button(
-                            "✅ Confirm",
-                            key=f"confirm_add_{row['item_name']}",
-                            use_container_width=True
-                        )
-                
-                        if confirm_add:
-                
-                            new_quantity = qty + add_qty
-                
-                            update_data = {
-                
-                                "item_name": row["item_name"],
-                
-                                "quantity": new_quantity,
-                
-                                "min_limit": min_qty,
-                
-                                "cost_price": cost_price,
-                
-                                "ideal_stock": ideal_stock
-                
-                            }
-                
-                            result = update_row(
-                
-                                "Inventory",
-                
-                                None,
-                
-                                update_data
-                
-                            )
-                
-                            if result:
-                
-                                st.success(
-                                    "Inventory Updated Successfully"
-                                )
-                
-                                st.rerun()
-                
-                            else:
-                
-                                st.error(
-                                    "Failed To Update Inventory"
-                                )
                                     
                 with b3:
             
@@ -487,12 +399,94 @@ def app():
                 
                         st.subheader("Inventory Management")
                 
-                        st.info(
-                            "This window will contain:\n\n"
-                            "• Add Stock\n"
-                            "• Remove Stock\n"
-                            "• Movement History"
-                        )
+                       
+                            with st.popover(
+                                "➕ Add",
+                                use_container_width=True
+                            ):
+                        
+                                add_qty = st.number_input(
+                                    "Quantity",
+                                    min_value=1,
+                                    step=1,
+                                    key=f"add_qty_{row['item_name']}"
+                                )
+                        
+                                add_technician = st.text_input(
+                                    "Technician",
+                                    key=f"add_tech_{row['item_name']}"
+                                )
+                        
+                                movement_reason = st.selectbox(
+                                    "Movement Reason",
+                                    [
+                                        "Purchase",
+                                        "Supplier Delivery",
+                                        "Customer Return",
+                                        "Inventory Adjustment",
+                                        "Transfer From Warehouse",
+                                        "Other"
+                                    ],
+                                    key=f"reason_{row['item_name']}"
+                                )
+                        
+                                invoice_no = st.text_input(
+                                    "Invoice / Reference No.",
+                                    key=f"invoice_{row['item_name']}"
+                                )
+                        
+                                add_notes = st.text_area(
+                                    "Notes",
+                                    key=f"add_notes_{row['item_name']}"
+                                )
+                        
+                                confirm_add = st.button(
+                                    "✅ Confirm",
+                                    key=f"confirm_add_{row['item_name']}",
+                                    use_container_width=True
+                                )
+                        
+                                if confirm_add:
+                        
+                                    new_quantity = qty + add_qty
+                        
+                                    update_data = {
+                        
+                                        "item_name": row["item_name"],
+                        
+                                        "quantity": new_quantity,
+                        
+                                        "min_limit": min_qty,
+                        
+                                        "cost_price": cost_price,
+                        
+                                        "ideal_stock": ideal_stock
+                        
+                                    }
+                        
+                                    result = update_row(
+                        
+                                        "Inventory",
+                        
+                                        None,
+                        
+                                        update_data
+                        
+                                    )
+                        
+                                    if result:
+                        
+                                        st.success(
+                                            "Inventory Updated Successfully"
+                                        )
+                        
+                                        st.rerun()
+                        
+                                    else:
+                        
+                                        st.error(
+                                            "Failed To Update Inventory"
+                                        )
 
             # =========================
             # HISTORY
