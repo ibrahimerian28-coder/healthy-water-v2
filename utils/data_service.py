@@ -57,7 +57,9 @@ def call_api(action, sheet, data=None, row_index=None, uuid=None):
                     
         print("Response =", repr(response))
 
-        return response.startswith("OK")
+        print("API RESPONSE =", response)
+
+            return response
 
     except Exception as e:
         print("API ERROR:", e)
