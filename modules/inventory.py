@@ -376,22 +376,22 @@ def app():
                             key=f"add_tech_{row['item_name']}"
                         )
                 
-                       movement_reason = st.selectbox(
-                           "Movement Reason",
-                           [
-                               "Purchase",
-                               "Supplier Delivery",
-                               "Customer Return",
-                               "Inventory Adjustment",
-                               "Transfer From Warehouse",
-                               "Other"
-                               ],
-                               key=f"reason_{row['item_name']}"
-                           )
-                    invoice_no = st.text_input(
-                        "Invoice / Reference No.",
-                        key=f"invoice_{row['item_name']}"
-                    )
+                        movement_reason = st.selectbox(
+                            "Movement Reason",
+                            [
+                                "Purchase",
+                                "Supplier Delivery",
+                                "Customer Return",
+                                "Inventory Adjustment",
+                                "Transfer From Warehouse",
+                                "Other"
+                                ],
+                                key=f"reason_{row['item_name']}"
+                            )
+                        invoice_no = st.text_input(
+                            "Invoice / Reference No.",
+                            key=f"invoice_{row['item_name']}"
+                        )
                 
                         add_notes = st.text_area(
                             "Notes",
