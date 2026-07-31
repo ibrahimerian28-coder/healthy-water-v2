@@ -335,7 +335,7 @@ def app():
             st.caption(
                 f"Current Stock : {qty} من {ideal_stock}"
             )
-            footer_left, footer_right = st.columns([4, 1])
+            footer_left, footer_buttons = st.columns([3,3])
 
             with footer_left:
             
@@ -345,13 +345,33 @@ def app():
                     f"{movement_icon} {last_movement}          📅 {last_date}          👨 {last_technician}"
                 )
             
-            with footer_right:
+            with footer_buttons:
+
+                b1, b2, b3 = st.columns(3)
             
-                show = st.button(
-                    "📜 History",
-                    key=f"history_{row['item_name']}",
-                    use_container_width=True
-                )
+                with b1:
+            
+                    show = st.button(
+                        "📜 History",
+                        key=f"history_{row['item_name']}",
+                        use_container_width=True
+                    )
+            
+                with b2:
+            
+                    add_stock = st.button(
+                        "➕ Add",
+                        key=f"add_{row['item_name']}",
+                        use_container_width=True
+                    )
+            
+                with b3:
+            
+                    remove_stock = st.button(
+                        "➖ Remove",
+                        key=f"remove_{row['item_name']}",
+                        use_container_width=True
+                    )
 
             # =========================
             # HISTORY
