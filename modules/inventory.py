@@ -209,31 +209,24 @@ def app():
             
             </div>
             
-            <div style="
-            display:flex;
-            justify-content:space-between;
-            margin-top:15px;
-            font-size:14px;
-            font-weight:500;
-            ">
             
-            <div>
-            🕒 <b>{last_movement}</b>
-            </div>
-            
-            <div>
-            📅 <b>{last_date}</b>
-            </div>
-            
-            <div>
-            👨‍🔧 <b>{last_technician if last_technician else '-'}</b>
-            </div>
-            
-            </div>
             </div>
             """,
                 unsafe_allow_html=True
             )
+            info1, info2, info3 = st.columns(3)
+
+            with info1:
+                st.caption("🕒 Last Movement")
+                st.write(f"**{last_movement}**")
+            
+            with info2:
+                st.caption("📅 Last Date")
+                st.write(f"**{last_date}**")
+            
+            with info3:
+                st.caption("👨‍🔧 Technician")
+                st.write(f"**{last_technician if last_technician else '-'}**")
 
             c1, c2, c3, c4 = st.columns(
                 [2, 2, 2, 2]
