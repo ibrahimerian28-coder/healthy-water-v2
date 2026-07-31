@@ -106,6 +106,7 @@ def app():
     sort_by = st.selectbox(
         "↕️ Sort By",
         [
+            "Default",
             "Name (A-Z)",
             "Quantity (High → Low)",
             "Quantity (Low → High)",
@@ -122,7 +123,11 @@ def app():
         df["cost_price"]
     )
     
-    if sort_by == "Name (A-Z)":
+    if sort_by == "Default":
+
+        pass
+    
+    elif sort_by == "Name (A-Z)":
     
         df = df.sort_values(
             "item_name"
